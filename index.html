@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UKETA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Yuji+Syuku&family=Zen+Kaku+Gothic+New:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: variety-show energy, kept tidy like a theatre programme
+   IDEA: a yose stage: red curtains, a mekuri on its wooden stand, one act at a time
+   PICTURE: the stage itself (mic for manzai, folding table and pipe chair for konto) on the watch tab; a telop-lettered owarai age on the scorecard
+   COLOUR and TYPE: vermilion curtain, spotlight gold, telop yellow stroked in ink; Dela Gothic One + Zen Kaku Gothic New
+   LAYOUT: red header with three tabs; a phone-width stage centred on any screen; scorecard hero then paired panels */
+:root{color-scheme:light dark;
+--bg:light-dark(#f3f0eb,#15110f);--paper:light-dark(#fff,#211a17);--ink:light-dark(#1d1714,#f3ece6);
+--mute:light-dark(#6b605a,#a99d95);--line:light-dark(#e2dbd2,#3a302b);--chip:light-dark(#f0ebe5,#2d2521);
+--red:light-dark(#d63b22,#c2351e);--yel:#ffd21f;--blue:light-dark(#2f4a9a,#3d5cc4)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 'Zen Kaku Gothic New',system-ui,sans-serif;overflow-x:clip}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.telop{font-family:'Dela Gothic One',sans-serif;font-weight:400;color:var(--yel);-webkit-text-stroke:.14em #1d1714;paint-order:stroke fill;text-shadow:.04em .07em 0 #1d1714;line-height:1.08}
+.top{background:var(--red);color:#fff;padding:16px max(5vw,16px) 0}
+.in{max-width:1240px;margin:0 auto}
+.brand{display:flex;flex-wrap:wrap;align-items:flex-end;gap:4px 18px}
+h1.telop{font-size:clamp(30px,5vw,44px);margin:0}
+.brand p{margin:0 0 6px;font-size:14px}
+.tabs{display:flex;gap:4px;margin-top:12px;overflow-x:auto}
+.tabs a{flex:none;color:#fff;text-decoration:none;padding:10px 20px;border-radius:12px 12px 0 0;font-weight:700;min-height:44px}
+.tabs a[aria-current=page]{background:var(--bg);color:var(--ink)}
+.tabs b{background:var(--yel);color:#1d1714;border-radius:99px;padding:0 8px;font-size:13px;margin-left:6px}
+.tabs b:empty{display:none}
+.note{background:var(--yel);color:#1d1714;padding:8px max(5vw,16px);font-size:14px;font-weight:700}
+main{padding:20px max(5vw,16px) 64px}
+#v-watch{padding:0}
+.btn{min-height:44px;padding:8px 18px;border-radius:10px;border:0;background:var(--red);color:#fff;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.link{background:none;border:0;color:var(--red);font-weight:700;text-decoration:underline;cursor:pointer;padding:0}
+.empty{padding:28px;text-align:center;color:var(--mute);background:var(--paper);border-radius:14px;border:1.5px dashed var(--line)}
+/* stage */
+.stage{position:relative;max-width:430px;margin:0 auto;border-radius:22px;overflow:hidden;color:#fff;background:radial-gradient(ellipse 62% 40% at 50% 26%,#fff4c9 0%,#f0c95a 20%,#5a3a2c 55%,#140f0d 85%);box-shadow:0 14px 34px rgba(0,0,0,.28)}
+.cur{position:absolute;top:0;bottom:0;width:48px;z-index:1}
+.cur.l{left:0;background:repeating-linear-gradient(90deg,#b42d18 0 12px,#8f2312 12px 17px)}
+.cur.r{right:0;background:repeating-linear-gradient(90deg,#8f2312 0 5px,#b42d18 5px 17px)}
+.val{position:absolute;left:0;right:0;top:0;height:60px;z-index:2;background:repeating-linear-gradient(180deg,#a82a16 0 18px,#8f2312 18px 22px)}
+.boards{position:relative;z-index:0;padding:84px 56px 0;display:flex;flex-direction:column;align-items:center}
+.ttl{margin:0;text-align:center;text-wrap:balance}
+.scene{position:relative;width:100%;margin-top:14px}
+.mek{position:absolute;left:0;bottom:0}
+.prop{position:absolute;bottom:0}
+.play{display:flex;flex-direction:column;align-items:center;gap:10px;margin:22px 0 0}
+.play a{width:96px;height:96px;border-radius:48px;background:var(--yel);border:4px solid #1d1714;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(0,0,0,.4);transition:transform .15s}
+.play a:active{transform:scale(.94)}
+.play p{margin:0;font-size:15px;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.7)}
+.pit{position:relative;z-index:3;margin-top:-40px;padding:76px 20px 22px;background:linear-gradient(180deg,rgba(20,15,13,0) 0%,rgba(20,15,13,.9) 34%,#140f0d 100%);display:flex;flex-direction:column;gap:10px}
+.tg{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.tg span{background:rgba(255,255,255,.16);font-size:13px;font-weight:700;padding:2px 9px;border-radius:6px}
+.hint{margin:0;font-size:13px;color:#c9bfb4;text-align:center}
+.rgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.rb{min-height:52px;border-radius:14px;border:2px solid;font-weight:700;font-size:16px;cursor:pointer;white-space:nowrap}
+.rb:disabled{border-color:rgba(255,255,255,.16)!important;background:rgba(255,255,255,.05)!important;color:#7d726b!important;cursor:not-allowed}
+.rb.u{border-color:var(--yel);background:var(--yel);color:#1d1714}
+.rb.m{border-color:#c9bfb4;background:transparent;color:#fff}
+.rb.s{border-color:#8fa6ea;background:transparent;color:#fff}
+.rb.a{border-color:#8a7f78;border-style:dashed;background:transparent;color:#e9e1da}
+.today{margin:4px 0 0;font-size:14px;font-weight:700;text-align:center}
+.fine{margin:0;font-size:13px;line-height:1.5;color:#c9bfb4;text-align:center}
+.done{padding:120px 56px 140px;text-align:center}
+.stamp{position:absolute;left:0;right:0;top:34%;z-index:7;text-align:center;pointer-events:none;font-size:clamp(44px,13vw,60px);margin:0;animation:stampIn .45s cubic-bezier(.2,1.6,.4,1) both}
+.stamp.s-1{color:#cfd9ff;animation:stampDrop .55s ease-in both}.stamp.s0{color:#fff}.stamp.s-2{color:#c9bfb4;font-size:clamp(36px,10vw,48px)}
+@keyframes stampIn{from{transform:scale(2.2) rotate(-8deg);opacity:0}to{transform:scale(1) rotate(-4deg);opacity:1}}
+@keyframes stampDrop{0%{transform:translateY(-30px);opacity:0}40%{transform:translateY(0);opacity:1}100%{transform:translateY(18px) rotate(3deg);opacity:1}}
+.drape{position:absolute;inset:0;z-index:6;pointer-events:none;overflow:hidden}
+.drape i{position:absolute;top:0;bottom:0;width:51%;transition:transform .5s cubic-bezier(.6,0,.3,1);box-shadow:0 0 24px rgba(0,0,0,.5)}
+.drape .dl{left:0;transform:translateX(-100%);background:repeating-linear-gradient(90deg,#b42d18 0 22px,#8f2312 22px 30px)}
+.drape .dr{right:0;transform:translateX(100%);background:repeating-linear-gradient(90deg,#8f2312 0 8px,#b42d18 8px 30px)}
+.drape.shut i{transform:translateX(0)}
+.stage{transition:opacity .25s}
+.stage.busy .rb,.stage.busy .play a{pointer-events:none}
+.drape.slow i{transition-duration:2.6s}
+.later{position:absolute;left:50%;top:56%;z-index:8;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:2px;min-width:132px;min-height:104px;padding:10px 18px;border:0;border-radius:20px;background:rgba(20,15,13,.62);cursor:pointer;color:#fff;font-weight:700;font-size:15px;text-shadow:0 1px 4px rgba(0,0,0,.8);animation:laterIn .35s ease-out .55s both}
+.later b{font-size:64px;line-height:1;color:transparent;-webkit-text-stroke:2.5px #ffd21f;transition:color .2s,transform .3s cubic-bezier(.2,1.8,.4,1),text-shadow .3s}
+.later.on b{color:#ffd21f;transform:scale(1.25) rotate(-8deg);text-shadow:0 0 24px #ffe98a,0 0 48px #ffd21f}
+.later.on span::after{content:' ✓'}
+@keyframes laterIn{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+@media(prefers-reduced-motion:reduce){.later{animation:none}.later b{transition:none}}
+.favb{background:none;border:0;font-size:22px;line-height:1;cursor:pointer;color:#c9bfb4;min-width:44px;min-height:44px}
+.favb.on{color:#e0a800}
+.lfilt{display:flex;gap:4px}.lfilt button{min-height:40px;padding:4px 12px;border-radius:99px;border:1.5px solid var(--line);background:var(--paper);font-weight:700;cursor:pointer;color:var(--ink)}
+.lfilt button[aria-pressed=true]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+@media(prefers-reduced-motion:reduce){.stamp{animation:none}.drape i{transition:none}}
+/* log */
+.head2{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px}
+.head2 h2{margin:0;font-size:24px}
+.omhead{background:radial-gradient(ellipse 60% 80% at 50% 0,#4b3a2c 0,#241b16 70%);color:#fff;border-radius:16px;border-left:8px solid #b42d18;border-right:8px solid #b42d18;padding:14px 16px;margin-bottom:12px;text-align:center}
+.omtop{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin:0 0 8px}
+.omt{font-size:28px;margin:0}
+.tix{position:relative;display:flex;align-items:baseline;justify-content:center;min-width:96px;gap:4px;padding:6px 18px 6px 16px;border-radius:8px;-webkit-mask:radial-gradient(circle 7px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 7px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat;mask:radial-gradient(circle 7px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 7px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat}
+.tix .tl{white-space:nowrap;font-size:10px;font-weight:700;letter-spacing:.12em;align-self:center;writing-mode:vertical-rl;text-orientation:upright;line-height:1;margin-right:4px}
+.tix .tn{font-family:'Dela Gothic One',sans-serif;font-weight:400;font-size:40px;line-height:1}
+.tix .tu{font-size:14px;font-weight:700}
+.tix.gold{background:linear-gradient(135deg,#8a6a14 0,#f7d774 22%,#fff3b0 38%,#d4a72c 55%,#f7d774 75%,#9c7a1c 100%);color:#5a3d00;box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)}
+.tix.gold .tn{color:#c8161d;text-shadow:0 1px 0 #fff3b0}
+.tix.gold{padding:14px 22px 14px 22px;overflow:hidden}
+.tix .ww{position:absolute;font-style:normal;font-size:10px;font-weight:700;line-height:1;color:#7a5a08;opacity:.75;white-space:nowrap;letter-spacing:-.02em;pointer-events:none}
+.tix .ww.wwt{top:2px;left:0;right:0;text-align:center}.tix .ww.wwb{bottom:2px;left:0;right:0;text-align:center;transform:rotate(180deg)}
+.tix .ww.wwl,.tix .ww.wwr{top:12px;bottom:12px;writing-mode:vertical-rl;display:flex;justify-content:space-between}.tix .ww.wwl{left:3px}.tix .ww.wwr{right:3px}
+.tix.empty{-webkit-mask:none;mask:none;border:2px dashed #8a7a6c;color:#bfb3a8;background:transparent}
+.tix.empty .tn{color:#e0574c}
+.tix.empty .tl{writing-mode:horizontal-tb;font-size:9px;position:absolute;top:3px;left:16px;margin:0}
+.tix.empty{padding-top:14px}
+.omtx{margin:0 0 10px;font-size:13px;color:#d9cfc6}.omtx b{color:#ffd21f}
+.omtk{margin:0 0 10px;display:flex;flex-direction:column;gap:2px;font-size:13px;color:#d9cfc6}.omtk b{color:#ffd21f}.omtk>b{font-size:17px}
+#omq{width:100%;max-width:420px;min-height:44px;border-radius:12px;border:1.5px solid #4a3d34;background:#2e2520;color:#fff;padding:8px 14px;font-size:16px}
+.omwrap{position:relative}
+.omar{position:absolute;top:calc(50% - 46px);z-index:5;width:52px;height:52px;border-radius:50%;border:2px solid #ffd21f;background:rgba(29,23,20,.85);color:#ffd21f;font-size:34px;line-height:1;display:none;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.35);user-select:none;-webkit-user-select:none;touch-action:none;padding:0 0 4px}
+.omar.omar-l{left:6px}.omar.omar-r{right:6px}
+@media(hover:hover){.omwrap:hover .omar{display:flex}}
+.omscroll{scrollbar-color:#b8860b #2a211c;scrollbar-width:auto}
+.omscroll::-webkit-scrollbar{height:16px}.omscroll::-webkit-scrollbar-track{background:#2a211c;border-radius:8px}.omscroll::-webkit-scrollbar-thumb{background:linear-gradient(90deg,#8a6a14,#f7d774,#d4a72c);border-radius:8px;border:3px solid #2a211c}
+.omscroll{direction:rtl;display:flex;align-items:flex-start;gap:22px;overflow-x:auto;overflow-y:hidden;padding:4px 20px 8px;margin:0 -10px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+.omk{direction:ltr;flex:none;display:flex;flex-direction:column;align-items:center;background:none;border:0;padding:0;cursor:pointer;color:inherit}
+.omk-bar{display:block;height:14px;background:#8a5a2e;border-radius:3px;box-shadow:0 3px 0 #5e3b1e;position:relative;z-index:2}
+.omk-frame{position:relative;display:flex;justify-content:center;padding:0 0 0;border-left:9px solid #6b4423;border-right:9px solid #6b4423;margin-top:-2px}
+.omk-paper{display:flex;align-items:center;justify-content:center;background:#fffdf6;box-shadow:0 3px 0 #ece5d6,0 6px 0 #d9d2c4,0 10px 14px rgba(0,0,0,.35);padding:14px 0;margin:0 6px;box-sizing:border-box}
+.omk-name{writing-mode:vertical-rl;text-orientation:upright;font-family:'Yuji Syuku',serif;color:#141010;line-height:1.1;letter-spacing:.02em;max-height:100%;text-align:center}
+.omk-ring{position:absolute;top:-8px;width:9px;height:12px;border:2px solid #8a8f95;border-radius:5px;z-index:3}
+.omk-feet{display:block;height:8px;margin-top:22px;background:linear-gradient(90deg,#4a2e17 0 30px,transparent 30px calc(100% - 30px),#4a2e17 calc(100% - 30px))}
+.omk-n{margin-top:8px;font-weight:700;font-size:14px;color:var(--ink);white-space:nowrap}
+.omk:focus-visible .omk-paper,.omk:hover .omk-paper{outline:3px solid #ffd21f;outline-offset:3px}
+.omswipe{text-align:center;color:var(--mute);font-size:12px;margin:6px 0 0}
+.omgrid{list-style:none;margin:0;padding:0;display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.omg{width:100%;height:80px;overflow:hidden;display:flex;align-items:center;gap:10px;background:#241b16;color:#fff;border:0;border-left:5px solid #b42d18;border-radius:12px;padding:8px 10px;cursor:pointer;text-align:left;min-height:64px}
+.omg .lmk{flex:none}.omn{display:flex;flex-direction:column;min-width:0}.omn b{font-size:14px;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.25}.omn small{color:#bfb3a8;font-size:12px}
+.omback{margin:0 0 8px}.omgh{display:flex;align-items:center;gap:12px;margin:0 0 10px}.omgh h2{margin:0}.omgh p{margin:2px 0 0;color:var(--mute);font-size:13px}
+.lplay.off{background:#4a3d34;box-shadow:none;font-size:18px}
+.omnew{font-size:12px;color:#bfb3a8}.omstar{color:#ffd21f}
+.omrate{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.omrate .rb{min-height:40px;font-size:12px;padding:4px 2px;white-space:nowrap}
+.omhint{color:var(--mute);font-size:13px;text-align:center}
+.lg2{list-style:none;margin:0 auto;padding:0;display:grid;gap:8px;max-width:720px}
+.lc2{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"mk main side" "mk act side";gap:4px 10px;align-items:center;padding:8px 10px;border-radius:12px;color:#fff;background:radial-gradient(ellipse 60% 90% at 45% 30%,#4b3a2c 0,#241b16 70%,#1d1714 100%);border-left:7px solid #b42d18;border-right:7px solid #b42d18;box-shadow:inset 0 4px 0 #8f2312}
+.mk2{display:flex;background:#6b4423;padding:4px;border-radius:4px;box-shadow:0 2px 0 #4a2e17}
+.mk2 span{display:flex;align-items:center;justify-content:center;background:#fffdf6;height:92px;box-sizing:border-box;padding:6px 3px}.mk2 em i{display:block;font-style:normal}.lleft{grid-area:mk;align-self:center;display:flex;flex-direction:column;align-items:center;gap:4px}.lleft time{font-size:11px;color:#bfb3a8;white-space:nowrap}
+.mk2 em{font-style:normal;color:#141010;writing-mode:vertical-rl;text-orientation:upright;font-family:'Yuji Syuku',serif;font-size:15px;line-height:1.2;max-height:80px;letter-spacing:.02em}
+.lmain{grid-area:main;min-width:0}
+.lmain .telop{font-size:21px;margin:0 0 6px;line-height:1.25;overflow-wrap:anywhere}.lmain .telop.long{font-size:17px}
+.lrow{display:flex;align-items:center;gap:8px}
+.lic2 svg{height:34px;width:auto;display:block}
+.lact{grid-area:act;display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap}
+.la1{display:flex;align-items:center;gap:6px}
+.lact .favb{min-width:32px;min-height:36px;font-size:20px;padding:0}
+.lact .lsel select{width:auto;max-width:80px;min-height:32px;background:#2e2520;color:#fff;border-color:#4a3d34;font-size:13px;padding:2px 6px}
+.lact .la{margin-left:auto}.lact .la .link{color:#bfb3a8;padding:6px 3px;font-size:13px}
+.lc2 .lside{grid-area:side}.lagain{font-size:11px;font-weight:700;color:#ffd21f;letter-spacing:.05em;white-space:nowrap}.lagain b{color:#9d9189;font-weight:600;margin-left:2px}.lsortw{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--mute)}.lsortw select{min-height:36px;border:1.5px solid var(--line);background:var(--paper);border-radius:10px;padding:2px 8px;font-size:14px}
+@media(min-width:620px){.lg2{max-width:900px}.lc2{grid-template-columns:auto minmax(0,1fr) 210px 86px;grid-template-areas:"mk main act side";gap:6px 18px;padding:12px 18px}.lact{flex-direction:column;align-items:stretch;justify-content:center;gap:8px}.lact .la{margin-left:auto;align-self:flex-end}}
+.lg{list-style:none;margin:0;padding:0;display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.lc{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px 10px;align-items:center;padding:10px 12px 8px;border-radius:14px;color:#fff;background:radial-gradient(ellipse 60% 70% at 50% 30%,#4b3a2c 0,#241b16 65%,#1d1714 100%);border-left:8px solid #b42d18;border-right:8px solid #b42d18;box-shadow:inset 0 6px 0 #8f2312}
+.lmk{position:relative;align-self:start}.lmk .mek{position:relative!important;left:auto!important;top:auto!important;bottom:auto!important;right:auto!important;margin:0!important}
+.lmid{min-width:0;text-align:center}
+.lmid .telop{font-size:17px;margin:0 0 6px;line-height:1.25;overflow-wrap:anywhere}
+.lic svg{height:46px;width:auto;display:block;margin:0 auto}
+.lside{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;color:#d9cfc6}
+.lplay{width:44px;height:44px;border-radius:50%;background:#ffd21f;display:grid;place-items:center;box-shadow:0 3px 0 #b8940f}
+.lplay svg{width:16px;height:18px;margin-left:3px}
+.lfoot{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;align-items:center;border-top:1px solid rgba(255,255,255,.12);padding-top:6px}
+.lfoot .favb{min-width:36px;min-height:36px;font-size:20px}
+.ltg{display:flex;flex-wrap:wrap;gap:4px;order:9;flex:1 1 60%}.ltg i{font-style:normal;white-space:nowrap;font-size:12px;background:#3a302a;color:#d9cfc6;border-radius:6px;padding:1px 7px}
+.lfoot .lsel{flex:0 0 auto;margin:0}.lfoot .lsel select{width:auto;max-width:92px;min-height:34px;background:#2e2520;color:#fff;border-color:#4a3d34;font-size:13px}
+.lfoot .la{margin-left:auto;order:10}.lfoot .la .link{color:#bfb3a8;padding:6px 4px;font-size:13px}
+.log{list-style:none;margin:0;padding:0;background:var(--paper);border:1.5px solid var(--line);border-radius:14px}
+.log li{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) minmax(0,.9fr) auto auto;gap:8px 16px;align-items:center;padding:10px 16px;border-top:1px solid var(--line)}
+.log li:first-child{border-top:0}
+.lw{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.lw time{color:var(--mute);font-size:13px}
+.lt a{color:var(--ink)}.la{display:flex}.la .link{padding:10px 8px;font-size:14px}
+.fmt{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:700;border-radius:6px;padding:1px 7px;white-space:nowrap}
+.f-m{background:var(--yel);color:#1d1714}.f-k{background:var(--blue);color:#fff}.f-p{background:#e6e0d8;color:#1d1714}
+.lr{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+.r{min-height:44px;border:1.5px solid var(--line);background:var(--paper);border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;padding:2px;white-space:nowrap}
+.r:hover{border-color:var(--ink)}
+.r1.on{background:var(--yel);border-color:#1d1714;color:#1d1714}.r0.on{background:var(--mute);border-color:var(--mute);color:var(--paper)}
+.r-1.on{background:var(--blue);border-color:var(--blue);color:#fff}.r-2.on{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+/* scorecard */
+.find{font-family:'Dela Gothic One',sans-serif;font-weight:400;font-size:clamp(24px,3.4vw,36px);line-height:1.25;margin:0 0 18px;text-wrap:balance;max-width:30ch}
+.hero{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:14px}
+.agecard{background:radial-gradient(circle at 85% -10%,rgba(255,210,31,.4),transparent 55%),var(--red);color:#fff;border-radius:16px;padding:22px 24px}
+.agecard p{margin:0}.lab{font-weight:700}
+.age{font-size:clamp(96px,15vw,160px);margin:8px 0 10px!important;animation:pop .6s cubic-bezier(.2,1.5,.4,1)}
+.age small{font-size:.3em;margin-left:.1em}
+@keyframes pop{from{transform:scale(.7) rotate(-4deg);opacity:0}}
+@media(prefers-reduced-motion:reduce){.age{animation:none}.play a{transition:none}}
+.tier{margin-top:12px!important;padding-top:12px;border-top:1px solid rgba(255,255,255,.35);font-size:15px}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.kpi{background:var(--paper);border:1.5px solid var(--line);border-radius:16px;padding:14px 16px}
+.kpi.wide{grid-column:span 3}
+.kpi p{margin:0}.kl{font-size:13px;color:var(--mute);font-weight:700}
+.kv{font-family:'Dela Gothic One',sans-serif;font-size:clamp(26px,3.4vw,38px);line-height:1.15;margin-top:4px!important}
+.kv small{font:400 15px 'Zen Kaku Gothic New',sans-serif;color:var(--mute)}
+.kv.sm{font-size:clamp(20px,2.4vw,26px)}.kd{font-size:14px;color:var(--mute)}
+.split{display:flex;height:18px;border-radius:99px;overflow:hidden;background:var(--chip);margin:10px 0 8px}
+.split i:nth-child(1){background:var(--yel)}.split i:nth-child(2){background:var(--mute)}.split i:nth-child(3){background:var(--blue)}.split i:nth-child(4){background:var(--ink)}
+.legend{font-size:14px}
+.sharebox{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:24px;align-items:center;margin-top:14px;background:var(--paper);border:1.5px solid var(--line);border-radius:16px;padding:18px}
+.sharebox canvas{width:100%;height:auto;aspect-ratio:4/5;border-radius:12px;display:block;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.sharebox h3{margin:0 0 6px;font-size:19px}.sharebox p{margin:0 0 12px}
+.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px;align-items:start}
+.cols section{background:var(--paper);border:1.5px solid var(--line);border-radius:16px;padding:18px 18px 12px}
+.cols h3{margin:0 0 2px;font-size:19px}.cols h3+p{margin:0 0 10px;color:var(--mute);font-size:14px}
+.br{display:grid;grid-template-columns:8.5em minmax(0,1fr) 5.6em;gap:10px;align-items:center;padding:5px 0}
+.bl{line-height:1.25}.bl small{display:block;color:var(--mute);font-size:13px}
+.bt{height:14px;background:var(--chip);border-radius:99px;overflow:hidden}.bt i{display:block;height:100%;background:var(--red);border-radius:99px}
+.bv{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:700}.bv small{color:var(--mute);font-weight:400}
+.foot{color:var(--mute);font-size:13px;margin-top:18px;max-width:80ch}
+.emptyd{text-align:center;padding:40px 16px;max-width:560px;margin:auto}
+.emptyd .telop{font-size:120px;margin:0}
+/* sheet */
+.sheet{position:fixed;inset:0;z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet[hidden],.toast[hidden]{display:none}
+.scrim{position:absolute;inset:0;background:rgba(20,14,12,.55)}
+.panel{position:relative;background:var(--paper);width:min(580px,100%);max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:20px 20px 24px;display:grid;gap:12px}
+.panel h2{margin:0;font-size:22px}
+@media(min-width:700px){.sheet{align-items:center}.panel{border-radius:18px}}
+.panel label{display:grid;gap:4px;font-weight:700;font-size:14px}
+.panel input{min-height:44px;border:1.5px solid var(--line);background:var(--paper);border-radius:10px;padding:8px 12px;font-size:16px;width:100%}
+fieldset{border:0;padding:0;margin:0}legend{font-weight:700;font-size:14px;margin-bottom:6px;padding:0}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.seg button{min-height:44px;border:1.5px solid var(--line);background:var(--paper);border-radius:10px;font-weight:700;cursor:pointer}
+.seg .on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{flex:none;border:1.5px solid var(--line);background:var(--paper);border-radius:99px;padding:4px 12px;min-height:40px;cursor:pointer;font-size:14px}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.small{font-size:13px;color:var(--mute);margin:4px 0 0}
+.err{color:var(--red);margin:0;font-weight:700;min-height:1.2em}
+.row{display:flex;justify-content:flex-end;gap:8px}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--ink);color:var(--bg);border-radius:12px;padding:8px 10px 8px 16px;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;z-index:30;width:max-content;max-width:calc(100% - 24px);box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.toast button{background:none;border:0;color:var(--yel);font-weight:700;cursor:pointer;min-height:40px;padding:0 6px}
+.acct{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.acct span{font-size:13px;font-weight:700;max-width:16em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gbtn{min-height:40px;padding:6px 14px;border-radius:99px;border:0;background:#fff;color:#1d1714;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.obtn{min-height:40px;padding:6px 12px;border-radius:99px;border:1.5px solid rgba(255,255,255,.6);background:transparent;color:#fff;font-weight:700;cursor:pointer;font-size:13px}
+.ver{background:none;border:0;color:#fff;opacity:.9;font-size:13px;text-decoration:underline;cursor:pointer;padding:6px 0;min-height:36px}
+.rchip{display:inline-block;font-size:13px;font-weight:700;border-radius:8px;padding:3px 10px;white-space:nowrap}
+.rc1{background:var(--yel);color:#1d1714}.rc0{background:var(--chip);color:var(--ink)}.rc-1{background:var(--blue);color:#fff}.rc-2{background:var(--ink);color:var(--bg)}
+.lsel select{min-height:40px;border:1.5px solid var(--line);background:var(--paper);border-radius:10px;padding:4px 8px;font-size:14px}
+.lrw{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tg2{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}.tg2 span{font-size:13px;background:var(--chip);border-radius:6px;padding:1px 7px}
+.diag{background:#1d1714;color:#fff;border-radius:16px;padding:20px 22px;margin:0 0 14px;display:grid;gap:10px}
+.shimo{display:flex;align-items:center;justify-content:center;gap:6px;margin:10px 0 0;font-size:13px;color:var(--mute);cursor:pointer}.shimo input{width:18px;height:18px;accent-color:#ffd21f}
+.locked{margin:0;padding:18px;border:1.5px dashed var(--line);border-radius:12px;color:var(--mute);font-weight:700;text-align:center}
+.diag .wbti{margin:0 0 8px;font-size:12px;font-weight:700;letter-spacing:.08em;opacity:.75}
+.diag .code{display:inline-flex;gap:4px}.diag .code b{font-family:'Dela Gothic One',sans-serif;font-weight:400;background:var(--yel);color:#1d1714;border-radius:6px;padding:2px 8px;font-size:20px}
+.diag h3{margin:0;font-family:'Dela Gothic One',sans-serif;font-weight:400;font-size:clamp(20px,2.6vw,28px);line-height:1.35;text-wrap:balance}
+.diag ul{margin:0;padding-left:1.2em;display:grid;gap:4px}.diag small{color:#c9bfb4}
+.news h3{margin:14px 0 4px;font-size:17px}.news ul{margin:0;padding-left:1.2em}
+.imp{display:flex;gap:8px;flex-wrap:wrap}
+@media(max-width:860px){.sharebox,.hero,.cols{grid-template-columns:minmax(0,1fr)}.log li{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.log .lr{grid-column:1/-1}}
+@media(max-width:600px){.tabs a{padding:10px 12px}main{padding:12px 10px 48px}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi.wide{grid-column:span 2}.br{grid-template-columns:6.8em minmax(0,1fr) 5em}.log li{grid-template-columns:minmax(0,1fr)}.stage{border-radius:16px}}
+@media(max-width:380px){.cur{width:36px}.boards{padding-left:42px;padding-right:42px}}
+.lc2{padding:4px 12px 4px 4px!important;gap:2px 12px!important;align-items:center}
+.lleft{align-self:stretch!important}
+.lleft .mk2{flex:1;align-self:stretch}
+.mk2 span{height:auto!important;min-height:62px;flex:1;padding:4px 2px!important}
+.mk2 em{max-height:none!important;font-size:14px!important}
+.lic2{display:flex;flex-direction:column;align-items:center;gap:2px;flex:none}.lic2 time{font-size:10px;color:#9d9189;white-space:nowrap}
+.lic2 svg{height:30px!important}
+.lmain .telop{margin:2px 0 3px!important}
+.favsp{display:inline-block;visibility:hidden}
+.lact .lsel select{min-height:30px!important}
+.lact .la .link{padding:2px 3px!important}
+.lplay{width:40px;height:40px}
+.lbar{max-width:900px;margin:0 auto 10px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;background:#241b16;border-left:7px solid #b42d18;border-right:7px solid #b42d18;color:#fff}
+.lbar .lfilt{display:flex;gap:0;background:#2e2520;border-radius:99px;padding:3px}
+.lbar .lfilt:empty{display:none}
+.lbar .lfilt button{min-height:34px;padding:2px 14px;border:0;border-radius:99px;background:transparent;color:#d9cfc6;font-weight:700;font-size:13px}
+.lbar .lfilt button[aria-pressed=true]{background:#ffd21f;color:#1d1714}
+.lbar .lsortw{color:#bfb3a8;font-size:12px;gap:6px}
+.lbar .lsortw select{min-height:34px;background:#2e2520;color:#fff;border:1.5px solid #4a3d34;border-radius:99px;padding:2px 10px;font-size:13px}
+.lbar .lnew{margin-left:auto;min-height:36px;padding:4px 14px;border:0;border-radius:99px;background:#ffd21f;color:#1d1714;font-weight:800;font-size:13px;cursor:pointer;box-shadow:0 3px 0 #b8940f}
+.shimo small{font-size:11px;opacity:.8}
+@media(max-width:600px){.lbar{gap:6px;padding:6px 8px}.lbar .lsortw span{display:none}.lbar .lsortw select{max-width:112px;padding:2px 6px}.lbar .lfilt button{padding:2px 10px}.lbar .lnew{padding:4px 10px}}
+
+/* v1.3: ★ countdown (ring + number) while the curtain closes */
+.drape.cd i{transition-duration:3s;transition-timing-function:cubic-bezier(.45,0,.35,1)}
+.drape.mid i{transition-duration:1.3s}
+.later .ring{position:absolute;left:-5px;top:-5px;width:calc(100% + 10px);height:calc(100% + 10px);overflow:visible;pointer-events:none}
+.later .ring rect{fill:none;stroke:#ffd21f;stroke-width:4;stroke-linecap:round;stroke-dasharray:100;stroke-dashoffset:0;vector-effect:non-scaling-stroke}
+.cdn{position:absolute;left:0;right:0;top:calc(56% + 124px);z-index:8;margin:0;text-align:center;font-size:46px;line-height:1;pointer-events:none;animation:cdIn .35s ease-out .5s both}
+.cdn span{display:inline-block}
+.cdn.tk span{animation:cdTick .32s ease-out}
+.cdn small{display:block;margin-top:6px;font:700 12px/1.3 'Zen Kaku Gothic New',sans-serif;color:#fff;-webkit-text-stroke:0;text-shadow:0 1px 3px #000}
+.later.gone,.cdn.gone{opacity:0!important;transition:opacity .2s}
+@keyframes cdIn{from{opacity:0}to{opacity:1}}
+@keyframes cdTick{from{transform:scale(1.5)}to{transform:scale(1)}}
+/* v1.3: memo above the rating buttons */
+
+/* v1.3: tabs lock, count, アンケート, admin */
+.tabs a.locked{opacity:.5;display:flex;flex-direction:column;align-items:center;line-height:1.15}
+.tabs a.locked b{display:none}
+.tabs a .lk{font-size:10px;font-weight:700;opacity:.95;white-space:nowrap}
+@media(max-width:560px){.tabs{gap:3px}.tabs a{flex:1 1 0;min-width:0;padding:9px 2px!important;font-size:13px;text-align:center;white-space:nowrap}.tabs a .lk{font-size:9px}.tabs b{padding:0 5px;font-size:11px;margin-left:3px}}
+.ccount{display:inline-block;margin-left:8px;font-size:11px;color:#fff;opacity:.65}
+.enqw{max-width:560px;margin:0 auto;padding:6px 4px 30px}
+.enqw h2{font-size:26px;margin:4px 0 10px}
+.eq{font-weight:700;margin:16px 0 6px;font-size:14px}.eq small{font-weight:400;color:var(--mute)}
+.echips{display:flex;flex-wrap:wrap;gap:8px}
+.echips button{background:var(--paper);border:1.5px solid var(--line);border-radius:999px;padding:8px 13px;font:inherit;font-size:13.5px;color:var(--ink);cursor:pointer}
+.echips button[aria-checked=true]{background:#ffd21f;border-color:#1d1714;color:#1d1714;font-weight:700;box-shadow:0 2px 0 #1d1714}
+.echips button:disabled{opacity:.45;cursor:not-allowed}
+.echips.sm button{font-size:12.5px;padding:5px 10px}
+.enqw input,.enqw textarea,.admw input,.admw select,.admw textarea{width:100%;box-sizing:border-box;font:inherit;border:1.5px solid var(--line);border-radius:10px;padding:9px 10px;background:var(--paper);color:var(--ink)}
+.enqw textarea{min-height:110px;resize:vertical}
+.esub{font-size:12px;color:var(--mute);margin:8px 0 0}
+.esend{width:100%;margin-top:18px;background:var(--red);color:#fff;border:0;border-radius:12px;padding:13px;font-family:'Dela Gothic One',sans-serif;font-size:17px;box-shadow:0 3px 0 #1d1714;cursor:pointer}
+.esend:disabled{opacity:.6}
+.admlink{position:fixed;right:8px;bottom:6px;z-index:40;font-size:10px;color:var(--mute);opacity:.55;text-decoration:none}
+.admlink[hidden]{display:none}
+.admw{max-width:760px;margin:0 auto;padding:6px 4px 40px}
+.admw h2{font-size:24px;margin:4px 0 6px}
+.admw h3{font-size:16px;margin:22px 0 8px;border-bottom:2px solid var(--line);padding-bottom:4px}
+.admw .kp{display:flex;gap:10px;flex-wrap:wrap}
+.admw .kp div{background:var(--paper);border:1.5px solid var(--line);border-radius:12px;padding:8px 14px}
+.admw .kp b{display:block;font-family:'Dela Gothic One',sans-serif;font-size:24px}
+.admw .kp small{color:var(--mute);font-size:12px}
+.admw ul{list-style:none;margin:0;padding:0}
+.admw li{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:6px 0;font-size:13.5px;overflow-wrap:anywhere}
+.admw li .m{color:var(--mute);font-size:11.5px}
+.admw li .tag{display:inline-block;background:var(--chip);border-radius:6px;padding:0 6px;font-size:11.5px;margin-right:4px}
+.admw .row2{display:flex;gap:8px}
+.admw .row2>*{flex:1}
+.admw .btn2{background:#1d1714;color:#ffd21f;border:0;border-radius:10px;padding:9px 14px;font:inherit;font-weight:700;cursor:pointer;white-space:nowrap;flex:none}
+.admw .btn2.red{background:var(--red);color:#fff}
+.admw .lnk{background:none;border:0;color:var(--red);font:inherit;font-size:12px;cursor:pointer;padding:0 4px}
+.admw .res{display:grid;gap:8px;margin-top:10px}
+.admw .rc{display:flex;gap:10px;align-items:center;text-align:left;background:var(--paper);border:1.5px solid var(--line);border-radius:12px;padding:6px;cursor:pointer;font:inherit;color:var(--ink)}
+.admw .rc img{width:120px;height:68px;object-fit:cover;border-radius:8px;flex:none;background:#000}
+.admw .rc small{display:block;color:var(--mute);font-size:11.5px}
+.admw .rc.have{opacity:.5}
+.admw .af{display:grid;gap:8px;background:var(--paper);border:2px solid #ffd21f;border-radius:12px;padding:12px;margin-top:10px}
+.admw .af label{font-size:12.5px;font-weight:700;display:grid;gap:3px}
+.admw .chips2{display:flex;flex-wrap:wrap;gap:5px}
+.admw .chips2 button{border:1.5px solid var(--line);background:var(--paper);border-radius:99px;padding:3px 9px;font:inherit;font-size:12px;cursor:pointer;color:var(--ink)}
+.admw .chips2 button.on{background:#ffd21f;border-color:#1d1714}
+.admw .note2{font-size:12px;color:var(--mute)}
+.lnote{margin:4px 0 0;font-size:12.5px;line-height:1.45;color:var(--mute);overflow-wrap:anywhere}
+.cmt{display:flex;flex-direction:column;gap:5px}
+.cmt label.cl{font-size:13px;font-weight:700;color:#fff}
+.cmt small{font-weight:400;color:#c9bfb4;font-size:11.5px}
+.cmt textarea{width:100%;box-sizing:border-box;font:inherit;font-size:14px;line-height:1.45;border:1.5px solid rgba(255,255,255,.22);background:rgba(255,255,255,.07);color:#fff;border-radius:10px;padding:7px 9px;min-height:44px;resize:vertical}
+.cmt textarea::placeholder{color:#a99d95}
+.cmt .cdev{display:flex;align-items:center;gap:6px;font-size:12.5px;color:#e9e1da;cursor:pointer}
+.cmt .cdev input{accent-color:#ffd21f;width:16px;height:16px;margin:0}
+</style>
+</head>
+<body>
+<header class="top"><div class="in">
+  <div class="brand"><h1 class="telop">UKETA</h1><p>漫才とコントを観て、評価して、自分の笑いのツボを知る <button class="ver" data-act="news" id="verBtn">v1.3 · 更新履歴</button><small class="ccount" id="ccount"></small></p><div class="acct" id="acct"></div></div>
+  <nav class="tabs">
+    <a href="#watch" data-v="watch">寄席</a>
+    <a href="#oneman" data-v="oneman">ワンマン</a>
+    <a href="#log" data-v="log">記録<b id="logCount"></b></a>
+    <a href="#stats" data-v="stats">WBTI診断</a>
+    <a href="#enq" data-v="enq">アンケート</a>
+  </nav>
+</div></header>
+<div id="note" class="note" hidden></div>
+<main>
+  <section id="v-watch" class="view"><div class="stage" id="stage" aria-live="polite"></div></section>
+  <section id="v-log" class="view in" hidden>
+    <div class="lbar"><div class="lfilt" id="lfilt"></div><label class="lsortw"><span>並び替え</span><select id="lsort" aria-label="並び替え"></select></label><button class="lnew" data-act="new">＋ 記録する</button></div>
+    <div id="logList"></div>
+  </section>
+  <section id="v-oneman" class="view in" hidden><div id="om"></div></section>
+  <section id="v-stats" class="view in" hidden><div id="dash"></div></section>
+  <section id="v-enq" class="view in" hidden><div id="enq"></div></section>
+  <section id="v-admin" class="view in" hidden><div id="adm"></div></section>
+</main>
+<a href="#admin" class="admlink" id="admLink" hidden>admin</a>
+
+<div id="sheet" class="sheet" hidden>
+  <div class="scrim"></div>
+  <form id="form" class="panel" novalidate>
+    <h2 id="fTitle">ネタを記録する</h2>
+    <p class="small" style="margin:0">漫才とコントのみ。バラエティ番組やトーク、YouTube企画は対象外です。</p>
+    <label>コンビ・グループ名<input id="fGroup" list="glist" autocomplete="off" placeholder="例：ミルクボーイ"></label>
+    <datalist id="glist"></datalist>
+    <div id="fNew" hidden>
+      <label>ブレイクした年（任意）<input id="fPeak" type="number" min="1950" max="2100" inputmode="numeric" placeholder="例：2019"></label>
+      <p class="small">新しいグループとして登録されます。ブレイク年はお笑い年齢の計算に使います。</p>
+    </div>
+    <label>ネタの題名（任意）<input id="fT" maxlength="200" placeholder="例：コーンフレーク"></label>
+    <label>ひとこと（任意・自分用メモ）<textarea id="fNote" maxlength="500" rows="2" placeholder="例：ツッコミ最高"></textarea></label>
+    <label>YouTubeのリンク（任意）<input id="fUrl" type="url" placeholder="https://youtu.be/…"></label>
+    <label>長さ・分（任意、視聴時間の計算用）<input id="fDur" type="number" min="0" max="300" step="0.5" inputmode="decimal" placeholder="例：5"></label>
+    <fieldset><legend>形式</legend><div class="seg" id="fFmt"><button type="button" data-f="m">漫才</button><button type="button" data-f="k">コント</button></div></fieldset>
+    <fieldset><legend>スタイル（このネタに合わせて変えられます）</legend><div class="chips" id="fStyles"></div></fieldset>
+    <fieldset><legend>評価</legend><div class="lr" id="fRate"></div></fieldset>
+    <p class="err" id="fErr" role="alert"></p>
+    <div class="row"><button type="button" class="btn ghost" data-close>キャンセル</button><button type="submit" class="btn">保存</button></div>
+  </form>
+</div>
+<div id="newsSheet" class="sheet" hidden>
+  <div class="scrim"></div>
+  <div class="panel news" role="dialog" aria-labelledby="newsTitle">
+    <h2 id="newsTitle">更新履歴</h2>
+    <div id="newsBody"></div>
+    <div class="row"><button type="button" class="btn" data-close>閉じる</button></div>
+  </div>
+</div>
+<div id="toast" class="toast" hidden role="status"></div>
+
+<script>
+{
+const STY={shabekuri:'しゃべくり',system:'システム',contem:'コント漫才',rapid:'ハイテンポ',surreal:'シュール',aruaru:'あるある',drama:'人間ドラマ',edgy:'毒舌',physical:'動き',zure:'ズレ',music:'歌ネタ',madness:'狂気',fukusen:'伏線回収',tendon:'天丼',wboke:'ダブルボケ',meta:'メタ',aho:'アホ',herikutsu:'屁理屈',iimachigai:'言い間違い',chara:'キャラ',kire:'キレツッコミ',tatoe:'例えツッコミ',notsukkomi:'ツッコまない',jiji:'時事',jigyaku:'自虐',henken:'偏見',kotoba:'言葉遊び',shimo:'下ネタ',ma:'間',oogoe:'大声',ninzu:'大人数',hokkori:'ほっこり'};
+const BOKE=['surreal','zure','madness','physical','aho','herikutsu','iimachigai','chara','wboke'],TSUK=['kire','tatoe','notsukkomi'];
+const FMT={m:'漫才',k:'コント',b:'漫才・コント',p:'ピン'};
+const R={'1':'ウケた','0':'まあまあ','-1':'スベった','-2':'途中でやめた'};
+const RV={'1':100,'0':50,'-1':0,'-2':0,'s1':150,'s0':100,'s-1':50,'s-2':50};
+const sv=e=>e.fav?'s'+e.r:e.r;
+const VERSION='1.3';
+const ADMIN_EMAIL='james@raymercer.net';
+const CHANGELOG=[
+ ['1.3','2026年11月23日',['ネタが172本から521本に、芸人さんも73組から115組に。タイムマシーン3号、さまぁ～ず、四千頭身、かが屋、千鳥…やっと呼べました','★推す！はカウントダウン式に。幕が閉まるまでの3秒で決めてください。迷ったら推す','評価ボタンの上に「ひとこと」。自分用メモです。「開発者にも送る」にチェックすると開発者にも届きます（悪口はお手柔らかに）','新タブ「アンケート」。観たい組、欲しい機能、なんでもどうぞ。全部読みます','はじめての人は寄席から。3本でワンマン解禁＆チケット1枚プレゼント、20本で記録とWBTI診断が解禁。焦らず観てください','そのほか：収録数を表示、記録にひとことを表示、細かい改善']],
+ ['1.2','2026年11月21日',['新タブ「ワンマン」：寄席で10本観るごとにチケット1枚。推しのネタを好きなだけ…じゃなくて1本だけ観られます。好きな組ばかり観てると偏るので','ネタが64本から172本に。ピン芸人15人も仲間入り（R-1王者など）。ひとりで全部背負う人たちです','「ウケた」のあと、幕が閉まるあいだに★「推す！」。推したネタは記録からすぐ観直せます。推しは点数も＋50点、えこひいきです','ネタの頭から再生。前説や出囃子は飛ばします。早く本題に入りたいあなたへ','「成績表」は「WBTI診断」に。推しスタイルTOP3、ボケ派かツッコミ派か、ピン芸の点数も。あなたのツボ、丸裸です','そのほか：「観る」→「寄席」、「途中で飽きた」→「途中でやめた」（言い方は大事）、タグ約30種類、「ゴールデンタイム」設定（下ネタ控えめ）、漫才派・コント派の判定をゆるめに、「好きな尺」、バックアップのボタンを削除、デザインをいろいろ改善']],
+ ['1.1','2026年11月20日',['Googleでログインできるように。スマホでもPCでも同じ記録。逃げられません','成績表に「笑いの診断」を追加。当たっても怒らないでください','記録にスタイルを表示。評価の変更はプルダウンから（うっかり変更防止）','更新履歴を追加。今まさに読んでるやつです','デザインを改善']],
+ ['1.0','2026年11月20日',['UKETAとして公開','寄席の舞台で1本ずつ観る形式に。選り好みはさせません','「途中で飽きた」を追加。評価はYouTubeで観てから。観てない人の評価は聞いてません','視聴時間とベスト尺','全部日本語に。日本語話せないとお笑いは難しいよね・・・']],
+ ['0.2','2026年11月19日',['公式の漫才・コント動画だけに。バラエティ・企画は寄席の外でどうぞ','お笑い年齢をファン層ベースに。見た目年齢より正直です','シェア用カード']],
+ ['0.1','2026年11月19日',['最初のバージョン。YouTubeで観て、ウケた・まあまあ・スベったで評価。ここからすべてが始まった']]
+];
+const FB_CFG={apiKey:'AIzaSyBEG3JxRGTmQ1qMfN_pjBwdGMLernk59eM',authDomain:'uketa-f7562.firebaseapp.com',projectId:'uketa-f7562',storageBucket:'uketa-f7562.firebasestorage.app',messagingSenderId:'410660866760',appId:'1:410660866760:web:1234a5c8c4a8369d0373fd'};
+const FBV='10.14.1';
+const TIERS=[[0,'養成所','まずは3本'],[3,'若手',''],[15,'中堅',''],[40,'ベテラン',''],[100,'大御所','']];
+// id, name, romaji, format (m manzai / k konto / b both), styles, breakout year (approx.), fan age (estimate), note, videos [youtube id, format, title, views, likes, length in seconds] as of 2026-11-19
+const CAT=[
+["bakusho", "爆笑問題", "Bakushō Mondai", "m", "edgy shabekuri", 1995, 52, "Topical, news-driven manzai", [["tdK2he46Yjc", "m", "漫才「ツーショット」2014年度版", 582187, 2002, 532, 0, "jiji shabekuri edgy rapid"], ["7a7vnPAnA_A", "m", "2013年度版 漫才 爆笑問題のツーショット", 287198, 0, 597, 22, "jiji shabekuri edgy rapid"], ["y51qjje9CGM", "m", "2012年度版 漫才 爆笑問題のツーショット", 254657, 0, 607, 25, "jiji shabekuri edgy rapid"], ["rZy3_EmCTMI", "m", "ツーショット2011（2010年総決算）", 187496, 0, 582, 45, "jiji"], ["2f0axMTHK7o", "m", "ツーショット2010（2009年総決算）", 171775, 0, 474, 50, "jiji"]]],
+["nakagawake", "中川家", "Nakagawa-ke", "m", "shabekuri aruaru", 2001, 44, "M-1 2001 champion · brothers", [["q6QYAcF9Uoc", "m", "中川家の寄席2023「大阪の不動産屋」", 9757221, 73106, 1269, 15, "aruaru chara ma hokkori"], ["XyYAgGiHYwg", "m", "スピード違反", 13173018, 0, 653, 14, "aruaru chara ma hokkori"], ["0_4Yq_nDW1o", "m", "居酒屋チェーン", 8880828, 0, 1426, 21, "aruaru chara ma"], ["cnALwCUp_Mk", "m", "タクシー", 9750103, 0, 1089, 18, ""], ["JALzgOlGqxg", "m", "おかんと温泉旅館にて", 8498988, 0, 1033, 13, ""]]],
+["ramens", "ラーメンズ", "Rahmens", "k", "surreal", 2002, 42, "Minimalist wordplay theatre", [["enoUCj-WNCI", "k", "不思議の国のニポン", 4658171, 0, 1413, 0, "kotoba surreal system ma"], ["IaBDGFGNYK0", "k", "不透明な会話", 2539224, 0, 828, 0, "kotoba herikutsu surreal ma"], ["sC5T1l-yT48", "k", "条例", 1838057, 0, 920, 0, "kotoba surreal herikutsu shimo"], ["vAEitV5SPn0", "k", "名は体を表す", 2374772, 0, 1246, 0, "kotoba"], ["LdCEXnF8TmQ", "k", "50 on 5", 1755155, 0, 856, 0, "kotoba"]]],
+["masudaokada", "ますだおかだ", "Masuda Okada", "m", "shabekuri", 2002, 46, "M-1 2002 champion", [["wSDZGDQr9SQ", "m", "岡田はセコい", 20197, 100, 452, 9, "shabekuri chara hokkori ma"]]],
+["untouchable", "アンタッチャブル", "Untouchable", "m", "rapid shabekuri", 2004, 42, "M-1 2004 champion", [["909dVjZtm8g", "m", "ハンバーガー", 498137, 2320, 438, 0, "rapid aho shabekuri oogoe chara"], ["fHAU8SQQXZM", "k", "車乗り込みコント6連発", 396614, 0, 722, 0, ""], ["3sch3VLQrrg", "m", "神社の前で即興漫才", 631756, 0, 375, 0, ""]]],
+["tutorial", "チュートリアル", "Tutorial", "b", "shabekuri surreal", 2006, 41, "M-1 2006 champion", [["acRI9OMTZNo", "m", "冷蔵庫", 3628554, 11888, 426, 0, "madness chara tendon shabekuri"], ["DeAnIlv__Nk", "m", "きゅうり", 2788119, 0, 625, 0, "madness chara tendon shabekuri"], ["cM8EdXTKWNw", "k", "ボーリング症候群", 1138109, 0, 285, 0, "surreal madness chara"], ["9JAgT-K0HOI", "k", "東大阪宇宙科学センター", 1694683, 0, 1147, 0, ""], ["Vrt6rX8jRKg", "k", "葉", 382886, 0, 488, 0, ""]]],
+["bananaman", "バナナマン", "Bananaman", "k", "drama surreal", 2006, 41, "Long-running konto duo", [["mMfrNBTNacM", "k", "お前の姉ちゃん（RADIO DANCE）", 305668, 2236, 301, 0, "drama aho tendon ma kotoba"], ["FyTEGeqEQCU", "k", "赤えんぴつ「誕生花」", 564177, 0, 274, 0, "music"], ["BROwcrp-XWY", "k", "ヒム子「お会計してぇ〜！」", 221386, 0, 142, 0, "chara"], ["dLH-UtH8us8", "k", "赤えんぴつ「姉妹」", 59026, 0, 197, 0, "music"], ["_l-DMQ8LnkI", "k", "スライドボーイズ「東京ひとりぼっち」", 75413, 0, 154, 0, "music"]]],
+["sandwich", "サンドウィッチマン", "Sandwichman", "b", "contem aruaru", 2007, 40, "M-1 2007 champion", [["CPblUJmSR0E", "k", "みどりな窓口", 28562389, 87073, 353, 0, "zure chara tendon hokkori"], ["4Ei2ycRd6fE", "m", "救急車", 18174696, 70897, 244, 0, "contem zure chara hokkori"], ["5kmyOfvucp8", "k", "カラオケ", 55471692, 0, 832, 0, "zure chara tendon hokkori"], ["XhvUsxNYO1M", "k", "薬局", 33148041, 0, 387, 14, "zure chara aho hokkori"], ["Gpy-8na4zSQ", "k", "蜂の巣駆除", 48076331, 0, 770, 0, ""]]],
+["nonstyle", "NON STYLE", "Non Style", "m", "rapid", 2008, 34, "M-1 2008 champion", [["I1E2Tcv7gQo", "m", "熱血教師", 12051196, 56053, 272, 0, "rapid contem tendon chara"], ["uQfBi9EdqAQ", "m", "エレベーター", 11787976, 0, 201, 0, "rapid contem tendon chara"], ["rwX0IYU5AA8", "m", "無人島", 10659065, 0, 304, 0, "rapid contem tendon aho"], ["GIu3PZJpB7k", "m", "寝坊", 9243362, 0, 332, 0, ""], ["3uWSH7iQAg0", "m", "デート", 7857310, 0, 460, 12, ""]]],
+["audrey", "オードリー", "Audrey", "m", "zure", 2008, 36, "M-1 2008 runner-up", [["hnJfHIr9SLM", "m", "日本武道館の漫才（ANN 10周年）", 7841195, 101453, 1495, 28, "zure chara meta tendon ma"]]],
+["knights", "ナイツ", "Knights", "m", "system rapid", 2008, 45, "Deliberate-misspeaking manzai", [["EDv-gNkkd88", "m", "野球寿限無", 12415514, 47916, 1077, 8, "iimachigai system rapid kotoba"], ["huJ93g_kGjU", "m", "全テレビ局紹介", 8440881, 0, 1005, 9, "iimachigai jiji system rapid"], ["9lYwvpIhT1U", "m", "自己紹介", 7857723, 0, 1083, 8, "iimachigai system meta"], ["0bSK8XHe8rU", "m", "漫才協会事務局", 5748152, 0, 618, 0, ""], ["vb7L27fmVTU", "m", "リオの戦リオ品", 4748186, 0, 840, 8, "jiji"]]],
+["punkbooboo", "パンクブーブー", "Punk Booboo", "m", "rapid system", 2009, 38, "M-1 2009 champion", [["hfz4knBN4Wg", "m", "命乞い", 2589612, 8192, 236, 0, "system tendon kotoba zure"], ["Tgkwwonbjko", "m", "万引き", 1200731, 0, 243, 6, ""], ["b9B2n2cj7Uw", "m", "新聞勧誘", 1128978, 0, 238, 6, ""], ["MfcaNqevs8c", "m", "電器屋さん", 1012430, 0, 274, 6, ""], ["UdX345tIG2w", "m", "怖い話", 941727, 0, 331, 6, ""]]],
+["tokyo03", "東京03", "Tokyo 03", "k", "drama aruaru", 2009, 40, "KOC 2009 champion · trio", [["PLUl51eS8C0", "k", "修学旅行", 17866310, 57900, 1178, 0, "drama kire fukusen aruaru"], ["7b33Fk_3Qu0", "k", "スマイルハウジング", 17402598, 0, 721, 0, "drama kire aruaru fukusen"], ["yyOSPXOFwM8", "k", "救世主", 15675320, 0, 1036, 0, "drama kire fukusen"], ["aTLLemQpMN0", "k", "余裕", 15161075, 0, 840, 13, ""], ["dfvmg2SI788", "k", "お礼させて下さい", 14732428, 0, 781, 13, ""]]],
+["waraimeshi", "笑い飯", "Waraimeshi", "m", "system surreal", 2010, 40, "M-1 2010 champion · double boke", [["4ZObHifkZkE", "m", "ハエ", 2231089, 11274, 534, 0, "wboke system surreal tendon"], ["t7HalhGGCyM", "m", "伸びてしまった衣服のはき方", 1736924, 0, 658, 0, "wboke system surreal tendon"], ["nRaPlYEkZhU", "m", "割り込み", 470645, 0, 636, 0, "wboke"]]],
+["robert", "ロバート", "Robert", "k", "physical surreal", 2011, 35, "KOC 2011 champion · trio", [["xPTXxRA394c", "k", "トゥトゥトゥサークル", 10479697, 112955, 1418, 0, "surreal chara tendon madness physical"], ["AslvLTReeQs", "k", "兄弟CMソングライター", 3459907, 0, 1154, 0, "music chara surreal tendon"], ["o0oW4DnG8vc", "k", "NO GUITAR,NO LIFE", 1447833, 0, 816, 0, "chara surreal music zure"], ["oOSODqrjQlA", "k", "シゲとおさださん", 1256316, 0, 933, 8, ""], ["d5NAI-ZSP8E", "k", "スローガン～夢を信じて～", 969519, 0, 846, 0, ""]]],
+["baikingu", "バイきんぐ", "Baikingu", "k", "madness edgy", 2012, 34, "KOC 2012 champion", [["kkkyrKkrIME", "k", "ラーメン屋", 13655615, 30746, 329, 19, "kire zure aho oogoe"], ["VewbMFyOUp8", "k", "内見", 4740164, 0, 426, 0, "kire zure aho oogoe"], ["tmT5Qnrqtow", "k", "昼下がり", 4383381, 0, 438, 0, "kire zure drama"], ["r_fWgigylOU", "k", "ポイントカード", 4045666, 0, 494, 15, ""], ["oQsUhlzNBZE", "k", "閉店", 3631232, 0, 435, 8, ""]]],
+["kamomental", "かもめんたる", "Kamomental", "k", "madness drama", 2013, 35, "KOC 2013 champion", [["K_HkBacHNM8", "k", "白い靴下（KOC 2013 優勝ネタ）", 553183, 5335, 305, 0, "drama madness kire surreal"], ["PumLtO6OhZw", "k", "砂浜店長", 328698, 0, 462, 0, "surreal madness drama"], ["RcHxpqdH4H8", "k", "クレーマー", 282545, 0, 392, 9, "drama madness kire"], ["K6LROI0xxmg", "k", "言葉売り", 521470, 0, 554, 0, ""], ["sBy2__EXzAc", "k", "作文", 204488, 0, 301, 0, ""]]],
+["sissonne", "シソンヌ", "Sissonne", "k", "drama", 2014, 33, "KOC 2014 champion", [["v0knCQAkLnE", "k", "うちの息子、実は", 5548748, 40153, 758, 0, "drama chara surreal ma"], ["B8Kh2tWuGhw", "k", "先生の本性", 4656720, 0, 540, 0, "drama chara surreal"], ["avb8dXZJI0Q", "k", "名店への道", 4542138, 0, 928, 0, "drama chara aruaru ma"], ["zJ_aBsfjzWw", "k", "ばばあの罠", 3941046, 0, 563, 0, ""], ["N6fgYfBF_ik", "k", "インドカレー", 3920634, 0, 563, 40, ""]]],
+["trendy", "トレンディエンジェル", "Trendy Angel", "m", "rapid physical", 2015, 22, "M-1 2015 champion", [["5agvzWmfQIE", "m", "K-POP", 329418, 689, 258, 0, "jigyaku music rapid chara"], ["ZL07exibjuQ", "m", "モテる男", 226051, 0, 287, 0, "jigyaku chara rapid"], ["ZC6QuHSWMMA", "m", "ハゲネタ漫才", 265422, 0, 206, 0, "jigyaku"], ["Q9g6jfg45QU", "m", "誕生日", 20684, 0, 277, 12, ""], ["7o9V45uvFdQ", "m", "イライラ", 14075, 0, 255, 0, ""]]],
+["korochiki", "コロコロチキチキペッパーズ", "Korochiki Peppers", "k", "physical", 2015, 24, "KOC 2015 champion", [["WAntOMm2s6s", "k", "卓球（KOC 2015 優勝ネタ・2026再演）", 1401442, 8776, 308, 0, "physical chara oogoe surreal"], ["YT566JxSJD8", "m", "学歴", 861227, 0, 229, 0, "chara oogoe herikutsu"], ["7PvyH5E_xZk", "k", "妖精", 473382, 0, 310, 3, ""], ["IaJpRmPIyGs", "k", "救世主", 444426, 0, 511, 15, ""], ["XzWU1RtOZVQ", "m", "熟女", 363680, 0, 343, 20, ""]]],
+["ginshari", "銀シャリ", "Ginshari", "m", "shabekuri", 2016, 33, "M-1 2016 champion", [["S8UXiKtn03g", "m", "滋賀県のご当地漫才", 212154, 1584, 353, 0, "shabekuri kotoba aruaru tatoe"], ["0RBfgXrdrUY", "m", "静岡県のご当地漫才", 181743, 0, 458, 0, ""], ["1Cncp6K6rv4", "m", "山口県のご当地漫才", 95151, 0, 260, 0, ""], ["qyzPBakbOFI", "m", "長崎オリジナル漫才", 189425, 0, 491, 26, ""]]],
+["rice", "ライス", "Rice", "k", "drama", 2016, 33, "KOC 2016 champion", [["PCENvh7dLH8", "k", "命乞い", 282411, 3024, 254, 0, "drama zure ma surreal"], ["HXgoIcc5Qso", "k", "chaku", 229452, 0, 386, 0, "drama zure ma"], ["IaVBaE55Qh8", "k", "あっちとこっち", 168831, 0, 497, 10, "drama zure ma aruaru"], ["aJxN85-Sqxk", "k", "ドリーマー", 132457, 0, 424, 8, ""], ["zF4RnhIzRkI", "k", "まぎらわしい", 115364, 0, 236, 6, ""]]],
+["torosalmon", "とろサーモン", "Toro Salmon", "m", "shabekuri", 2017, 35, "M-1 2017 champion", [["mbOomwRxkNk", "m", "新幹線", 293067, 2993, 433, 0, "shabekuri zure aho"], ["Lr0Fzo4UKqM", "k", "労働者", 381750, 0, 457, 0, "shimo"], ["vGLyUFKNCL8", "k", "外出自粛", 233189, 0, 681, 0, ""], ["L5HNyZsFQEA", "k", "クレーマー", 196237, 0, 611, 0, ""], ["ss_oX-jb8Kk", "k", "合唱コンクール", 191172, 0, 437, 20, ""]]],
+["wagyu", "和牛", "Wagyu", "m", "contem shabekuri", 2017, 31, "M-1 runner-up 2016–18", [["mbAlivtYBZA", "m", "逆ヘッド（よしもと若手祭り）", 1350984, 5282, 385, 0, "contem herikutsu drama zure"], ["yMuMdz7nGUM", "m", "怖い話", 664326, 0, 333, 10, ""], ["Q8eiPBglFyo", "m", "手料理", 339205, 0, 251, 0, ""]]],
+["kamaitachi", "かまいたち", "Kamaitachi", "b", "shabekuri drama", 2017, 30, "KOC 2017 champion · M-1 2019 runner-up", [["7HnqhxNSeb8", "k", "予約", 4679917, 25626, 520, 6, "herikutsu aruaru drama zure"], ["Gp2hyXo4s4w", "m", "UFJ・USJ（M-1 2019 決勝）", 3323479, 36723, 524, 0, "herikutsu shabekuri iimachigai tendon"], ["edN8HxnIhNQ", "k", "スクイズ", 2918958, 0, 512, 0, "herikutsu drama zure edgy"], ["OXbdK5XyAdo", "k", "ホームルーム", 2890651, 0, 530, 0, ""], ["t8r0ojwWLxQ", "k", "サーフショップ", 1977750, 0, 499, 0, ""]]],
+["shimofuri", "霜降り明星", "Shimofuri Myōjō", "m", "rapid physical", 2018, 25, "M-1 2018 champion", [["GbUzJ0kUZ40", "m", "新学期", 1710802, 25086, 263, 0, "rapid physical oogoe tatoe"], ["Av6Ul1q5mmE", "m", "ボケツッコミ入れ替え漫才「豪華客船」", 1699060, 0, 448, 0, "rapid physical meta tatoe"], ["riL7x3ukBu4", "m", "アンパンマン", 939849, 0, 284, 0, ""], ["fe7YuHTxWtU", "m", "吹奏楽部", 723959, 0, 276, 0, ""], ["eQbzLq1zp6E", "m", "寿司2", 705567, 0, 477, 0, ""]]],
+["hanako", "ハナコ", "Hanako", "k", "aruaru drama", 2018, 28, "KOC 2018 champion · trio", [["OQZncXKxuRc", "k", "天空龍", 2027245, 9768, 394, 0, "chara physical aruaru madness"], ["n8SgfHw5xzY", "k", "食育", 1586594, 0, 339, 0, "drama chara madness"], ["XU86g8TSnm8", "k", "個別指導塾", 1425552, 0, 316, 0, "chara surreal drama"], ["9qSdep3hcp4", "k", "先生", 1319280, 0, 304, 0, ""], ["GcUwR95wKPA", "k", "ディベート部", 1223580, 0, 331, 0, ""]]],
+["tombrown", "トム・ブラウン", "Tom Brown", "m", "madness surreal", 2018, 27, "M-1 2018 finalist", [["AEwzjsUJ6Xs", "m", "合体させない漫才（ノーカット）", 3887488, 42741, 553, 57, "madness tendon oogoe system surreal"], ["LFVgWp3TuXQ", "m", "ナカジMAX", 3177809, 0, 258, 3, ""], ["qUm89bwMg8A", "m", "コール", 769059, 0, 269, 8, ""], ["KAn-BZurcKA", "m", "剛力", 760649, 0, 255, 0, ""], ["8Hb1T0xeBSo", "m", "アントニオ猪木のものまね", 832085, 0, 254, 0, ""]]],
+["chocoplanet", "チョコレートプラネット", "Chocolate Planet", "k", "physical aruaru", 2018, 22, "Character and impression konto", [["hME8NF7dTyk", "k", "クレーム", 10618438, 57187, 423, 0, "chara surreal zure drama"], ["_Nlrn2aRdHo", "k", "自慢師たち", 11819742, 0, 786, 9, "chara surreal herikutsu"], ["m50H_0B78aQ", "k", "クイズショー", 10242778, 0, 544, 0, "chara zure system"], ["Myp1RLUiAuI", "k", "ブランド", 5875042, 0, 888, 0, ""], ["_YbIlhLOnzA", "k", "静かにしろ", 5788128, 0, 193, 0, ""]]],
+["milkboy", "ミルクボーイ", "Milkboy", "m", "system", 2019, 30, "M-1 2019 champion", [["nScpgbWs2i0", "m", "サイゼ", 11685013, 59980, 248, 0, "system aruaru tendon shabekuri"], ["j-htiRPGs9w", "m", "滋賀", 5769850, 0, 272, 20, "system aruaru tendon shabekuri"], ["Ee1S-jyg-Q4", "m", "競歩", 5634033, 0, 264, 0, "system aruaru tendon shabekuri"], ["XbyTjqj48X4", "m", "SASUKE", 5331162, 0, 220, 27, "system"], ["thD_tn70xsw", "m", "寝られへん", 3910455, 0, 295, 0, "system"]]],
+["pekopa", "ぺこぱ", "Pekopa", "m", "system zure", 2019, 24, "M-1 2019 finalist · the tsukkomi that won’t", [["91IwQYgOfSA", "m", "心に松陰寺（M-1 2020 敗者復活）", 134692, 3669, 253, 0, "notsukkomi hokkori chara system"], ["Q0saKFkBs8Q", "m", "弱暗黒漫才", 45627, 0, 150, 0, ""], ["swW0BU_7ln4", "m", "即興漫才 東京タワー", 90087, 0, 295, 16, ""], ["f5Yr5Ma3wsI", "m", "演技指導", 2501, 0, 634, 12, ""]]],
+["jarujaru", "ジャルジャル", "JaruJaru", "b", "system surreal", 2020, 26, "KOC 2020 champion", [["AOtvUnalVYc", "k", "ハズレの先生が担任になった奴", 16832846, 187275, 393, 0, "system tendon kotoba chara"], ["b1J39WQFvSs", "m", "国名分けっこ（M-1 決勝）", 6337206, 104414, 281, 0, "system kotoba tendon rapid"], ["DaCmjtB-5To", "k", "押しドア、引きドア、間違える奴", 17024704, 0, 406, 0, "system tendon aho"], ["2fuKvKLPIDk", "k", "人質チョイスミスった奴", 11937467, 0, 204, 0, "system tendon zure"], ["0px-xNc5sZ0", "k", "嘘をつき通す奴〜ピザ〜", 11184961, 0, 595, 0, ""]]],
+["magilove", "マヂカルラブリー", "Majikaru Lovely", "m", "physical surreal", 2020, 27, "M-1 2020 champion", [["qJyyaaSfS4Y", "m", "寿司屋の職人がヤバイ", 919700, 5573, 123, 0, "contem aho physical oogoe madness"], ["bMTPZQ0vTfI", "m", "ラップバトル（あらびき団）", 741840, 0, 185, 0, ""], ["Rb4agfLbObs", "m", "子供を助けたい", 224097, 0, 247, 4, ""], ["9NPURIukmps", "m", "文章問題", 175607, 0, 252, 0, ""]]],
+["mitorizu", "見取り図", "Mitorizu", "m", "shabekuri", 2020, 28, "M-1 finalist 2018–20", [["eg8WG9PY5GY", "m", "RPG", 620861, 5196, 146, 10, "contem tatoe zure shabekuri"], ["ImeewFAm4cs", "m", "おしゃれ", 575147, 0, 160, 6, "contem tatoe zure shabekuri"], ["zvC6ni4gHRI", "m", "美容室", 508401, 0, 202, 0, "contem tatoe zure shabekuri"], ["SHOAzVBj1XY", "m", "子供っぽい", 596587, 0, 329, 0, ""], ["guvM083zJ3g", "m", "マネージャー", 494546, 0, 505, 0, ""]]],
+["newyork", "ニューヨーク", "New York", "b", "edgy", 2020, 29, "M-1 and KOC finalist", [["S-I1m6K-oKY", "k", "フリーター", 1808623, 14204, 302, 0, "henken edgy aruaru drama"], ["Bo_0b2Nik7c", "m", "ラブソング（M-1 決勝）", 1740967, 18312, 196, 0, "music zure edgy tendon"], ["iL7lePjR10U", "k", "シェアハウス", 2478941, 0, 462, 0, "henken edgy drama"], ["C6aFuaAWk2Q", "m", "KREVA", 1896706, 0, 476, 0, "henken edgy music"], ["uryu6bYjz2Y", "m", "女", 1478324, 0, 397, 0, "henken"]]],
+["nishikigoi", "錦鯉", "Nishikigoi", "m", "physical", 2021, 27, "M-1 2021 champion", [["qHAJXrvYTqc", "m", "むすめさんをください", 436900, 2967, 811, 16, "aho oogoe contem jigyaku hokkori"], ["L03uObezHoQ", "m", "ホットドッグ", 412704, 0, 733, 14, "aho oogoe contem hokkori"], ["0q8pelrEfQ0", "m", "サルを捕まえる", 238971, 0, 441, 15, "aho oogoe contem hokkori"], ["Yxc4cCtjNwc", "m", "まさのりクルーズ", 412137, 0, 1071, 18, ""], ["qVsVr5Cyank", "m", "山登り", 184885, 0, 435, 15, ""]]],
+["oswald", "オズワルド", "Oswald", "m", "zure shabekuri", 2021, 29, "M-1 2021 runner-up", [["peJsE0Tb1Dc", "m", "車", 2369759, 19556, 296, 10, "ma herikutsu zure shabekuri"], ["FGWi3ppxfPM", "m", "ダイエット", 2214717, 0, 314, 6, "ma herikutsu zure shabekuri"], ["SNqeL4QPaMo", "m", "アメリカ人", 1814329, 0, 324, 10, "ma herikutsu zure shabekuri"], ["IphX84NhN_Y", "m", "結婚式の余興", 1591650, 0, 371, 15, ""], ["uRH4sJwDy9s", "m", "改名", 1278915, 0, 307, 0, ""]]],
+["kuukikaidan", "空気階段", "Kūki Kaidan", "k", "drama madness", 2021, 29, "KOC 2021 champion", [["47vrrq1Ihbc", "k", "火事（KOC 2021 決勝）", 4014713, 59353, 340, 8, "drama fukusen chara hokkori"], ["a4Aow16xOUA", "k", "定時制高校", 3698818, 0, 391, 0, "drama hokkori chara"], ["99zLd10VlXw", "k", "違反", 3110003, 0, 269, 0, "drama chara madness"], ["LqXUIRwSeJc", "k", "みどり屋①", 3002442, 0, 781, 0, ""], ["HrUAHajCjOM", "k", "トイレ", 1986858, 0, 525, 0, ""]]],
+["mammy", "ザ・マミィ", "The Mammy", "k", "drama madness", 2021, 28, "KOC 2021 runner-up", [["J9B3r0viLBI", "k", "退職代行", 463636, 3289, 333, 0, "zure drama chara kire"], ["skW01Qrk6vQ", "k", "この気もちはなんだろう", 356943, 0, 312, 0, "zure drama chara kire"], ["gYykFjCkmhU", "k", "パワハラ", 184461, 0, 355, 0, "zure drama kire"], ["_e-xj56NiUY", "k", "金メダル", 116399, 0, 520, 12, ""], ["sZezzF8CvDI", "k", "殉職", 99691, 0, 339, 0, ""]]],
+["westland", "ウエストランド", "Westland", "m", "edgy", 2022, 31, "M-1 2022 champion", [["VMHHjNzOPps", "m", "田舎", 1374108, 10615, 374, 0, "henken edgy rapid jigyaku oogoe"], ["bdG9JIg32pk", "m", "叶えたい目標", 742856, 0, 487, 0, "henken edgy jigyaku oogoe"], ["y_5x2X7tjHo", "m", "大人のデート", 692406, 0, 365, 0, ""], ["mWRMK2jx3f8", "m", "不安な話", 680628, 0, 335, 0, ""], ["M3VZs5cothY", "m", "イケメン", 659086, 0, 317, 0, ""]]],
+["sayaka", "さや香", "Sayaka", "m", "shabekuri", 2022, 28, "M-1 2022 runner-up", [["e8euV-fulvE", "m", "似顔絵", 3069865, 24310, 231, 0, "shabekuri herikutsu oogoe zure"], ["5OdEZ6nE1Cs", "m", "よしもと漫才劇場9周年SPネタ", 2305940, 0, 192, 0, "shabekuri herikutsu oogoe zure"], ["0TzvQqSqt2o", "m", "健康診断", 1321420, 0, 160, 0, "shabekuri herikutsu oogoe zure"], ["W7TujuXZw00", "m", "爆弾処理", 712559, 0, 352, 6, ""], ["69CUIFEO1r8", "m", "幼馴染", 542655, 0, 161, 0, ""]]],
+["biscuit", "ビスケットブラザーズ", "Biscuit Brothers", "k", "madness physical", 2022, 26, "KOC 2022 champion", [["spXE73M_sRI", "k", "野犬（KOC 2022 優勝ネタ）", 461460, 5738, 279, 0, "drama madness chara surreal"], ["Ch08uGXIsIQ", "k", "ぴったり", 251238, 0, 291, 0, "drama madness chara surreal"], ["LssUmagqYAE", "k", "赤い糸", 71828, 0, 593, 18, ""], ["FgviFWdakOE", "k", "世界征服", 69586, 0, 662, 0, ""], ["6gBZfDjIsLQ", "k", "漢 ～あきら道～", 52244, 0, 407, 10, ""]]],
+["danseiburanko", "男性ブランコ", "Dansei Buranko", "b", "surreal drama", 2022, 29, "M-1 and KOC finalist", [["CIjM8wnMQLo", "k", "授業参観", 529989, 12219, 306, 0, "chara surreal drama hokkori"], ["yl34LRo5UUU", "m", "エイリアン", 297264, 4009, 230, 0, "surreal drama contem hokkori"], ["6E7WuCN6rfA", "k", "1パーセント", 230884, 0, 325, 0, "surreal chara drama hokkori"], ["Mah1IgMI-zA", "k", "ボトルメール", 397711, 0, 290, 8, ""], ["IzSamTT35ks", "k", "親子丼のセット", 298744, 0, 324, 8, ""]]],
+["yoneda", "ヨネダ2000", "Yoneda 2000", "m", "surreal music", 2022, 24, "M-1 finalist 2022 and 2025", [["KIgQgg7W-vc", "m", "餅つき（M-1 2022 決勝）", 2568018, 33999, 246, 0, "madness music tendon surreal"], ["d1T5x4icIAA", "m", "どすこい", 1437257, 0, 276, 0, "madness surreal tendon music"], ["EELNc2F4CkU", "m", "バカップル", 992042, 0, 183, 15, ""], ["uHGTce3ORFw", "m", "プレゼント", 939083, 0, 154, 0, ""], ["wku6rWANjkQ", "m", "YouTuber", 384243, 0, 196, 0, ""]]],
+["yarens", "ヤーレンズ", "Yarens", "m", "rapid", 2023, 30, "M-1 2023 runner-up", [["CKTX8S7wLcU", "m", "和菓子屋さん", 1541833, 16327, 870, 0, "rapid zure tendon aho"], ["_ATBvjOrNmQ", "m", "ケーキ屋さん", 1187481, 0, 929, 0, "rapid zure tendon aho"], ["Z4j4TR9Gmzo", "m", "旅館", 749460, 0, 602, 0, "rapid zure tendon aho"], ["9LOWAGBcBXw", "m", "スパイ映画", 652583, 0, 1021, 0, ""], ["wHNn2rJwjc0", "m", "お花屋さん", 367607, 0, 715, 12, ""]]],
+["sarugorilla", "サルゴリラ", "Sarugorilla", "k", "physical zure", 2023, 33, "KOC 2023 champion", [["5nXYkinwXFc", "k", "RULE（KOC 2023 優勝ネタ）", 1473217, 13658, 391, 0, "zure chara ma drama"], ["Bs0uoKvXkBs", "k", "青春", 1016901, 0, 281, 0, "drama zure fukusen"], ["-nlGn6KbWMI", "k", "最終面接", 372034, 0, 374, 0, "zure chara ma"], ["-uRINt1s_3g", "k", "説教", 271345, 0, 265, 0, ""], ["85DVUEn8EFY", "k", "催眠術", 203406, 0, 357, 0, ""]]],
+["reiwa", "令和ロマン", "Reiwa Roman", "m", "contem shabekuri", 2024, 30, "M-1 2023 and 2024 champion", [["r2lOuUYATYA", "m", "名字・完全版（M-1 2024 決勝）", 3428292, 54781, 811, 0, "meta shabekuri herikutsu rapid"], ["GNt7dOc_u6U", "m", "タイムスリップ", 2968821, 0, 845, 0, "meta shabekuri contem rapid"], ["rBtbyyk7-0E", "m", "back number", 2733024, 0, 680, 0, "meta shabekuri herikutsu music"], ["gVIlbV349B8", "m", "実家", 2416370, 0, 593, 0, ""], ["-rMr9YYw6e8", "m", "町工場", 1362114, 0, 287, 0, ""]]],
+["batteries", "バッテリィズ", "Batteries", "m", "zure", 2024, 25, "M-1 2024 runner-up", [["r2OtrKD66MI", "m", "運転免許", 3361324, 35064, 259, 0, "aho hokkori shabekuri zure"], ["VNO4IPnVx0A", "m", "大学", 1599227, 0, 228, 0, "aho hokkori shabekuri"], ["J04Vve5YmNA", "m", "三重県", 1128829, 0, 288, 0, "aho hokkori shabekuri"], ["aZQf6kjV094", "m", "自己啓発", 1166320, 0, 272, 0, ""], ["1Fcb0_8JyHU", "m", "伝統工芸品", 2859301, 0, 196, 10, ""]]],
+["loveletters", "ラブレターズ", "Love Letters", "k", "surreal drama", 2024, 34, "KOC 2024 champion", [["bOlOn70ndUM", "k", "野球拳（KOC 2016 決勝）", 487069, 5452, 224, 0, "music drama surreal chara"], ["tzX95hees_Y", "k", "光", 441677, 0, 352, 0, "drama fukusen surreal"], ["hfKN9ZlnjeM", "k", "西岡中学校", 342088, 0, 188, 0, "drama surreal chara"], ["xjsI4sXX9CA", "k", "義母と隣人の間に", 171073, 0, 321, 0, ""], ["ONVI7-b8p8I", "k", "退職代行", 199294, 0, 667, 0, ""]]],
+["dow", "ダウ90000", "Dow 90000", "k", "drama rapid", 2024, 24, "Eight-member theatre troupe", [["qywNl-EreFU", "k", "ピーク", 1291023, 16558, 751, 0, "ninzu drama aruaru kotoba"], ["Zrq-X5jLFx8", "k", "今更", 880590, 0, 646, 0, "ninzu drama aruaru kotoba"], ["UrAG0aWbgYA", "k", "浪人", 609604, 0, 338, 0, "ninzu drama aruaru"], ["VwTnzPtlDek", "k", "幼馴染", 851192, 0, 844, 0, ""], ["rvnc0fjNRqw", "k", "ベランダ", 850987, 0, 270, 0, ""]]],
+["nippon", "ニッポンの社長", "Nippon no Shachō", "b", "madness surreal", 2025, 27, "Double Impact 2025 champion", [["DRSohye5QD8", "k", "新入部員", 2345307, 22350, 373, 0, "madness oogoe surreal physical"], ["1X1dtxN72d0", "k", "最終面接", 1838522, 0, 379, 0, "madness surreal oogoe"], ["xzb-hJ6LQec", "k", "ゴルフセンター", 1539175, 0, 298, 0, "madness physical surreal"], ["x3lg7wAye94", "k", "空港へ行け", 939726, 0, 334, 8, ""], ["Irrs_mNhxN0", "k", "手術", 800994, 0, 328, 0, ""]]],
+["longcoat", "ロングコートダディ", "Long Coat Daddy", "b", "surreal", 2025, 29, "KOC 2025 champion", [["tG-1iLtBvTA", "k", "料理頂上決戦（KOC 2022 決勝）", 1823646, 19322, 287, 0, "system tendon surreal meta"], ["JYTXUd6XyTs", "k", "ママ", 690079, 0, 333, 0, "surreal system tendon chara"], ["lunby9UEukY", "k", "井上さん", 611102, 0, 336, 0, "surreal system tendon chara"], ["kJUvZVeYWOk", "m", "ジェンガ", 1277772, 0, 148, 0, ""], ["FAOsnr7uN4E", "k", "旅人", 732371, 0, 856, 0, ""]]],
+["yadan", "や団", "Yadan", "k", "drama edgy", 2025, 32, "KOC 2025 runner-up · trio", [["QinRx_j2hBc", "k", "バーベキュー（KOC 2022 決勝）", 448616, 6754, 299, 0, "drama fukusen madness kire"], ["1QOihxMpk6g", "k", "雨", 195656, 0, 293, 0, "drama fukusen madness"], ["rt8o2_qeeVE", "k", "休憩時間", 182800, 0, 346, 0, "drama madness kire"], ["Pkm_u_mbQKg", "k", "餃子", 198304, 0, 349, 0, ""], ["J7gwY4kBigA", "k", "社長", 82156, 0, 315, 0, ""]]],
+["evers", "エバース", "Evers", "m", "zure contem", 2025, 27, "M-1 2025 third place", [["Hze4KggzQg8", "m", "タバコ", 6757099, 55877, 280, 0, "herikutsu shabekuri ma zure"], ["kfbpoEgKsmU", "m", "桜の木の下", 3056103, 0, 277, 0, "herikutsu shabekuri ma zure"], ["EJgexKOjWnY", "m", "ドッペルゲンガー", 4744353, 0, 333, 0, "herikutsu shabekuri ma zure"], ["m4swHtC82Q4", "m", "野球肘", 4358195, 0, 211, 0, ""], ["R05TQhAfwLE", "m", "棺桶", 3313189, 0, 277, 0, ""]]],
+["takuro", "たくろう", "Takurō", "m", "zure contem", 2025, 26, "M-1 2025 champion", [["Y0455Ak1HGQ", "m", "催眠術", 5005408, 32833, 177, 6, "aho chara ma zure"], ["k4yIT8isgTg", "m", "刑事ドラマ", 2233949, 0, 179, 6, "aho chara ma zure"], ["eKB3Xv3Ip1U", "m", "ダイナマイトストレート", 1033146, 0, 161, 6, "aho chara ma zure"], ["8VGQ4V45PZw", "m", "引退会見", 1009328, 0, 169, 0, ""], ["VHoqNTJBFBE", "m", "取り調べ", 656505, 0, 151, 0, ""]]],
+["laland", "ラランド", "Lalande", "b", "edgy zure", 2020, 25, "サーヤとニシダの男女コンビ", [["YBBjU1TtN-8", "m", "ギャンブル狂いの夫", 1560491, 16558, 385, 0, "edgy henken contem zure"], ["Vb9MZCWCSJU", "k", "BARにて", 1112083, 16860, 647, 0, "edgy zure chara henken"], ["INtP1gASABs", "m", "リスニングテスト", 1048183, 0, 269, 0, ""], ["nvir_HTG_eU", "k", "立ちション", 778945, 0, 552, 12, ""], ["KPaR27fYNUo", "k", "顔の大きさを受け入れられないヘアメイク", 1205715, 0, 817, 0, ""]]],
+["jelladon", "ジェラードン", "Jerādon", "k", "physical madness", 2026, 21, "KOC 2026 champion", [["fO6JebRGQfg", "k", "握手会", 11700131, 141047, 301, 0, "chara physical madness oogoe"], ["UtvKDeB5Ggw", "k", "マジックバー", 9485093, 0, 411, 0, "chara physical madness oogoe"], ["Ebadx1sUrUw", "k", "満員電車", 4669089, 0, 259, 0, ""], ["vvIuQD2Rs3c", "k", "酔っ払い", 3403529, 0, 333, 0, ""]]],
+["kaerutei", "蛙亭", "Kaerutei", "k", "surreal drama", 2026, 27, "KOC 2026 runner-up", [["XEuJtDYeHCA", "k", "マッチングアプリ", 1813613, 20351, 720, 0, "surreal chara madness zure"], ["mNDKiEhcDCI", "k", "ルンルン♫くじ", 1473496, 0, 398, 0, "surreal chara madness"], ["zKgaVTLDHQM", "k", "逆だワン！", 1330686, 0, 294, 0, "surreal chara madness"], ["lRU5ii2qNKc", "k", "引越し", 1008575, 0, 349, 0, ""], ["lEVB-1i90kY", "k", "レンタル彼氏", 759688, 0, 355, 0, ""]]],
+["imai", "今井らいぱち", "Imai Raipachi", "p", "chara drama", 2026, 30, "R-1グランプリ2026王者", [["yIhfsLmSknc", "p", "財前一樹 講演会", 455929, 0, 272, 0, "chara drama surreal", "k"], ["3oTUcvSyO6U", "p", "歌い方が長渕すぎる女子高生", 142281, 0, 249, 0, "music", "k"], ["0_LN6NaGG2s", "p", "YAMATO", 97375, 0, 248, 0, "", "k"], ["xCc6IKpE4_Q", "p", "言いたい方を言うだけ", 90219, 0, 471, 0, "kotoba", "k"], ["gDEH8ljVGNA", "p", "熱血教師", 58716, 0, 253, 0, "", "k"]]],
+["tomoda", "友田オレ", "Tomoda Ore", "p", "music surreal", 2025, 24, "R-1グランプリ2025王者", [["qGi9F8TeX8U", "p", "風間和彦", 1057915, 0, 239, 0, "music surreal chara", "k"], ["2-NqPJ15_ZA", "p", "どうにかできたはず", 1767902, 0, 231, 0, "music surreal tendon", "k"], ["xrTNjhjRsXA", "p", "好きな人が言っていたら少し嫌かもしれない音頭", 1584672, 0, 195, 0, "music", "k"], ["nVdhD3DdOOk", "p", "私の彼は左きき", 1178547, 0, 245, 0, "music", "k"], ["G7oC9YH0YR4", "p", "ないないなないなない音頭", 714798, 0, 223, 0, "music", "k"]]],
+["machiura", "街裏ぴんく", "Machiura Pink", "p", "shabekuri surreal", 2024, 35, "R-1グランプリ2024王者・漫談", [["s_ZGnIS2NvM", "p", "長い商店街", 226302, 0, 861, 0, "shabekuri surreal ma herikutsu", "m"], ["1-EG0fq2-u0", "p", "アンパンマン", 331862, 0, 692, 0, "shabekuri surreal herikutsu", "m"], ["sUtoGP8wjOk", "p", "初期メンバー", 129543, 0, 435, 0, "", "m"], ["AbUuQRDqCI0", "p", "床穴", 111138, 0, 789, 0, "", "m"], ["R4bryU56X00", "p", "冠番組", 106554, 0, 225, 0, "", "m"]]],
+["tazuhara", "田津原理音", "Tazuhara Rion", "p", "system rapid", 2023, 26, "R-1グランプリ2023王者", [["qHgIhgbXf3w", "p", "バトリオンモンスターズ", 53979, 0, 283, 0, "system rapid chara", "k"], ["78wYFjtjehQ", "p", "文字を大きく", 122427, 0, 163, 0, "system kotoba", "m"], ["jRQiVaKqOUA", "p", "家具の説明書", 45360, 0, 292, 0, "", "k"], ["hIolhSh3w0M", "p", "カードマジック", 53649, 0, 141, 0, "", "k"], ["aNTyh3Re0Ok", "p", "指名手配", 33436, 0, 156, 0, "", "k"]]],
+["shinichi", "お見送り芸人しんいち", "Omiokuri Geinin Shinichi", "p", "music edgy", 2022, 28, "R-1グランプリ2022王者・歌ネタ", [["gjEkaBWyhnE", "p", "好きなもの", 755660, 0, 200, 0, "music edgy henken", "m"], ["VyDq2XEq1l8", "p", "僕の好きなもの", 355495, 0, 225, 0, "music edgy henken", "m"], ["903xa_M841g", "p", "僕の好きなもの", 179348, 0, 239, 0, "music", "m"], ["_X0gMIL_Vp8", "p", "僕を嫌いな人", 83393, 0, 250, 0, "music", "m"], ["ztr7AxVb1dM", "p", "漫才師はかっこいい", 9408, 0, 240, 0, "music", "m"]]],
+["yuriyan", "ゆりやんレトリィバァ", "Yuriyan Retriever", "p", "chara madness", 2017, 25, "R-1グランプリ2021王者", [["RfDdt8vqIv8", "p", "伊木成声治先生", 1329031, 0, 485, 0, "chara madness oogoe", "k"], ["WBbIkmciQE4", "p", "Barの女", 455106, 0, 249, 0, "", "k"], ["SzzUls1IxLw", "p", "喧嘩の仲裁", 260118, 0, 201, 0, "", "k"], ["OXvmD_dpPYI", "p", "Supermarket", 217396, 0, 176, 0, "", "k"], ["0syKpGAogNA", "p", "3周年SPネタ", 132057, 0, 162, 4, "", "k"]]],
+["soshina", "粗品", "Soshina", "p", "system edgy", 2019, 22, "R-1グランプリ2019王者・フリップ芸", [["xBwBZbr7XEM", "p", "フリップネタ32", 1358256, 0, 507, 0, "system tatoe edgy rapid", "m"], ["6-HH-nDd83c", "p", "フリップネタ42", 1160602, 0, 487, 16, "system tatoe edgy rapid", "m"], ["5y-Wi1c3nqw", "p", "フリップネタ22", 1543322, 0, 496, 0, "", "m"], ["sBL98Dw2NLI", "p", "フリップネタ58", 1042751, 0, 516, 20, "", "m"], ["ipY7Ei2LIcY", "p", "タクシーの運転手がこいた屁", 839336, 0, 1075, 0, "", "m"]]],
+["hamada", "濱田祐太郎", "Hamada Yutaro", "p", "shabekuri jigyaku", 2018, 35, "R-1グランプリ2018王者・漫談", [["FWfJbaojx60", "p", "見てみたいもの", 322008, 0, 167, 0, "shabekuri jigyaku edgy", "m"], ["i-AZ96_GFVw", "p", "ニュース", 317022, 0, 144, 10, "shabekuri jigyaku edgy", "m"], ["ZWVZUDDKBeI", "p", "インスタ", 212255, 0, 174, 0, "", "m"], ["NXmLrBDlle8", "p", "営業の質問", 151870, 0, 170, 0, "", "m"], ["AOak0jUoYrw", "p", "中谷さんの声", 126196, 0, 163, 0, "", "m"]]],
+["akira", "アキラ100%", "Akira 100%", "p", "physical shimo", 2017, 35, "R-1グランプリ2017王者・裸芸", [["galZW90YExM", "p", "絶対見せない de SHOW", 55006, 0, 383, 10, "physical shimo tendon", "k"]]],
+["zakoshi", "ハリウッドザコシショウ", "Hollywood Zakoshisyoh", "p", "madness physical", 2016, 30, "R-1グランプリ2016王者・誇張ものまね", [["v1YxwNLb8mU", "p", "ものまね30連発ハイライト", 1140455, 0, 990, 0, "madness physical oogoe chara", "k"], ["_encu6-sUc8", "p", "クレーム", 72089, 0, 486, 0, "", "k"], ["Rz98gHulvCo", "p", "すぐ寝ちゃうコント⑦", 15942, 0, 144, 0, "", "k"], ["A7JlvfTyVDA", "p", "作家バカヤロウ！", 5313, 0, 359, 0, "", "k"], ["vXAj4uRCoUs", "p", "あら-1プレイバック", 73565, 0, 138, 20, "", "k"]]],
+["jinnai", "陣内智則", "Jinnai Tomonori", "p", "system zure", 2005, 40, "映像とツッコむひとりコント", [["CY0qkB6TdIc", "p", "回転寿司", 12611165, 0, 685, 0, "system zure tatoe", "k"], ["ediLZYjDQT0", "p", "運転シミュレーター", 8841047, 0, 356, 0, "system zure tatoe", "k"], ["Lv_0wD9p2rk", "p", "交換日記", 9335229, 0, 753, 62, "", "k"], ["fDFOK-S3x-w", "p", "テトリス", 8863780, 0, 455, 82, "", "k"], ["3DxeUOXjgI4", "p", "運動会", 7843947, 0, 571, 63, "", "k"]]],
+["bakarhythm", "バカリズム", "Bakarhythm", "p", "surreal kotoba", 2006, 40, "ひとりコント", [["GchTJ_87gIc", "p", "銀行弱盗", 2054522, 0, 745, 0, "surreal kotoba herikutsu", "k"], ["St4LMYxl9ig", "p", "志望遊戯", 1229088, 0, 549, 20, "surreal kotoba herikutsu", "k"], ["dHUAmsXTXGI", "p", "悪魔の契約", 3015999, 0, 996, 32, "", "k"], ["e866x-vVaVU", "p", "愛しの小森整骨院（？）", 2936870, 0, 1099, 15, "", "k"], ["s3HXYCKjhn4", "p", "40LOVE ～幸福の類～", 2297575, 0, 1032, 48, "", "k"]]],
+["lucifer", "ルシファー吉岡", "Lucifer Yoshioka", "p", "drama shimo", 2015, 38, "先生コント", [["y-prIx4lhiw", "p", "生徒の悩み", 225564, 0, 423, 0, "drama chara shimo", "k"], ["QtJpLQKiV5g", "p", "ホームルーム", 146078, 0, 358, 0, "drama chara shimo", "k"], ["advrGgyCcVQ", "p", "娘の夢", 138368, 0, 420, 0, "", "k"], ["uySe9Z1ApuQ", "p", "セクハラ", 103234, 0, 351, 10, "shimo", "k"], ["yoXJ0sAjX28", "p", "歴史の授業", 91587, 0, 304, 10, "", "k"]]],
+["yoshizumi", "吉住", "Yoshizumi", "p", "drama madness", 2020, 28, "THE W 2020王者", [["tMfr8m_kZVE", "p", "無償の愛", 241981, 0, 312, 0, "drama madness chara", "k"], ["t6IHkeOKEZs", "p", "許されざる恋", 172402, 0, 303, 0, "drama madness chara", "k"], ["iXCD0FMVzlY", "p", "どっちが異常？", 422616, 0, 313, 0, "", "k"], ["_pvQtXJjMWY", "p", "依存症", 173552, 0, 157, 0, "", "k"], ["Nni6tRCYGtk", "p", "幸せの勧誘", 140097, 0, 431, 0, "", "k"]]],
+["ikezaki", "サンシャイン池崎", "Sunshine Ikezaki", "p", "oogoe physical", 2016, 25, "空前絶後の自己紹介", [["f2Ag4WBvR4c", "p", "空前絶後", 2926935, 0, 240, 0, "oogoe physical tendon", "m"], ["7rFLr4TJHxo", "p", "魔女の宅急便", 743689, 0, 225, 5, "", "m"], ["sGZpc61swNs", "p", "サンシャインブレイド", 576966, 0, 256, 0, "", "m"], ["umWzUmnYcFw", "p", "記憶喪失", 456417, 0, 239, 0, "", "m"], ["guXUOHPDY3Y", "p", "サザエさん", 402119, 0, 215, 27, "", "m"]]],
+["timemachine", "タイムマシーン3号", "Time Machine Sangō", "m", "shabekuri kotoba", 2011, 32, "デブネタと言葉遊びの王道漫才", [["oswC2Sv4JBA", "m", "太らせる", 12810078, 0, 410, 0, ""], ["gEmUp1pw2yE", "m", "悪魔のド◯えもん", 7821614, 0, 237, 0, ""], ["Q3nYKYhwEy4", "m", "デブリンピック", 6100703, 0, 310, 0, ""], ["2epslOh-bwU", "k", "カツアゲ", 5344093, 0, 199, 0, ""], ["06LuYBOEgtE", "m", "一昨日の食事", 3429899, 0, 220, 0, ""]]],
+["summers", "さまぁ～ず", "Summers", "k", "surreal ma", 2000, 45, "ゆるくてシュールなコントの大御所", [["9YOznJZLZPM", "k", "スナック", 340092, 0, 866, 16, ""], ["UK7jBKQbXmo", "k", "張り込み", 281332, 0, 1043, 0, ""], ["BewWsz0zflY", "k", "明日から南仏", 226607, 0, 951, 4, ""], ["oPxCJWKkmPI", "k", "リハビリ", 214304, 0, 909, 0, ""], ["m-Wy1loNUK0", "k", "かおみ亭", 211582, 0, 841, 0, ""]]],
+["sanshiro", "三四郎", "Sanshirō", "m", "rapid chara", 2015, 30, "小宮のクセ強ツッコミ", [["BiIdqVG66nw", "m", "ドラゴンボール", 766432, 0, 614, 6, ""], ["DSQYFyGSGzg", "m", "リア充に・・・", 298357, 0, 391, 10, ""], ["w5hBdiElADI", "m", "モテたい", 257175, 0, 475, 6, ""], ["wW8yJ-yiNYo", "m", "美容師", 193827, 0, 401, 10, ""], ["-rR8cwoySLE", "m", "ピザ", 180538, 0, 308, 4, ""]]],
+["yonsen", "四千頭身", "Yonsen Tōshin", "m", "ma notsukkomi", 2018, 22, "脱力系トリオ漫才", [["UxsAQVcqcAg", "m", "喧嘩", 4612951, 0, 346, 8, ""], ["A4Fv60o-hnw", "m", "ショッピング", 4069281, 0, 388, 4, ""], ["J6_79nIjkf4", "m", "前半にたたみかけるな的なツッコミ", 3509487, 0, 357, 4, "meta"], ["sQ3w1hu3y2w", "m", "大陸", 3306298, 0, 370, 3, ""], ["Yf4ZJWT1DxA", "m", "正夢", 2432809, 0, 339, 0, ""]]],
+["exit", "EXIT", "Exit", "m", "rapid chara", 2019, 23, "チャラ男漫才", [["RTgKxAsszqM", "m", "心温まる犯罪撲滅ネタ", 2470466, 0, 286, 6, ""], ["p-RsJsqbinY", "m", "ニワカパリピ", 1492611, 0, 257, 3, ""], ["8QPALacDdEY", "m", "高齢化社会", 1190482, 0, 233, 15, ""], ["GCvA1Wjy8bA", "m", "相撲", 713775, 0, 212, 3, ""], ["ULZ4VB597ME", "k", "居候", 439173, 0, 514, 12, ""]]],
+["mogu", "モグライダー", "Moguraidā", "m", "madness aho", 2021, 28, "芝の暴走をともしげが拾えない", [["kV81dOi7bBQ", "m", "ファミコン", 354724, 0, 379, 5, ""], ["Hq3k9h8YMr4", "m", "芦田愛菜の秘密", 203120, 0, 499, 6, ""], ["58KfegEbDh4", "m", "ギャルタレント", 132343, 0, 811, 8, ""], ["63FVmGrIYss", "m", "大谷翔平", 103173, 0, 572, 4, ""], ["tEob6m07ZqU", "m", "ロビンソン", 85865, 0, 442, 6, ""]]],
+["cowcow", "COWCOW", "Cow Cow", "b", "aruaru music", 2013, 35, "あたりまえ体操", [["G0zRBRUQils", "k", "あたりまえ体操＃１", 36192768, 0, 140, 0, "music aruaru"], ["scU888GbC7s", "k", "こういう人知りません？", 2122878, 0, 247, 17, "aruaru"], ["aZM6COSY8Pg", "k", "ヤクザの息子の反抗期", 1681501, 0, 178, 4, ""], ["eNdko4KfriM", "m", "昔の遊び〜テーマパーク", 355278, 0, 648, 8, ""], ["mJLOmsye50Q", "m", "しょうもない遊び", 306498, 0, 324, 0, ""]]],
+["rotch", "ロッチ", "Rotch", "k", "drama zure", 2010, 33, "中岡の哀愁コント", [["PUnWaAI28bY", "k", "XPhone5", 4452996, 0, 553, 10, ""], ["C4pdfYIdVdw", "k", "言わんといて", 2145274, 0, 957, 15, ""], ["u2shZvwYBrA", "k", "ボウズ", 820832, 0, 677, 15, ""], ["O8X-1IkZAbo", "k", "カテゴリー", 691032, 0, 439, 8, ""], ["GpLNOjZYl7c", "k", "猿渡", 624565, 0, 568, 10, ""]]],
+["rubbergirl", "ラバーガール", "Rubber Girl", "k", "ma surreal", 2010, 33, "間とズレの低温コント", [["-RhomIYh8VM", "k", "引っ越し", 5547853, 0, 895, 0, ""], ["D3PRCkwPF5k", "k", "時価の店", 3848633, 0, 492, 0, ""], ["B2ZODdiHDGw", "k", "振り込め詐欺", 2929930, 0, 187, 3, ""], ["SINh198fCjU", "k", "喫茶店で絶対儲かる話", 2847256, 0, 457, 10, ""], ["iuDw8CX1LAQ", "k", "ファミリー向け物件", 2811617, 0, 593, 4, ""]]],
+["kagaya", "かが屋", "Kagaya", "k", "drama hokkori", 2019, 27, "切なくて優しいコント", [["gZSV39Sm1mQ", "k", "数学の授業", 534487, 0, 304, 0, ""], ["Qhx32TWhiTM", "k", "発注ミス", 489621, 0, 425, 0, ""], ["C13AZwqG-CI", "k", "一人カラオケ", 424686, 0, 442, 0, "music"], ["AaBsjN7-V-I", "k", "タクシー", 309886, 0, 724, 0, ""], ["hwI9T2c-ngo", "k", "喫茶店", 274043, 0, 544, 0, ""]]],
+["jishaku", "磁石", "Jishaku", "m", "shabekuri system", 2008, 36, "正統派しゃべくり", [["Jz13rBdhtW8", "m", "優柔不断", 290675, 0, 536, 0, ""], ["vqRWBxntwi8", "m", "熱血教師", 249897, 0, 669, 6, ""], ["U5aRDHa7i7E", "m", "旅行代理店", 226701, 0, 574, 10, ""], ["3FSJ0rOh3vs", "m", "不倫", 181771, 0, 662, 4, ""], ["U7ogOLsX28A", "m", "お見合い", 173381, 0, 720, 4, ""]]],
+["nagareboshi", "流れ星☆", "Nagareboshi", "m", "physical chara", 2010, 35, "ちゅうえいのギャグ", [["dFPM94e-a0Y", "m", "肘祭り（じいちゃん子）", 1143238, 0, 354, 0, ""], ["eIK77YKAm_w", "m", "ギフニーランド", 306223, 0, 606, 4, ""], ["A0RyVRvcbmY", "m", "お化け屋敷", 295102, 0, 470, 8, ""], ["z8r-I5KrJqY", "m", "友達", 229877, 0, 389, 20, ""], ["-23kEzMdNLc", "m", "じゃない方の叫び", 331956, 0, 943, 0, ""]]],
+["ultra", "うるとらブギーズ", "Ultra Boogies", "k", "zure drama", 2020, 30, "KOC常連のコント", [["d5ByDbTcS7c", "k", "迷子センター", 238217, 0, 410, 14, ""], ["fe2tc2XUKn0", "k", "催眠術", 103055, 0, 340, 6, ""], ["57fO2_h0b04", "k", "俺のレール", 97895, 0, 302, 25, ""], ["VbHAqN7mNGg", "k", "いたこ", 79198, 0, 299, 0, ""], ["b3ZM_I_V1OM", "k", "陶芸家", 56322, 0, 300, 10, ""]]],
+["amasso", "Aマッソ", "A Masso", "b", "edgy meta", 2020, 27, "ワードセンスの女性コンビ", [["9J3NU9hI3as", "k", "紙媒体", 959297, 0, 624, 0, ""], ["RpuvmsjgMi4", "m", "資料", 804072, 0, 349, 10, ""], ["D-uctgqtZQM", "k", "きっかけ", 772583, 0, 641, 0, ""], ["-We15wvwIcE", "k", "ヤンキー", 553431, 0, 818, 12, ""], ["_x-eTsplCZY", "m", "イトコの相談", 435167, 0, 438, 3, ""]]],
+["zoffy", "ゾフィー", "Zoffy", "k", "surreal drama", 2019, 30, "KOCファイナリストのコント", [["CVi5jsY7f8g", "k", "世の中に必要のない人", 414322, 0, 525, 0, ""], ["q3yMp3pad2s", "k", "謝罪会見", 394171, 0, 326, 7, ""], ["8Q4PqG4A3RA", "k", "地獄の道化師", 195739, 0, 435, 3, ""], ["jvjJPRh_Iew", "k", "不良のいる教室", 162216, 0, 424, 10, ""], ["oa0olzoEpdo", "k", "弁当と平和", 158354, 0, 509, 8, ""]]],
+["slimclub", "スリムクラブ", "Slim Club", "b", "ma surreal", 2010, 35, "超スローな間", [["90hJ-gJ0i_I", "k", "旅の途中", 319908, 0, 635, 12, ""], ["qnNHu8b7rig", "k", "同窓会", 264185, 0, 573, 10, ""], ["xSelHe8R8Xk", "k", "銀行", 152136, 0, 531, 18, ""], ["Y44B7Ynjgjw", "k", "郵便局", 39941, 0, 518, 20, ""], ["CZYH0ojC2G8", "k", "キャンプ", 29792, 0, 487, 0, ""]]],
+["daitaku", "ダイタク", "Daitaku", "m", "shabekuri meta", 2020, 30, "双子漫才", [["FXxbpAYcICQ", "m", "ドッペルゲンガー", 324512, 0, 331, 8, ""], ["D3vCFsdHFjs", "m", "親父", 184721, 0, 248, 8, ""], ["-HrX7JKID4c", "m", "差し入れ", 161892, 0, 535, 6, ""], ["7c7FC8rrflw", "m", "兄貴", 145300, 0, 270, 8, ""], ["-PFKyjTXB7s", "m", "黒い仕事", 132471, 0, 366, 0, ""]]],
+["nichoukenju", "2丁拳銃", "Nichō Kenjū", "m", "shabekuri system", 2003, 40, "クイズ丁度ええ", [["Px_EV-vsdcE", "m", "クイズ・ちょうどえぇ", 439180, 0, 485, 0, ""], ["61hBENmS4mg", "m", "コンパでみる調度えぇ講座", 191428, 0, 768, 0, ""], ["uDfRDc2I-oE", "m", "モンスターペアレント", 168977, 0, 743, 0, ""], ["09F2W23s7Nw", "m", "学生時代", 48452, 0, 592, 0, ""], ["CpgwRV0-xw0", "k", "不動産屋", 38512, 0, 787, 0, ""]]],
+["igoshogi", "囲碁将棋", "Igo Shōgi", "m", "shabekuri herikutsu", 2015, 35, "THE SECOND常連の漫才", [["z7OSrKfBb_c", "m", "転校", 239303, 0, 255, 5, ""], ["3JRU9g08Agg", "m", "コンビニの客", 258205, 0, 473, 4, ""], ["E0TRhzHe6Io", "m", "ものまね", 237123, 0, 514, 6, ""]]],
+["geese", "ザ・ギース", "The Geese", "k", "surreal kotoba", 2012, 33, "言葉と理屈のコント", [["QlOqYFvie5c", "k", "SLクラブ", 111029, 0, 359, 15, ""], ["ADqbVXfBwCE", "k", "地下ギャンブル", 71560, 0, 665, 4, ""], ["OZbfHW65w4U", "k", "難読捜査会議", 54607, 0, 402, 0, "kotoba"], ["YeBtlLqzdEE", "k", "マジシャンズチョイス", 35133, 0, 494, 8, ""], ["ByFI_btAqPI", "k", "笛", 32714, 0, 431, 3, ""]]],
+["arcopeace", "アルコ&ピース", "Arco & Peace", "b", "meta drama", 2012, 32, "平子の熱量", [["YVEFxSF6HmA", "k", "死後の世界", 160321, 0, 632, 8, ""], ["Z9pYYqEIv9g", "k", "間違い探し", 124189, 0, 559, 8, ""], ["orkb89FAUYw", "m", "鳥になりたい", 122227, 0, 583, 12, ""], ["XnZaD3I4kWA", "k", "バイトの面接", 233740, 0, 529, 20, ""], ["SSVhIizoE8Y", "m", "口裂け女", 202107, 0, 613, 25, ""]]],
+["kabeposter", "カベポスター", "Kabe Poster", "m", "shabekuri herikutsu", 2022, 27, "理屈っぽい漫才", [["f2s2u2NjEMM", "m", "噂話", 692974, 0, 155, 5, ""], ["xCW4Hbwxi14", "m", "晩御飯", 477739, 0, 975, 25, ""], ["-f4jogWzIiI", "m", "自分の意見", 453836, 0, 149, 6, ""], ["UIgV1NNpfvM", "m", "由来", 437339, 0, 151, 4, ""], ["orGwytQ4QUE", "m", "ヤンキー", 351433, 0, 161, 0, ""]]],
+["mayurika", "マユリカ", "Mayurika", "m", "shabekuri drama", 2023, 26, "幼馴染コンビ", [["wgUjHStHnBw", "m", "結婚相談所", 1097394, 0, 179, 0, ""], ["VoA9X3y-__s", "m", "転校", 927622, 0, 162, 7, ""], ["0FEAv2zG2Rs", "m", "ドライブデート", 542986, 0, 193, 5, ""], ["dQQ0dTJXUDY", "m", "4周年SPネタ", 429341, 0, 148, 6, ""], ["2ftD0EL85CE", "m", "ゲームセンター", 351610, 0, 122, 6, ""]]],
+["benishoga", "紅しょうが", "Beni Shōga", "b", "shabekuri chara", 2023, 30, "THE W女王", [["Ut6RL55210M", "k", "ホームにて", 874251, 0, 231, 3, ""], ["Peb9rjc0sTo", "m", "猫ちゃん", 343309, 0, 137, 8, ""], ["zKWub4HQoZU", "m", "最後の晩餐", 317400, 0, 315, 0, ""], ["Ujmz8Kh1HXk", "m", "合コン", 309765, 0, 169, 0, ""], ["8Hg7HTP3OUI", "m", "美容院", 136357, 0, 245, 0, ""]]],
+["party", "ぱーてぃーちゃん", "Party-chan", "m", "chara rapid", 2023, 22, "ギャルとチャラ男", [["B9U0ZJ4merw", "m", "おもしろ荘の漫才", 823269, 0, 259, 28, ""], ["-nJejY2ES4w", "m", "お祭り、暴れお漫才", 728330, 0, 256, 3, ""], ["2TuNGVdKZ1w", "m", "アパレル店員", 638942, 0, 319, 13, ""], ["q0YUVsuFqHM", "m", "幻のお漫才", 250308, 0, 323, 15, ""], ["lpy79jWl1dc", "m", "接客態度が信子なお店", 198362, 0, 638, 30, ""]]],
+["kyuban", "9番街レトロ", "Kyūbangai Retro", "m", "ma surreal", 2026, 26, "M-1 2026注目", [["MRBAW9Usfj4", "m", "夜眠れない", 875872, 0, 263, 0, ""], ["WQX2frHVoWw", "m", "占いの館", 549628, 0, 268, 8, ""], ["Xk5PprmnR9c", "m", "占い", 342729, 0, 277, 4, ""], ["-OE0NjHndfs", "m", "忘れられない恋", 320114, 0, 243, 0, ""], ["MoPsnMxoR94", "m", "役所", 305211, 0, 316, 15, ""]]],
+["stretchies", "ストレッチーズ", "Stretchies", "m", "shabekuri herikutsu", 2024, 25, "正統派漫才", [["7vTFuRJeKgo", "m", "水掛け論", 89137, 0, 263, 8, ""], ["EusmYpXC8AI", "m", "怒ってる？", 86945, 0, 282, 8, ""], ["lMlnrifdhks", "m", "飯", 44885, 0, 192, 3, ""], ["xUtmyd8geTA", "m", "Amazon", 41226, 0, 289, 3, ""], ["rL7c7QBkpQw", "m", "ドライブデート", 29688, 0, 231, 0, ""]]],
+["hanayama", "華山", "Hanayama", "m", "chara drama", 2024, 27, "女性コンビ漫才", [["nULiFwosq8A", "m", "不良品", 102365, 0, 193, 4, ""], ["_EtwmGVnTIg", "m", "誕生日", 85442, 0, 176, 7, ""], ["_FWu6Vo0KIE", "m", "演技の仕事", 84437, 0, 206, 0, ""], ["4RiZOi9ofrg", "m", "訪問販売", 47901, 0, 182, 7, ""]]],
+["razor", "レイザーラモン", "Razor Ramon", "m", "chara aruaru", 2005, 38, "RGのあるあるとHGのプロレス", [["xGdZWLcbOHI", "m", "佐野元春漫才", 40297, 0, 311, 10, "music"], ["ge92XGh2Fnk", "m", "記憶喪失漫才", 11807, 0, 399, 15, ""], ["8wmw8qY1vaU", "m", "ジョブズ春日漫才", 9857, 0, 307, 15, ""], ["eBf3rU08_Ak", "m", "ショーン・マイケルズ漫才", 8959, 0, 174, 8, ""], ["p2ZBVApAx0o", "m", "WWEオールスターズ漫才", 7317, 0, 257, 10, ""]]],
+["haraichi", "ハライチ", "Haraichi", "m", "system kotoba", 2010, 30, "ノリボケ漫才", [["rhHSVxPiVcs", "m", "お化け屋敷", 563245, 0, 506, 4, "system"], ["b6Jxx8NBTJU", "m", "仙台。", 224685, 0, 324, 4, ""], ["hK6dN4zaHIA", "m", "部活のエース", 68292, 0, 172, 4, ""]]],
+["kinzoku", "金属バット", "Kinzoku Bat", "m", "edgy shabekuri", 2020, 27, "毒っ気のある関西漫才", [["y4VF7gth5GE", "m", "同窓会", 2454611, 0, 296, 8, ""], ["kvIKS3ye1Hg", "m", "ずっと「あー」", 1498875, 0, 148, 7, ""], ["HVwyhHaxf30", "m", "市民税", 632760, 0, 147, 0, ""], ["jfL4HhUn_HU", "m", "怖い話", 79592, 0, 486, 32, ""]]],
+["unjash", "アンジャッシュ", "Unjash", "k", "zure system", 2004, 40, "すれ違いコント", [["5FCZS6_DkHA", "k", "アルバイトの面接", 864797, 0, 272, 6, "zure"], ["aYHvL4bi6LY", "k", "ピーポーくんの交通安全教室", 432648, 0, 333, 5, "zure"]]],
+["shinku", "真空ジェシカ", "Shinkū Jessica", "b", "surreal meta", 2023, 26, "大喜利型ボケ", [["xhySKRcEULY", "k", "美容院", 2327066, 0, 635, 0, ""], ["c29BSruE7GA", "m", "新人研修", 243354, 0, 172, 0, ""]]],
+["oideyasu", "おいでやすこが", "Oideyasu Koga", "b", "kire music", 2020, 32, "おいでやす小田の絶叫ツッコミ", [["Vb6ykvNTJek", "k", "進路相談", 488047, 0, 422, 0, ""], ["490sAbE3UFY", "m", "誕生日パーティー", 389752, 0, 290, 4, ""], ["4aFnsAUIKCY", "k", "言えよ", 308658, 0, 580, 0, ""], ["FTwGjQUCYPc", "k", "取り調べ", 251494, 0, 525, 0, ""], ["Yvdou5BMnX8", "k", "ハンバーグレストラン", 171713, 0, 395, 0, ""]]],
+["hikorohee", "ヒコロヒー", "Hikorohee", "p", "ma drama", 2022, 28, "ピン芸人・コント", [["NzTbSAAIj5Q", "p", "ボランティア2", 99856, 0, 465, 15, "", "k"], ["a0P3IJnxOAw", "p", "生徒の相談", 76035, 0, 372, 18, "", "k"], ["Xikf9NIw2u4", "p", "家庭教師", 20966, 0, 349, 6, "", "k"]]],
+["gakutensoku", "ガクテンソク", "Gakutensoku", "m", "shabekuri herikutsu", 2024, 30, "THE SECOND 2024王者", [["Yr4KCIFt6Kc", "m", "ついてない一日", 641054, 0, 331, 25, ""], ["NhT44XgXBu8", "m", "旅行", 617339, 0, 332, 25, ""], ["_Yequ7WHe-4", "m", "サンリオピューロランド", 496659, 0, 420, 7, ""], ["E1e-VoakUyc", "m", "オリジナルヒーロー", 454050, 0, 343, 25, ""], ["dwZobcK7rrs", "m", "葬式で元とる", 250180, 0, 269, 0, ""]]],
+["thepunch", "ザ・パンチ", "The Punch", "m", "chara aho", 2008, 38, "ノーパンチ！", [["F2z1q_09AMU", "m", "心理テスト", 474803, 0, 221, 0, ""], ["do1umFA6AwU", "m", "おばさん", 43219, 0, 250, 0, ""], ["BGBl79hyWLI", "m", "デートプラン", 256612, 0, 337, 0, ""], ["0QoWSKN-UK4", "m", "自己紹介", 52520, 0, 341, 0, ""], ["dpMH4pyaXP0", "m", "同窓会", 22363, 0, 319, 0, ""]]],
+["tomochika", "友近", "Tomochika", "p", "chara", 2006, 38, "キャラ芸の女王", [["gMZvODuX9GY", "p", "ヒール講談", 122724, 0, 412, 0, "chara", "m"]]],
+["onigoe", "鬼越トマホーク", "Onigoe Tomahawk", "m", "edgy", 2019, 28, "ケンカ芸", [["ueCTbvJqrlk", "m", "テレビ東京", 116063, 0, 134, 0, ""], ["oLk5BC9FR8k", "m", "怖い話", 97345, 0, 461, 0, ""]]],
+["chidori", "千鳥", "Chidori", "m", "chara shabekuri", 2015, 35, "岡山弁の大悟とノブ", [["Ze88RCfn23Q", "m", "田舎", 472607, 0, 594, 11, ""]]],
+["diane", "ダイアン", "Diane", "m", "ma shabekuri", 2010, 35, "ゴイゴイスー", [["WDBholvebQw", "m", "出前", 1133359, 0, 466, 6, ""]]],
+["sanjino", "3時のヒロイン", "Sanji no Heroine", "k", "chara music", 2019, 24, "THE W 2019王者", [["cSiO8D5O3UM", "k", "プラネタリウム", 636978, 0, 299, 5, ""]]]
+].map(a=>({id:a[0],name:a[1],ro:a[2],fmt:a[3],styles:a[4].split(' '),peak:a[5],fan:a[6],note:a[7],v:a[8].map(([y,f,t,n,l,d,s,tg,sd])=>({y,f,t,n,l,d,s:s||0,tags:tg?tg.split(' '):null,side:sd||null}))}));
+
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const safeUrl=u=>/^https?:\/\/\S+$/i.test(u||'')?u:'';
+const ytUrl=(y,t)=>'https://www.youtube.com/watch?v='+encodeURIComponent(y)+(t?'&t='+t+'s':'');
+const vtags=x=>(x.v&&x.v.tags)||x.g.styles;
+const etags=e=>{const x=VID[e.vid];return (x&&x.v.tags)||e.styles||[]};
+const fside=e=>e.fmt==='p'?(e.side||(VID[e.vid]&&VID[e.vid].v.side)||'k'):e.fmt;
+const YEAR=new Date().getFullYear();
+const hm=sec=>{const m=Math.round((sec||0)/60);return m>=60?Math.floor(m/60)+'時間'+(m%60?m%60+'分':''):m+'分'};
+const mmss=sec=>Math.floor(sec/60)+':'+String(Math.round(sec%60)).padStart(2,'0');
+const nid=p=>p+'-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const score=rs=>rs.length?Math.round(rs.reduce((a,r)=>a+(RV[r]??0),0)/rs.length):null;
+const S={entries:[],custom:[],view:'watch',cur:null,played:{},dl:null,fb:null,user:null,mode:'local',star:false,logFav:false};
+let F={},T=[],col=null,localDocs={},readyRes,tt;
+const ready=new Promise(r=>readyRes=r);
+const LS='owarai-techo-v1',SS='owarai-techo-now',NS='uketa-noshimo';
+try{S.noShimo=localStorage.getItem(NS)==='1'}catch(e){S.noShimo=false}
+
+const VID={};CAT.forEach(g=>g.v.forEach(v=>{VID[v.y]={g,v}}));
+function groups(){return CAT.concat(S.custom.map(c=>({id:c.gid,name:c.name,ro:'',fmt:c.fmt||'m',styles:(c.styles||[]).filter(s=>STY[s]),peak:c.peak||null,fan:c.peak?Math.min(75,Math.max(12,YEAR-c.peak+16)):null,v:[],custom:true})))}
+const gById=id=>groups().find(g=>g.id===id);
+const secOf=e=>{const d=e.sec||(e.vid&&VID[e.vid]?VID[e.vid].v.d:0);return e.r===-2?d/2:d};
+function perGroup(){const o={};S.entries.forEach(e=>{const x=o[e.gid]=o[e.gid]||{name:e.gname,rs:[],sv:[]};x.rs.push(e.r);x.sv.push(sv(e))});return o}
+const tally=rs=>`▲${rs.filter(r=>r===1).length} ●${rs.filter(r=>r===0).length} ▼${rs.filter(r=>r===-1).length}${rs.some(r=>r===-2)?' 止'+rs.filter(r=>r===-2).length:''}`;
+const isToday=iso=>{const d=new Date(iso),n=new Date();return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()&&d.getDate()===n.getDate()};
+const cleanTitle=t=>String(t||'').replace(/（[^）]*）/g,'').trim()||t;
+const rateBtns=(sel,attr,id='')=>['1','0','-1','-2'].map(r=>{const on=sel!=null&&String(sel)===r;return `<button type="button" class="r r${r}${on?' on':''}" data-${attr}="${r}"${id?` data-id="${esc(id)}"`:''} aria-pressed="${on}">${R[r]}</button>`}).join('');
+
+/* storage: per-person db when available, this browser otherwise */
+function ingest(pairs){S.entries=[];S.custom=[];for(const [id,d] of pairs){if(!d)continue;if(d.kind==='w')S.entries.push({...d,id,r:Number(d.r)});else if(d.kind==='g')S.custom.push({...d,gid:d.gid||id})}S.entries.sort((a,b)=>String(b.at).localeCompare(String(a.at)));render()}
+const chain={};
+function goLocal(){col=null;try{localDocs=JSON.parse(localStorage.getItem(LS)||'{}')||{}}catch(e){localDocs={}}note('共有リンクで見ています。評価はこのブラウザにだけ保存されます。');ingest(Object.entries(localDocs))}
+function put(id,d){chain[id]=(chain[id]||Promise.resolve()).catch(()=>{}).then(()=>ready).then(async()=>{if(col){try{return await col.doc(id).set(d)}catch(e){if(!e||e.code!=='invalid_argument')throw e;goLocal()}}localDocs[id]=d;saveLocal()});return chain[id]}
+function del(id){chain[id]=(chain[id]||Promise.resolve()).catch(()=>{}).then(()=>ready).then(async()=>{if(col){try{return await col.doc(id).delete()}catch(e){if(!e||e.code!=='invalid_argument')throw e;goLocal()}}delete localDocs[id];saveLocal()});return chain[id]}
+function saveLocal(){try{localStorage.setItem(LS,JSON.stringify(localDocs))}catch(e){}ingest(Object.entries(localDocs))}
+function note(m){const n=$('#note');n.textContent=m;n.hidden=!m}
+async function init(){
+  const timer=setTimeout(()=>note('保存した評価をまだ読み込めません。通信状況を確認してください。'),10000);
+  let db=null,uid=null;
+  try{if(window.claude&&window.claude.use){window.claude.use('downloads').then(d=>{S.dl=d||null;if(S.view==='stats')render()}).catch(()=>{});db=await window.claude.use('db');const u=await window.claude.use('user');uid=u?await u.id():null;if(u&&u.can&&(await u.can('data.write'))===false)uid=null}}catch(e){}
+  if(db&&uid){
+    col=db.collection('data/users/'+uid);readyRes();
+    col.onSnapshot(s=>{if(!s.metadata.fromCache){clearTimeout(timer);note('')}ingest(s.docs.map(d=>[d.id,d.data()]))},e=>{clearTimeout(timer);note('評価を読み込めませんでした（'+(e&&e.code||'error')+'）。再読み込みしてください。')});
+  }else if(!window.claude){
+    clearTimeout(timer);try{localDocs=JSON.parse(localStorage.getItem(LS)||'{}')||{}}catch(e){localDocs={}}
+    readyRes();ingest(Object.entries(localDocs));startFirebase();
+  }else{
+    clearTimeout(timer);try{localDocs=JSON.parse(localStorage.getItem(LS)||'{}')||{}}catch(e){localDocs={}}
+    readyRes();note(db?'共有リンクで見ています。評価はこのブラウザにだけ保存されます。':(window.claude?'評価はこのブラウザにだけ保存されます。claude.aiにログインして開くと、どの端末でも記録が残ります。':''));ingest(Object.entries(localDocs));
+  }
+}
+
+/* Google login + Firestore (standalone site only) */
+let fbUnsub=null;
+async function startFirebase(){
+  renderAcct('loading');
+  try{
+    const base='https://www.gstatic.com/firebasejs/'+FBV+'/';
+    const [a,au,fs]=await Promise.all([import(base+'firebase-app.js'),import(base+'firebase-auth.js'),import(base+'firebase-firestore.js')]);
+    const app=a.initializeApp(FB_CFG);S.fb={au,fs,auth:au.getAuth(app),db:fs.getFirestore(app)};
+  }catch(e){S.fb=null;renderAcct();note('ログイン機能を読み込めませんでした。記録はこのブラウザに保存されます。');return}
+  const {au,fs,auth,db}=S.fb;loadExtras();
+  au.getRedirectResult(auth).catch(()=>{});
+  au.onAuthStateChanged(auth,async u=>{
+    S.user=u||null;if(fbUnsub){fbUnsub();fbUnsub=null}ADM.users=ADM.fb=null;
+    if(u)fs.setDoc(fs.doc(db,'profiles',u.uid),{name:(u.displayName||'').slice(0,60),last:new Date().toISOString(),ver:VERSION},{merge:true}).catch(()=>{});
+    if(u){
+      const ref=id=>fs.doc(db,'users',u.uid,'items',id);
+      col={doc:id=>({set:d=>fs.setDoc(ref(id),d),delete:()=>fs.deleteDoc(ref(id))})};S.mode='cloud';
+      const loc=Object.entries(localDocs);
+      if(loc.length){try{const ex=await fs.getDocs(fs.collection(db,'users',u.uid,'items')),have=new Set(ex.docs.map(d=>d.id));let n=0;for(const [id,d] of loc){if(!have.has(id)){await fs.setDoc(ref(id),d);n++}}localDocs={};try{localStorage.removeItem(LS)}catch(e){}if(n)toast('このブラウザの記録'+n+'件をアカウントに移しました')}catch(e){toast('このブラウザの記録を移せませんでした（'+(e&&e.code||'error')+'）')}}
+      fbUnsub=fs.onSnapshot(fs.collection(db,'users',u.uid,'items'),s=>ingest(s.docs.map(d=>[d.id,d.data()])),e=>note('記録を読み込めませんでした（'+(e&&e.code||'error')+'）'));
+      note('');
+    }else{
+      col=null;S.mode='local';try{localDocs=JSON.parse(localStorage.getItem(LS)||'{}')||{}}catch(e){localDocs={}}
+      ingest(Object.entries(localDocs));note('Googleでログインすると、どの端末からでも同じ記録が見られます。今はこのブラウザだけに保存されます。');
+    }
+    renderAcct();render();
+  });
+}
+const G_ICON='<svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M45 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h11.8a10 10 0 0 1-4.4 6.6v5.5h7.1c4.2-3.8 6.5-9.5 6.5-16.1z"/><path fill="#34A853" d="M24 46c5.9 0 10.9-2 14.5-5.4l-7.1-5.5c-2 1.3-4.5 2.1-7.4 2.1-5.7 0-10.5-3.8-12.2-9H4.5v5.7A22 22 0 0 0 24 46z"/><path fill="#FBBC05" d="M11.8 28.2a13 13 0 0 1 0-8.4v-5.7H4.5a22 22 0 0 0 0 19.8z"/><path fill="#EA4335" d="M24 10.8c3.2 0 6.1 1.1 8.4 3.3l6.3-6.3A22 22 0 0 0 4.5 14.1l7.3 5.7c1.7-5.2 6.5-9 12.2-9z"/></svg>';
+function renderAcct(st){
+  const el=$('#acct');if(!el)return;
+  if(window.claude){el.innerHTML='';return}
+  if(st==='loading'){el.innerHTML='';return}
+  if(!S.fb){el.innerHTML='';return}
+  el.innerHTML=S.user?`<span>${esc(S.user.displayName||S.user.email||'ログイン中')}</span><button class="obtn" data-act="logout">ログアウト</button>`:`<button class="gbtn" data-act="login">${G_ICON}Googleでログイン</button>`;
+}
+async function login(){
+  if(!S.fb)return;const {au,auth}=S.fb,p=new au.GoogleAuthProvider();
+  try{await au.signInWithPopup(auth,p)}catch(e){
+    const c=e&&e.code||'';
+    if(c==='auth/popup-blocked'||c==='auth/operation-not-supported-in-this-environment'){try{await au.signInWithRedirect(auth,p)}catch(x){toast('ログインできませんでした（'+(x&&x.code||'error')+'）')}}
+    else if(c!=='auth/popup-closed-by-user'&&c!=='auth/cancelled-popup-request')toast('ログインできませんでした（'+(c||'error')+'）');
+  }
+}
+/* backup */
+async function importBackup(obj){
+  const items=Array.isArray(obj)?obj:(obj&&obj.items)||[];const have=new Set(S.entries.map(e=>e.id));let n=0,skip=0;
+  for(const it of items){if(!it||!it.id||it.kind!=='w'&&it.kind!=='g')continue;if(have.has(it.id)){skip++;continue}const {id,...d}=it;if(d.r!=null)d.r=Number(d.r);await put(id,d);n++}
+  toast(n+'件を読み込みました'+(skip?'（'+skip+'件はすでにありました）':''));return n;
+}
+window.uketaImport=importBackup;
+function exportBackup(){
+  const data=JSON.stringify({app:'UKETA',version:VERSION,exported:new Date().toISOString(),items:S.entries.map(e=>({...e})).concat(S.custom.map(c=>({id:c.gid,...c})))},null,1);
+  const name='uketa-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  if(S.dl){S.dl.save({filename:name,data}).catch(e=>{if(!e||e.code!=='declined')toast('保存できませんでした')});return}
+  const u=URL.createObjectURL(new Blob([data],{type:'application/json'})),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);
+}
+
+/* what to watch next: one at a time, unrated only; every third pick comes from your weakest style */
+function rated(){const o={};S.entries.forEach(e=>{if(e.vid)o[e.vid]=e.r});return o}
+function pickNext(){
+  const rt=rated(),pool=Object.values(VID).filter(x=>rt[x.v.y]==null&&!(S.noShimo&&vtags(x).includes('shimo')));
+  if(!pool.length)return null;
+  const last=S.entries[0]&&S.entries[0].gid;
+  let cand=pool.filter(x=>x.g.id!==last);if(!cand.length)cand=pool;
+  const todayN=S.entries.filter(e=>isToday(e.at)).length;
+  if(todayN%3===2){
+    const st={};S.entries.forEach(e=>etags(e).forEach(s=>{(st[s]=st[s]||[]).push(e.r)}));
+    const weak=Object.entries(st).filter(([,a])=>a.length>=2).map(([k,a])=>[k,score(a)]).sort((a,b)=>a[1]-b[1])[0];
+    if(weak&&weak[1]<60){const w=cand.filter(x=>vtags(x).includes(weak[0]));if(w.length)cand=w}
+  }
+  return cand[Math.floor(Math.random()*cand.length)].v.y;
+}
+function loadNow(){try{const o=JSON.parse(sessionStorage.getItem(SS)||'{}');if(o.y&&VID[o.y]){S.cur=o.y;if(o.p)S.played[o.y]=true}}catch(e){}}
+function saveNow(){try{sessionStorage.setItem(SS,JSON.stringify({y:S.cur,p:!!S.played[S.cur]}))}catch(e){}}
+function ensureCur(){const rt=rated();if(!S.cur||!VID[S.cur]||rt[S.cur]!=null||(S.noShimo&&vtags(VID[S.cur]).includes('shimo'))){S.cur=pickNext();saveNow()}}
+
+/* stage drawings */
+const MIC='<svg width="60" height="187" viewBox="0 0 40 120" role="img" aria-label="漫才（スタンドマイク）"><rect x="13" y="0" width="14" height="22" rx="7" fill="#2b2b2b" stroke="#888" stroke-width="2"/><line x1="20" y1="22" x2="20" y2="112" stroke="#555" stroke-width="4"/><line x1="6" y1="116" x2="34" y2="116" stroke="#555" stroke-width="5" stroke-linecap="round"/></svg>';
+const PP='fill="#2b2b2b" stroke="#888" stroke-width="2"',TT='stroke="#555" stroke-linecap="round"';
+const SET=`<svg width="182" height="104" viewBox="0 0 140 80" role="img" aria-label="コント（パイプ椅子と会議テーブル）"><rect x="16" y="14" width="9" height="24" rx="3" transform="rotate(-8 20 26)" ${PP}/><line x1="22" y1="36" x2="24" y2="48" ${TT} stroke-width="3.5"/><rect x="20" y="45" width="30" height="7" rx="3" ${PP}/><line x1="24" y1="52" x2="46" y2="78" ${TT} stroke-width="3.5"/><line x1="46" y1="52" x2="24" y2="78" ${TT} stroke-width="3.5"/><rect x="64" y="36" width="72" height="6" rx="2" ${PP}/><line x1="74" y1="42" x2="74" y2="78" ${TT} stroke-width="3.5"/><line x1="126" y1="42" x2="126" y2="78" ${TT} stroke-width="3.5"/><line x1="68" y1="78" x2="80" y2="78" ${TT} stroke-width="4"/><line x1="120" y1="78" x2="132" y2="78" ${TT} stroke-width="4"/></svg>`;
+const FLIP=`<svg width="120" height="170" viewBox="0 0 80 112" role="img" aria-label="ピン（フリップ台）"><line x1="40" y1="10" x2="14" y2="108" ${TT} stroke-width="4"/><line x1="40" y1="10" x2="66" y2="108" ${TT} stroke-width="4"/><line x1="40" y1="10" x2="40" y2="104" ${TT} stroke-width="3"/><rect x="10" y="14" width="60" height="46" rx="2" fill="#f4f0e6" stroke="#888" stroke-width="2"/><line x1="18" y1="28" x2="58" y2="28" stroke="#9a9a9a" stroke-width="3" stroke-linecap="round"/><line x1="18" y1="38" x2="50" y2="38" stroke="#9a9a9a" stroke-width="3" stroke-linecap="round"/><line x1="18" y1="48" x2="44" y2="48" stroke="#9a9a9a" stroke-width="3" stroke-linecap="round"/><rect x="8" y="60" width="64" height="5" rx="1" ${PP}/></svg>`;
+function mekuri(name){
+  const n=[...name].length,fz=n<=5?27:n<=7?22:n<=9?18:16,ph=Math.max(150,Math.ceil(n*fz*1.04)+30),h=ph+70,w=74,pw=w-28;
+  return {h,html:`<div class="mek" style="width:${w}px;height:${h}px" role="img" aria-label="めくり：${esc(name)}">
+  <div style="position:absolute;left:6px;top:6px;width:7px;height:${h-12}px;background:#6b4423;border-radius:2px"></div>
+  <div style="position:absolute;right:6px;top:6px;width:7px;height:${h-12}px;background:#6b4423;border-radius:2px"></div>
+  <div style="position:absolute;left:6px;top:${h-48}px;width:${w-12}px;height:6px;background:#5e3b1e"></div>
+  <div style="position:absolute;left:0;bottom:0;width:26px;height:7px;background:#4a2e17;border-radius:2px"></div>
+  <div style="position:absolute;right:0;bottom:0;width:26px;height:7px;background:#4a2e17;border-radius:2px"></div>
+  <div style="position:absolute;left:0;top:0;width:${w}px;height:11px;background:#8a5a2e;border-radius:3px;box-shadow:0 2px 0 #5e3b1e"></div>
+  <div style="position:absolute;left:14px;top:11px;width:${pw}px;height:${ph}px;background:#fffdf6;box-shadow:0 3px 0 #ece5d6,0 6px 0 #d9d2c4,0 8px 10px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;padding:10px 0">
+    <span aria-hidden="true" style="writing-mode:vertical-rl;text-orientation:upright;font-family:'Yuji Syuku',serif;font-size:${fz}px;line-height:1.02;color:#141010;letter-spacing:.02em">${esc(name)}</span></div>
+  <span style="position:absolute;left:${14+pw*.25-4}px;top:6px;width:8px;height:10px;border:2px solid #8a8f95;border-radius:4px"></span>
+  <span style="position:absolute;left:${14+pw*.75-4}px;top:6px;width:8px;height:10px;border:2px solid #8a8f95;border-radius:4px"></span></div>`};
+}
+const PLAY_SVG='<svg width="34" height="38" viewBox="0 0 14 16" aria-hidden="true"><path d="M2 1 L13 8 L2 15 Z" fill="#1d1714"/></svg>';
+const CURT='<div class="cur l"></div><div class="cur r"></div><div class="val"></div>';
+const FINE='<p class="fine">面白かったネタは、YouTube内でも高評価・チャンネル登録・コメントで直接応援しましょう</p>';
+const SHIMO=()=>`<label class="shimo"><input type="checkbox" data-shimo${S.noShimo?' checked':''}> ゴールデンタイム</label>`;
+function renderWatch(force){
+  if(S.anim&&!force)return;
+  if(!force&&document.activeElement&&document.activeElement.id==='cmtT'&&S.cur&&VID[S.cur]&&rated()[S.cur]==null)return;
+  ensureCur();
+  const todayN=S.entries.filter(e=>isToday(e.at)).length,st=$('#stage');
+  if(!S.cur){st.innerHTML=`${CURT}<div class="done"><p class="telop" style="font-size:34px;margin:0">本日はこれにて</p><p style="margin:16px 0 0">収録しているネタは全部評価しました。新しいネタは「記録」から追加できます。</p></div><div class="pit"><p class="today">今日の評価 ${todayN}本</p>${FINE}${SHIMO()}</div>`;return}
+  const {g,v}=VID[S.cur],t=cleanTitle(v.t),tl=[...t].length,tz=tl<=4?40:tl<=7?32:tl<=10?26:22,mk=mekuri(g.name),p=!!S.played[v.y];
+  const prop=v.f==='m'?`<div class="prop" style="left:calc(50% - 30px)">${MIC}</div>`:v.f==='p'?`<div class="prop" style="left:calc(50% - 46px)">${FLIP}</div>`:`<div class="prop" style="left:calc(50% - 64px)">${SET}</div>`;
+  st.innerHTML=`${CURT}<div class="boards">
+    <h2 class="ttl telop" style="font-size:${tz}px">「${esc(t)}」</h2>
+    <div class="scene" style="height:${Math.max(200,mk.h+4)}px">${mk.html}${prop}</div>
+    <div class="play"><a href="${ytUrl(v.y,v.s)}" target="_blank" rel="noopener" data-play="${esc(v.y)}" aria-label="YouTubeで観る（${mmss(v.d)}）">${PLAY_SVG}</a><p>タップでYouTubeへ · ${mmss(v.d)}</p></div>
+  </div>
+  <div class="pit">
+    <div class="tg">${vtags({g,v}).filter(s=>STY[s]).map(s=>`<span>${STY[s]}</span>`).join('')}</div>
+    <p class="hint">${p?'観終わったら評価してください':'YouTubeで観ると評価できます'}</p>
+    <div class="cmt"><label class="cl" for="cmtT">💬 ひとこと <small>（任意・自分用メモ）</small></label><textarea id="cmtT" rows="2" maxlength="500" placeholder="例：ツッコミ最高／設定したのに下ネタばっかりだった">${esc(S.draft&&S.draft.y===v.y?S.draft.t:'')}</textarea><label class="cdev"><input type="checkbox" id="cmtD"${S.draft&&S.draft.y===v.y&&S.draft.d?' checked':''}> 開発者にも送る <small>（ご意見・要望など）</small></label></div>
+    <div class="rgrid" role="group" aria-label="評価">
+      <button type="button" class="rb u" data-rate="1"${p?'':' disabled'}>ウケた</button>
+      <button type="button" class="rb m" data-rate="0"${p?'':' disabled'}>まあまあ</button>
+      <button type="button" class="rb s" data-rate="-1"${p?'':' disabled'}>スベった</button>
+      <button type="button" class="rb a" data-rate="-2"${p?'':' disabled'}>途中でやめた</button>
+    </div>
+    <p class="today">今日の評価 ${todayN}本</p>${FINE}${SHIMO()}
+  </div>`;
+}
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const RM=()=>!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+async function rateCur(r){
+  const y=S.cur;if(!y||!VID[y]||S.anim)return;const {g,v}=VID[y],id='v-'+y,st=$('#stage');r=String(r);
+  S.anim=true;S.later=false;st.classList.add('busy');st.querySelectorAll('.rb').forEach(b=>b.disabled=true);
+  const dr=S.draft&&S.draft.y===y?S.draft:null,memo=dr?String(dr.t||'').trim().slice(0,500):'',toDev=!!(dr&&dr.d&&memo);
+  const doc={kind:'w',fav:false,gid:g.id,gname:g.name,vid:y,sec:v.d,title:v.t,url:ytUrl(y,v.s),fmt:v.f,side:v.side||null,styles:(v.tags||g.styles).slice(),r:Number(r),at:new Date().toISOString(),ver:VERSION,...(memo?{note:memo}:{})};
+  const n0=yoseN();
+  const saving=put(id,doc),uke=r==='1',rm=RM();S.draft=null;
+  if(toDev)sendFeedback({source:'comment',kind:'comment',text:memo,vid:y,gid:g.id,gname:g.name,title:v.t,r:Number(r)});
+  // ★推す: after ウケた, a 3-second countdown (ring + number) that runs while the curtain closes
+  let lt=null,cdn=null;
+  const CD=3000;
+  const countdown=()=>new Promise(res=>{const t0=performance.now(),rg=lt.querySelector('.ring rect'),nm=cdn.querySelector('span');let shown=3;
+    const tick=()=>{const t=performance.now()-t0,left=Math.max(0,CD-t),n=Math.max(1,Math.ceil(left/1000));
+      if(rg)rg.style.strokeDashoffset=String(100*(1-left/CD));
+      if(n!==shown){shown=n;nm.textContent=n;cdn.classList.remove('tk');void cdn.offsetWidth;cdn.classList.add('tk')}
+      if(t>=CD)res();else requestAnimationFrame(tick)};requestAnimationFrame(tick)});
+  if(uke){
+    st.insertAdjacentHTML('beforeend','<button type="button" class="later cd" data-later aria-pressed="false"><svg class="ring" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><rect x="2" y="2" width="96" height="96" rx="16" ry="18" pathLength="100"/></svg><b aria-hidden="true">★</b><span>推す！</span></button><p class="cdn telop" aria-hidden="true"><span>3</span><small>秒後に次の出番</small></p>');
+    lt=st.querySelector('.later.cd');cdn=st.querySelector('.cdn');
+  }
+  try{
+    if(rm){
+      if(uke){await countdown();lt.remove();cdn.remove()}
+      await saving;st.style.opacity='0';await wait(260);
+    }else if(uke){
+      lt.insertAdjacentHTML('beforebegin','<p class="stamp telop s1">ウケた！</p><div class="drape cd"><i class="dl"></i><i class="dr"></i></div>');
+      await wait(450);
+      const cdDone=countdown();st.querySelector('.drape').classList.add('shut');
+      await Promise.all([saving,cdDone,wait(CD+80)]);
+      lt.classList.add('gone');cdn.classList.add('gone');await wait(200);
+    }else{
+      st.insertAdjacentHTML('beforeend',`<p class="stamp telop s${r}">${r==='-1'?'スベった…':R[r]}</p><div class="drape"><i class="dl"></i><i class="dr"></i></div>`);
+      await wait(600);
+      st.querySelector('.drape').classList.add('shut');
+      await Promise.all([saving,wait(520)]);
+    }
+    const fav=uke&&S.later;
+    const prev=y;S.cur=null;renderWatch(true);
+    if(rm){st.style.opacity='1'}
+    else{
+      const D=document.createElement('div');D.className='drape shut'+(uke?' mid':'');D.innerHTML='<i class="dl"></i><i class="dr"></i>';
+      st.appendChild(D);D.getBoundingClientRect();await wait(140);D.classList.remove('shut');await wait(uke?1500:540);D.remove();
+    }
+    if(fav)await put(id,{...doc,fav:true});
+    const bonus=afterRate(n0);
+    toast(bonus+(fav?'★推した · ':'')+R[r]+'　次の出番へ',[['取り消す',async()=>{await del('v-'+prev);S.cur=prev;S.played[prev]=true;saveNow();renderWatch(true)}]]);
+  }catch(x){toast('保存できませんでした（'+(x&&x.code||'error')+'）');st.style.opacity='1';S.anim=false;renderWatch(true)}
+  finally{S.anim=false;S.later=false;st.classList.remove('busy');if(lt&&lt.isConnected)lt.remove();if(cdn&&cdn.isConnected)cdn.remove()}
+}
+
+/* ワンマン: pick any act; 1 ticket per 10 寄席 ratings */
+const BRK={'コロコロチキチキペッパーズ':'コロコロチキチキ|ペッパーズ','トレンディエンジェル':'トレンディ|エンジェル','ハリウッドザコシショウ':'ハリウッド|ザコシショウ','お見送り芸人しんいち':'お見送り芸人|しんいち','ゆりやんレトリィバァ':'ゆりやん|レトリィバァ','サンシャイン池崎':'サンシャイン|池崎','ルシファー吉岡':'ルシファー|吉岡','ビスケットブラザーズ':'ビスケット|ブラザーズ','チョコレートプラネット':'チョコレート|プラネット','ロングコートダディ':'ロングコート|ダディ','ニッポンの社長':'ニッポンの|社長','サンドウィッチマン':'サンドウィッチ|マン','アンタッチャブル':'アンタッ|チャブル','マヂカルラブリー':'マヂカル|ラブリー','チュートリアル':'チュート|リアル','パンクブーブー':'パンク|ブーブー','男性ブランコ':'男性|ブランコ','ウエストランド':'ウエスト|ランド','ラブレターズ':'ラブ|レターズ','トム・ブラウン':'トム・|ブラウン','街裏ぴんく':'街裏|ぴんく','友田オレ':'友田|オレ','今井らいぱち':'今井|らいぱち','田津原理音':'田津原|理音','濱田祐太郎':'濱田|祐太郎','陣内智則':'陣内|智則','ますだおかだ':'ますだ|おかだ','かもめんたる':'かもめ|んたる','バッテリィズ':'バッテ|リィズ','ザ・マミィ':'ザ・|マミィ','ジェラードン':'ジェラ|ードン','タイムマシーン3号':'タイムマシーン|3号','ぱーてぃーちゃん':'ぱーてぃー|ちゃん','うるとらブギーズ':'うるとら|ブギーズ','おいでやすこが':'おいでやす|こが','鬼越トマホーク':'鬼越|トマホーク','3時のヒロイン':'3時の|ヒロイン','ストレッチーズ':'ストレッ|チーズ','9番街レトロ':'9番街|レトロ','アルコ&ピース':'アルコ&|ピース','モグライダー':'モグ|ライダー','ガクテンソク':'ガクテン|ソク','レイザーラモン':'レイザー|ラモン','ラバーガール':'ラバー|ガール','ザ・ギース':'ザ・|ギース','スリムクラブ':'スリム|クラブ','カベポスター':'カベ|ポスター','アンジャッシュ':'アン|ジャッシュ','真空ジェシカ':'真空|ジェシカ','紅しょうが':'紅|しょうが','四千頭身':'四千|頭身','さまぁ～ず':'さまぁ|～ず','ザ・パンチ':'ザ・|パンチ','ヒコロヒー':'ヒコ|ロヒー','金属バット':'金属|バット','囲碁将棋':'囲碁|将棋','2丁拳銃':'2丁|拳銃'};
+const nameParts=(n,cpc)=>{const b=BRK[n];if(b&&[...n].length>cpc)return b.split('|');return [n]};
+const nameHTML=(n,cpc)=>nameParts(n,cpc).map(esc).join('<br>');
+const nameStag=(n,cpc)=>nameParts(n,cpc).map((x,i)=>`<i style="padding-top:${(i*.7).toFixed(1)}em">${esc(x)}</i>`).join('');
+const ymd=d=>isNaN(d)?'':`${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
+function tickets(){const yose=S.entries.filter(e=>e.vid&&VID[e.vid]&&!e.omOnly).length,used=S.entries.reduce((a,e)=>a+(e.omN||0),0),earned=(yose>=3?1:0)+Math.floor(yose/10);return {n:Math.max(0,earned-used),next:yose<3?3-yose:10-yose%10,yose,used}}
+function omMatch(g,q){if(!q)return true;q=q.toLowerCase();return [g.name,g.ro||'',...g.v.map(v=>v.t)].some(x=>String(x).toLowerCase().includes(q))}
+function renderOneman(){
+  const el=$('#om');if(!el.querySelector('#omq')){el.innerHTML=`<section class="omhead"><div class="omtop"><p class="telop omt">ワンマンライブ</p><div id="omtk"></div></div><p id="omtx" class="omtx"></p><input id="omq" type="search" placeholder="組名・ネタ名で検索" aria-label="組名・ネタ名で検索" autocomplete="off"></section><div id="ombody"></div>`;$('#omq').value=S.omQ||''}
+  const tk=tickets();
+  $('#omtk').innerHTML=`<div class="tix${tk.n?' gold':' empty'}" role="img" aria-label="チケット${tk.n}枚">${tk.n?'<i class="ww wwt">wwwwwwwwwwwwwwwwwwww</i><i class="ww wwb">wwwwwwwwwwwwwwwwwwww</i>':'<span class="tl">チケット</span>'}<b class="tn">${tk.n}</b><span class="tu">枚</span></div>`;
+  $('#omtx').innerHTML=`はじめの3本で1枚、そのあとは寄席で10本観るごとに1枚。好きな組のネタを1本選んで観られます。次の1枚まで寄席であと<b>${tk.next}本</b>。`;
+  const rt=rated(),body=$('#ombody'),G=CAT;
+  if(S.omG){const g=G.find(x=>x.id===S.omG);if(!g){S.omG=null;return renderOneman()}
+    body.innerHTML=`<button class="link omback" data-omback>← 一覧にもどる</button><div class="omgh">${(()=>{const mk=mekuri(g.name),sc=.5;return `<div class="lmk" style="width:${Math.round(74*sc)}px;height:${Math.round(mk.h*sc)}px"><div style="transform:scale(${sc});transform-origin:0 0;position:absolute;left:0;top:0">${mk.html}</div></div>`})()}<div><h2>${esc(g.name)}</h2><p>${FMT[g.fmt]||''} · ネタ${g.v.length}本</p></div></div>
+    <ol class="lg">${g.v.map(v=>{const r=rt[v.y],e=S.entries.find(x=>x.vid===v.y),pl=!!(S.omPlayed||{})[v.y],ic=v.f==='m'?MIC:v.f==='p'?FLIP:SET,ok=tk.n>0||pl;
+      return `<li class="lc omc"><div class="lmid" style="grid-column:1/3"><p class="telop">「${esc(cleanTitle(v.t))}」</p><div class="lic">${ic}</div></div>
+      <div class="lside">${ok?`<a class="lplay" href="${ytUrl(v.y,v.s)}" target="_blank" rel="noopener" data-omplay="${esc(v.y)}" aria-label="YouTubeで観る（チケット1枚）">${PLAY_SVG}</a>`:`<span class="lplay off" aria-label="チケットがありません">🔒</span>`}<small>${mmss(v.d)}</small></div>
+      <div class="lfoot">${r!=null?`<span class="rchip rc${r}">${R[r]}</span>${e&&e.fav?'<span class="omstar">★</span>':''}`:'<span class="omnew">まだ観ていない</span>'}<span class="ltg">${vtags({g,v}).filter(x=>STY[x]).slice(0,4).map(x=>`<i>${STY[x]}</i>`).join('')}</span></div>
+      ${pl?`<div class="omrate" role="group" aria-label="評価">${['1','0','-1','-2'].map(k=>`<button type="button" class="rb ${k==='1'?'u':k==='0'?'m':k==='-1'?'s':'x'}" data-omrate="${k}" data-y="${esc(v.y)}">${R[k]}</button>`).join('')}</div>`:''}</li>`}).join('')}</ol>
+    ${tk.n?'':'<p class="omhint">チケットがないときは🔒。寄席で観るとたまります。</p>'}`;return}
+  const L=G.filter(g=>omMatch(g,S.omQ));
+  const H=Math.round(Math.max(280,Math.min(570,(window.innerHeight-110)*.75))),FZ=Math.round(Math.max(34,Math.min(48,H/9))),PH=H-96,CPC=Math.max(4,Math.floor((PH-28)/(FZ*1.04)));
+  body.innerHTML=L.length?`<div class="omwrap"><button type="button" class="omar omar-l" data-omar="-1" aria-label="左へ">‹</button><div class="omscroll" style="height:${H+30}px">${L.map(g=>{const parts=nameParts(g.name,CPC),cols=parts.reduce((a,x)=>a+Math.ceil([...x].length/CPC),0),pw=Math.round(cols*FZ*1.12+26),seen=g.v.filter(v=>rt[v.y]!=null).length;
+    return `<button type="button" class="omk" data-omg="${esc(g.id)}" style="height:${H}px" aria-label="${esc(g.name)}（ネタ${g.v.length}本）">
+      <span class="omk-bar" style="width:${pw+30}px"></span>
+      <span class="omk-frame" style="height:${PH+14}px"><span class="omk-paper" style="width:${pw}px;height:${PH}px"><span class="omk-name" style="font-size:${FZ}px">${nameHTML(g.name,CPC)}</span></span><i class="omk-ring" style="left:${Math.round(pw*.25)+8}px"></i><i class="omk-ring" style="left:${Math.round(pw*.75)+2}px"></i></span>
+      <span class="omk-feet" style="width:${pw+40}px"></span>
+      <span class="omk-n">ネタ${g.v.length}本${seen?` · 観た${seen}`:''}</span></button>`}).join('')}</div><button type="button" class="omar omar-r" data-omar="1" aria-label="右へ">›</button></div><p class="omswipe">右から左へ ← スワイプ</p>`:'<p class="empty">見つかりませんでした。</p>';
+}
+async function omRate(y,r){
+  const x=VID[y];if(!x)return;const {g,v}=x,id='v-'+y,e=S.entries.find(q=>q.vid===y);
+  const base=e?(({id:_,...rest})=>rest)(e):{kind:'w',fav:false,gid:g.id,gname:g.name,vid:y,sec:v.d,title:v.t,url:ytUrl(y,v.s),fmt:v.f,side:v.side||null,styles:(v.tags||g.styles).slice(),omOnly:true,ver:VERSION};
+  try{await put(id,{...base,r:Number(r),omN:(base.omN||0)+1,at:new Date().toISOString()});delete S.omPlayed[y];toast(R[r]+' · チケットを1枚使いました');renderOneman()}catch(err){toast('保存できませんでした（'+(err&&err.code||'error')+'）')}
+}
+
+/* log */
+function renderLog(){
+  $('#logCount').textContent=S.entries.length||'';
+  const nF=S.entries.filter(e=>e.fav).length;if(!nF)S.logFav=false;
+  $('#lfilt').innerHTML=nF?`<button type="button" data-lf="0" aria-pressed="${!S.logFav}">すべて</button><button type="button" data-lf="1" aria-pressed="${S.logFav}">★推し ${nF}</button>`:'';
+  const SORTS={new:'新しい順',old:'古い順',score:'評価が高い順',name:'組名順',len:'長い順'},so=S.logSort||'new';
+  $('#lsort').innerHTML=Object.entries(SORTS).map(([k,l])=>`<option value="${k}"${k===so?' selected':''}>${l}</option>`).join('');
+  const rk=e=>(e.r===1?3:e.r===0?2:e.r===-1?1:0)+(e.fav?.5:0);
+  const LE=(S.logFav?S.entries.filter(e=>e.fav):S.entries).slice().sort((a,b)=>so==='old'?String(a.at).localeCompare(String(b.at)):so==='score'?rk(b)-rk(a)||String(b.at).localeCompare(String(a.at)):so==='name'?String(a.gname||'').localeCompare(String(b.gname||''),'ja'):so==='len'?(b.sec||0)-(a.sec||0):String(b.at).localeCompare(String(a.at)));
+  $('#logList').innerHTML=LE.length?'<ol class="lg2">'+LE.map(e=>{const u=safeUrl(e.url),d=new Date(e.at),t=cleanTitle(e.title||'題名なし'),mk=mekuri(e.gname||'？'),f=e.fmt,ic=f==='m'?MIC:f==='p'?FLIP:SET,sc=.4;
+    return `<li class="lc2"><div class="lleft"><div class="mk2" aria-label="${esc(e.gname||'')}"><span><em>${e.gname?nameStag(e.gname,4):'？'}</em></span></div></div>
+    <div class="lmain"><p class="telop${[...t].length>14?' long':''}">「${esc(t)}」</p><div class="lrow"><span class="lic2">${ic}<time>${ymd(d)}</time></span><span class="ltg">${etags(e).filter(s=>STY[s]).slice(0,4).map(s=>`<i>${STY[s]}</i>`).join('')}</span></div>${e.note?`<p class="lnote">💬 ${esc(e.note)}</p>`:''}</div>
+    <div class="lact"><div class="la1">${e.r===1||e.fav?`<button type="button" class="favb${e.fav?' on':''}" data-fav="${esc(e.id)}" aria-pressed="${!!e.fav}" aria-label="推す">${e.fav?'★':'☆'}</button>`:'<span class="favb favsp" aria-hidden="true"></span>'}<span class="rchip rc${e.r}">${R[e.r]||'–'}</span><label class="lsel"><select data-lsel="${esc(e.id)}" aria-label="評価を変更"><option value="">変更…</option>${['1','0','-1','-2'].filter(r=>Number(r)!==e.r).map(r=>`<option value="${r}">${R[r]}</option>`).join('')}</select></label></div>
+      <div class="la"><button class="link" data-edit="${esc(e.id)}">編集</button><button class="link" data-del="${esc(e.id)}">削除</button></div></div>
+    <div class="lside">${u?`<span class="lagain">また観る${secOf(e)?` <b>${mmss(e.sec||secOf(e))}</b>`:''}</span><a class="lplay" href="${esc(u)}" target="_blank" rel="noopener" aria-label="また観る（YouTube）">${PLAY_SVG}</a>`:''}</div></li>`}).join('')+'</ol>'
+    :'<p class="empty">まだ記録がありません。「寄席」から始めましょう。</p>';
+}
+
+/* scorecard */
+const bar=(l,sub,s,n,unit='本')=>`<div class="br"><div class="bl">${l}${sub?`<small>${sub}</small>`:''}</div><div class="bt"><i style="width:${Math.min(100,s??0)}%"></i></div><div class="bv">${s==null?'–':Math.min(100,s)}<small> · ${n}${unit}</small></div></div>`;
+function renderStats(){
+  const E=S.entries,el=$('#dash');
+  if(!E.length){el.innerHTML=`<div class="emptyd"><p class="telop">?</p><h2>お笑い年齢はまだ謎です</h2><p>ネタを何本か評価すると、観た組数、漫才派かコント派か、推しスタイル、好きな尺、そしてお笑い年齢がわかります。</p><a class="btn" href="#watch">観に行く</a></div>`;return}
+  const pg=perGroup(),nG=Object.keys(pg).length,rs=E.map(e=>e.r),rsv=E.map(sv),nFav=E.filter(e=>e.fav).length,cnt=r=>rs.filter(x=>x===r).length,pc=n=>(n/E.length*100).toFixed(1);
+  let w=0,sa=0;const pull={};E.forEach(e=>{const g=gById(e.gid);if(!g||!g.fan)return;let k=e.r===1?1:e.r===0?.4:0;if(e.fav)k=k?k*1.5:.6;if(!k)return;w+=k;sa+=k*g.fan;pull[g.id]=(pull[g.id]||0)+k});
+  const age=w?Math.round(sa/w):null,PL=Object.entries(pull).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([id])=>gById(id));
+  const ti=TIERS.filter(t=>E.length>=t[0]).length-1,tier=TIERS[ti],nextT=TIERS[ti+1];
+  const TOT=E.reduce((a,e)=>a+secOf(e),0);
+  const avgLen=f=>{const x=E.filter(e=>f(e.r)&&secOf(e));return x.length?x.reduce((a,e)=>a+(e.sec||secOf(e)),0)/x.length:null};
+  const LB=[['〜4分','',0,240],['4〜8分','',240,480],['8〜15分','',480,900],['15分〜','',900,1e9]].map(([l,s,a,b])=>{const x=E.filter(e=>{const d=e.sec||secOf(e);return d&&d>=a&&d<b}).map(sv);return {l,n:x.length,sc:score(x)}}).filter(x=>x.n);
+  const bestLen=[...LB].filter(x=>x.n>=2).sort((a,b)=>b.sc-a.sc||b.n-a.n)[0];
+  const fm=E.filter(e=>fside(e)==='m').map(sv),fk=E.filter(e=>fside(e)==='k').map(sv),sm=score(fm),sk=score(fk);
+  const fp=E.filter(e=>e.fmt==='p'),spn=score(fp.map(sv)),sNP=score(E.filter(e=>e.fmt!=='p').map(sv)),upn=fp.filter(e=>e.r===1).length;
+  let v;
+  const um=E.filter(e=>fside(e)==='m'&&e.r===1).length,uk=E.filter(e=>fside(e)==='k'&&e.r===1).length,ust=`ウケた${um+uk}本のうち漫才${um}本・コント${uk}本。`;
+  const mp=(sm+sk)?Math.round(sm/(sm+sk)*100):50;
+  if(!fk.length)v=['漫才一筋','今のところ漫才だけ','コントも観ると比べられます。','m'];
+  else if(!fm.length)v=['コント一筋','今のところコントだけ','漫才も観ると比べられます。','k'];
+  else if(mp>=75)v=['漫才派','漫才派',`笑い度は漫才${sm}・コント${sk}。笑いの${mp}%が漫才から。`,'m'];
+  else if(mp<=25)v=['コント派','コント派',`笑い度はコント${sk}・漫才${sm}。笑いの${100-mp}%がコントから。`,'k'];
+  else if(mp>=49&&mp<=51)v=['二刀流','漫才もコントも同じくらい好き',`笑い度は漫才${sm}・コント${sk}。きれいに五分五分。`+ust,fm.length>=fk.length?'m':'k'];
+  else v=['どっちでも','漫才でもコントでも笑える',`形式より中身で笑うタイプ（やや${mp>50?'漫才':'コント'}寄り）。`+ust,mp>50?'m':'k'];
+  const st={};E.forEach(e=>etags(e).forEach(s=>{if(STY[s])(st[s]=st[s]||[]).push(sv(e))}));
+  const SR=Object.entries(st).map(([k,a])=>({k,n:a.length,s:score(a),adj:(a.reduce((x,r)=>x+(RV[r]??0),0)+50)/(a.length+1)})).sort((a,b)=>b.adj-a.adj||b.n-a.n);
+  const fav=SR[0],top3=SR.slice(0,3);
+  const tb=E.filter(e=>etags(e).some(t=>BOKE.includes(t))).map(sv),tt=E.filter(e=>etags(e).some(t=>TSUK.includes(t))).map(sv),sb=score(tb),stt=score(tt);
+  const bt=tt.length<2||tb.length<2?['まだ不明','ツッコミが光るネタをもう少し観ると分かります']:stt-sb>=10?['ツッコミ派',`ツッコミが光るネタの笑い度${Math.min(100,stt)}、ボケ重視のネタ${Math.min(100,sb)}。`]:sb-stt>=10?['ボケ派',`ボケ重視のネタの笑い度${Math.min(100,sb)}、ツッコミが光るネタ${Math.min(100,stt)}。`]:['どっちも',`ボケ${Math.min(100,sb)}・ツッコミ${Math.min(100,stt)}。どっちのタイプでも笑えます。`];
+  const ERAS=[['昭和',0,1988],['1990年代',1989,1999],['2000年代',2000,2009],['2010年代',2010,2019],['2020年代',2020,9999]];
+  const era=ERAS.map(([l,a,b])=>{const x=E.filter(e=>{const g=gById(e.gid);return g&&g.peak>=a&&g.peak<=b}).map(sv);return {l,n:x.length,sc:score(x)}}).filter(x=>x.n);
+  const GR=Object.entries(pg).map(([id,o])=>({name:(gById(id)||o).name,n:o.rs.length,s:score(o.sv),rs:o.rs,fav:o.sv.some(x=>String(x)[0]==='s')})).sort((a,b)=>b.s-a.s||b.n-a.n);
+  const dg=diagnose({age,v,fav,sAll:score(rsv),E,bestLen,fm,fk,fp,spn,sNP});
+  el.innerHTML=`<section class="diag" aria-label="WBTI診断"><p class="wbti">WBTI（Warai-Based Type Indicator）診断</p><div class="code" aria-label="タイプ ${dg.code}">${[...dg.code].map(c=>`<b>${c}</b>`).join('')}<span style="align-self:center;margin-left:6px;font-weight:700">型</span></div><h3>あなたは${esc(dg.name)}です。</h3><ul>${dg.lines.map(l=>`<li>${esc(l)}</li>`).join('')}</ul><small>${dg.legend}</small></section>
+  <h2 class="find">${v[1]}${fav?`。いちばん笑うのは「${STY[fav.k]}」`:''}。</h2>
+  <div class="hero">
+    <div class="agecard"><p class="lab">お笑い年齢</p>
+      <p class="age telop">${age??'–'}${age?'<small>歳</small>':''}</p>
+      <p>${age?`${age}歳の笑いのツボ。いちばん影響しているのは ${PL.map(g=>`<b>${esc(g.name)}</b>（ファン層≈${g.fan}歳）`).join('、')}。`:'「ウケた」を付けると計算できます。'}</p>
+      <p class="tier"><b>${tier[1]}</b> · 芸歴${E.length}本${nextT?` · あと${nextT[0]-E.length}本で${nextT[1]}`:''}</p></div>
+    <div class="kpis">
+      <div class="kpi"><p class="kl">観た組数</p><p class="kv">${nG}<small>組 / 全${groups().length}組</small></p></div>
+      <div class="kpi"><p class="kl">評価した本数</p><p class="kv">${E.length}<small>本</small></p></div>
+      <div class="kpi"><p class="kl">視聴時間</p><p class="kv sm">${hm(TOT)}</p><p class="kd">1本あたり平均${hm(TOT/E.length)}</p></div>
+      <div class="kpi wide"><p class="kl">評価の内訳 · 笑い度 ${Math.min(100,score(rsv))}/100</p><div class="split"><i style="width:${pc(cnt(1))}%"></i><i style="width:${pc(cnt(0))}%"></i><i style="width:${pc(cnt(-1))}%"></i><i style="width:${pc(cnt(-2))}%"></i></div>
+        <p class="legend">ウケた ${cnt(1)} · まあまあ ${cnt(0)} · スベった ${cnt(-1)} · 途中でやめた ${cnt(-2)}${nFav?` · ★ ${nFav}`:''}</p></div>
+      <div class="kpi"><p class="kl">漫才かコントか</p><p class="kv sm">${v[0]}</p></div>
+      <div class="kpi"><p class="kl">推しスタイル TOP3</p><p class="kv sm">${top3.length?top3.map(x=>STY[x.k]).join('・'):'–'}</p></div>
+      <div class="kpi"><p class="kl">ボケ派かツッコミ派か</p><p class="kv sm">${bt[0]}</p><p class="kd">${bt[1]}</p></div>
+      <div class="kpi"><p class="kl">ピン芸</p><p class="kv sm">${fp.length?Math.min(100,spn)+'<small>点</small>':'–'}</p><p class="kd">${fp.length?`${fp.length}本観て、ウケた${upn}本`:'ひとり芸はまだ観ていません'}</p></div>
+      <div class="kpi"><p class="kl">好きな尺</p><p class="kv sm">${bestLen?bestLen.l:'–'}</p><p class="kd">いちばんウケた長さ</p></div>
+    </div>
+  </div>
+  <section class="sharebox"><canvas id="shareCv" width="1080" height="1350" role="img" aria-label="シェア用カード：お笑い年齢${age??'不明'}歳、${v[0]}"></canvas>
+    <div><h3>シェア用カード</h3><p>SNSに載せやすい4:5の画像です。表示されるのは成績だけで、名前やアカウントは出ません。</p>
+    <div class="row" style="justify-content:flex-start;flex-wrap:wrap">${S.dl||!window.claude?'<button class="btn" data-act="savecard">画像を保存</button>':''}</div>
+    <p class="small">${S.dl||!window.claude?'スクリーンショットでもOKです。':'スクリーンショットで保存してください。'}</p></div></section>
+  <div class="cols">
+    <section><h3>漫才 vs コント</h3><p>${v[2]}（笑い度 · 本数。ピン芸は漫談なら漫才、ひとりコントならコントに数えます）</p>${bar('漫才','',sm,fm.length)}${bar('コント','',sk,fk.length)}${fp.length?bar('うちピン芸','',spn,fp.length):''}</section>
+    <section><h3>ハマるスタイル</h3><p>笑い度 · 本数（1本だけのスタイルは少し割り引いて順位付け）</p>${SR.map(x=>bar(STY[x.k],'',x.s,x.n)).join('')}</section>
+    <section><h3>好きな尺</h3><p>${bestLen?`いちばん笑えるのは<b>${bestLen.l}</b>のネタ。`:'2本以上観た長さで比べます。'}平均の長さ：ウケた ${avgLen(r=>r===1)?mmss(avgLen(r=>r===1)):'–'} · まあまあ ${avgLen(r=>r===0)?mmss(avgLen(r=>r===0)):'–'} · スベった ${avgLen(r=>r<0)?mmss(avgLen(r=>r<0)):'–'}</p>${LB.map(x=>bar(x.l,'',x.sc,x.n)).join('')}</section>
+    <section><h3>時代</h3><p>各グループがブレイクした年代別</p>${era.map(x=>bar(x.l,'',x.sc,x.n)).join('')||'<p>まだデータがありません。</p>'}</section>
+    <section class="full" style="grid-column:1/-1"><h3>推し</h3>${nFav>=3?`<p>笑い度の高い順（★推すは＋50点で順位に反映）</p>${GR.slice(0,8).map(x=>bar((x.fav?'★':'')+esc(x.name),tally(x.rs),x.s,x.n)).join('')}`:`<p class="locked">🔒 もっと観て、このセクションを解放しよう。「ウケた」のあとに★推す！を3本押すと、推しランキングが出ます（あと${3-nFav}本）。</p>`}</section>
+  </div>
+  <p class="foot">計算方法：笑い度はウケた＝100、まあまあ＝50、スベった・途中でやめた＝0の平均（★推すは＋50点。表示は100まで）。お笑い年齢は、評価したグループの「ファン層の年齢」（各グループの主な客層を推定した値）を、ウケた＝100%、まあまあ＝40%の重み（★は1.5倍）で平均したもの。視聴時間は評価したネタの長さの合計で、途中でやめたネタは半分として計算（実際にYouTubeで観た時間はアプリからは分かりません）。ランク：若手は3本から、中堅15本、ベテラン40本、大御所100本。再生数・長さは2026年11月19日時点。</p>`;
+  drawShare({age,v,fav,tier,nG,nV:E.length,tot:TOT,PL,dg});
+}
+function diagnose({age,v,fav,sAll,E,bestLen,fm,fk,fp=[],spn=null,sNP=null}){
+  const isM=v[3]==='m';
+  const young=age!=null&&age<30;
+  const stim=fav&&['rapid','physical','madness','music'].includes(fav.k);
+  const sweet=(sAll??0)>=55;
+  const code=(isM?'M':'C')+(young?'Y':'O')+(stim?'S':'T')+(sweet?'A':'K');
+  const names={YS:'ハイテンポなお笑いにしか集中できないドパガキ',YT:'ラジオとYouTubeで育った、しゃべくり考察厨',OS:'若手の勢いに必死でついていこうとしている、無理してる大人',OT:`飲み会で${age??40}歳らしいつまらないおやじギャグを言うタイプのおやじ`};
+  const shorts={YS:'ドパガキ',YT:'考察厨',OS:'無理してる大人',OT:'おやじギャグおやじ'};
+  const k=(young?'Y':'O')+(stim?'S':'T');
+  const lines=[];
+  lines.push(isM?'マイク一本の勝負じゃないと興奮できない。セットや小道具は甘えだと思っている。':'設定とオチがないと落ち着かない。漫才の雑談パートで毎回スマホを見ている。');
+  lines.push(sweet?'笑いの沸点が低すぎる。たぶん箸が転んでも笑う。':'笑いの沸点が高すぎて、芸人より審査員になりたいタイプ。');
+  const bored=E.filter(e=>e.r===-2).length;
+  if(bored&&bored/E.length>=.15)lines.push(`集中力の持続時間はだいたい4分。途中でやめた率${Math.round(bored/E.length*100)}%。`);
+  if(bestLen&&bestLen.l==='〜4分')lines.push('5分を超えるネタは、もはや長編映画。');
+  else if(bestLen&&(bestLen.l==='8〜15分'||bestLen.l==='15分〜'))lines.push('単独ライブの長尺ネタを「通」ぶって観ている。');
+  if(fav&&fav.k==='edgy')lines.push('毒舌にしか反応しない。友達が少ないのでは。');
+  if(fav&&fav.k==='surreal')lines.push('「シュールが分かる自分」が好き。');
+  if(fp.length>=2&&spn!=null&&sNP!=null&&spn-sNP>=15)lines.push('ピン好き。ひとりで全部背負う芸人に自分を重ねている。コンビ芸人をちょっと信用していない。');
+  return {code,name:names[k],short:shorts[k],lines,legend:`${isM?'M=漫才':'C=コント'}・${young?'Y=若い':'O=老けてる'}・${stim?'S=刺激':'T=トーク'}・${sweet?'A=甘口':'K=辛口'}。`};
+}
+async function drawShare(d){
+  const c=$('#shareCv');if(!c||!c.getContext)return;const x=c.getContext('2d'),W=1080,H=1350;
+  const DG='"Dela Gothic One",sans-serif',ZK='"Zen Kaku Gothic New",sans-serif';
+  const txt=[(d.dg?d.dg.code+'型'+d.dg.short:''),hm(d.tot),d.v[0],d.fav?STY[d.fav.k]:'',d.tier[1],...d.PL.map(g=>g.name)].join('');
+  try{await Promise.all([document.fonts.load('100px "Dela Gothic One"','UKETA年齢歳0123456789組本'+txt),document.fonts.load('700 40px "Zen Kaku Gothic New"','お笑い年齢組本推視聴時間'+txt)])}catch(e){}
+  if(!c.isConnected)return;
+  const fit=(t,max,size,fam,wt='')=>{let z=size;for(;z>16;z-=2){x.font=`${wt} ${z}px ${fam}`;if(x.measureText(t).width<=max)break}return z};
+  const telop=(t,X,Y,z,al)=>{x.font=`${z}px ${DG}`;x.textAlign=al;x.lineJoin='round';x.fillStyle='#1d1714';x.fillText(t,X+z*.04,Y+z*.07);x.lineWidth=z*.16;x.strokeStyle='#1d1714';x.strokeText(t,X,Y);x.fillStyle='#ffd21f';x.fillText(t,X,Y)};
+  x.textBaseline='alphabetic';x.fillStyle='#d63b22';x.fillRect(0,0,W,H);
+  const gr=x.createRadialGradient(920,-40,0,920,-40,900);gr.addColorStop(0,'rgba(255,210,31,.5)');gr.addColorStop(1,'rgba(255,210,31,0)');x.fillStyle=gr;x.fillRect(0,0,W,H);
+  telop('UKETA',70,150,80,'left');
+  const dt=new Date();x.font=`700 30px ${ZK}`;x.fillStyle='#fff';x.textAlign='right';x.fillText(dt.getFullYear()+'.'+(dt.getMonth()+1),W-70,138);
+  x.textAlign='center';x.font=`700 46px ${ZK}`;x.fillText('お笑い年齢',W/2,275);
+  const at=d.age==null?'?':String(d.age);x.font=`330px ${DG}`;const aw=x.measureText(at).width;x.font=`120px ${DG}`;const kw=d.age==null?0:x.measureText('歳').width+14;
+  const sx=W/2-(aw+kw)/2;telop(at,sx,630,330,'left');if(d.age!=null)telop('歳',sx+aw+14,630,120,'left');
+  const tl=d.dg?`${d.dg.code}型「${d.dg.short}」`:'';
+  x.textAlign='center';x.fillStyle='#ffd21f';const tz=fit(tl,920,44,DG);x.font=`${tz}px ${DG}`;x.fillText(tl,W/2,708);
+  const line=d.PL.length?'推し: '+d.PL.map(g=>g.name).join('・'):'まだ評価なし';
+  x.fillStyle='#fff';const lz=fit(line,920,30,ZK,'700');x.font=`700 ${lz}px ${ZK}`;x.fillText(line,W/2,752);
+  x.fillStyle='#fffefa';x.beginPath();x.roundRect?x.roundRect(60,770,960,500,36):x.rect(60,770,960,500);x.fill();
+  x.fillStyle='#d63b22';x.fillRect(60,770,960,14);
+  const cell=(lab,val,X,Y,mw,vz)=>{x.textAlign='left';x.fillStyle='#6b605a';x.font=`700 28px ${ZK}`;x.fillText(lab,X,Y);const z=fit(val,mw,vz,DG);x.font=`${z}px ${DG}`;x.fillStyle='#1d1714';x.fillText(val,X,Y+z+14)};
+  cell('漫才かコントか',d.v[0],110,860,400,72);
+  cell('推しスタイル',d.fav?STY[d.fav.k]:'–',580,860,390,72);
+  x.fillStyle='#e2dbd2';x.fillRect(110,1010,860,3);
+  cell('観た組数',d.nG+'組',110,1070,190,60);
+  cell('観た本数',d.nV+'本',325,1070,190,60);
+  cell('視聴時間',hm(d.tot),540,1070,210,60);
+  cell('ランク',d.tier[1],775,1070,200,60);
+  x.textAlign='center';x.fillStyle='#fff';x.font=`700 28px ${ZK}`;x.fillText('WBTI診断 · UKETA',W/2,1318);
+}
+
+
+/* v1.3: unlocks for new users (existing users = any rating saved before v1.3, i.e. without `ver`) */
+const yoseN=()=>S.entries.filter(e=>e.vid&&VID[e.vid]&&!e.omOnly).length;
+const isOld=()=>S.entries.some(e=>e.kind==='w'&&!e.ver);
+const isAdmin=()=>!!(S.user&&S.user.email===ADMIN_EMAIL);
+function unlocked(v){
+  if(v==='admin')return isAdmin();
+  if(v==='watch'||v==='enq'||isAdmin())return true;
+  if(isOld())return true;
+  const n=yoseN();
+  if(v==='oneman'||v==='enqAll')return n>=3;
+  if(v==='log'||v==='stats')return n>=20;
+  return true;
+}
+function renderTabs(){
+  const n=yoseN();
+  $$('.tabs a').forEach(a=>{const v=a.dataset.v,lk=!unlocked(v),need=v==='oneman'?3:20;a.classList.toggle('locked',lk);a.setAttribute('aria-disabled',String(lk));
+    let sm=a.querySelector('.lk');if(lk){if(!sm){sm=document.createElement('small');sm.className='lk';a.appendChild(sm)}sm.textContent='🔒あと'+Math.max(1,need-n)+'本'}else if(sm)sm.remove()});
+  const al=$('#admLink');if(al)al.hidden=!isAdmin();
+  const c=$('#ccount');if(c)c.textContent=CAT.length+'組・'+Object.keys(VID).length+'本';
+}
+function afterRate(n0){
+  if(S.user&&S.fb){const {fs,db}=S.fb;fs.setDoc(fs.doc(db,'profiles',S.user.uid),{name:(S.user.displayName||'').slice(0,60),last:new Date().toISOString(),n:S.entries.length,ver:VERSION},{merge:true}).catch(()=>{})}
+  if(isOld())return '';
+  const n=n0+1;let m='';
+  if(n0<3&&n>=3)m+='🎉ワンマン解禁！ワンマンチケット1枚プレゼント · ';
+  else if(Math.floor(n/10)>Math.floor(n0/10))m+='🎫ワンマンチケット＋1 · ';
+  if(n0<20&&n>=20)m+='🎉記録・WBTI診断 解禁 · ';
+  setTimeout(renderTabs,50);return m;
+}
+
+/* v1.3: feedback (アンケート + memos sent to the developer) */
+const FB_OUT='uketa-fb-outbox';
+async function sendFeedback(o){
+  const p={text:'',...o,at:new Date().toISOString(),ver:VERSION,login:!!S.user,golden:!!S.noShimo,nRated:S.entries.length,uid:S.user?S.user.uid:null,name:S.user?(S.user.displayName||'').slice(0,60):'',ua:String(navigator.userAgent||'').slice(0,180)};
+  Object.keys(p).forEach(k=>{if(typeof p[k]==='string')p[k]=p[k].slice(0,k==='text'?1500:300)});
+  try{
+    if(S.fb){await S.fb.fs.addDoc(S.fb.fs.collection(S.fb.db,'feedback'),p);return true}
+    if(window.claude&&window.claude.use){const db=await window.claude.use('db');if(db){await db.collection('data/feedback').doc(nid('f')).set(p);return true}}
+    throw new Error('offline');
+  }catch(e){try{const a=JSON.parse(localStorage.getItem(FB_OUT)||'[]');a.push(p);localStorage.setItem(FB_OUT,JSON.stringify(a.slice(-50)))}catch(x){}
+    if(o.source==='comment')toast('ひとことは保存しました（開発者への送信はできませんでした）');return false}
+}
+const ENQ=[['any','💬','なんでもコメント'],['add','➕','観たい組がない'],['more','🎬','この組をもっと観たい'],['fn','💡','こんな機能が欲しい'],['info','📝','ネタの情報がちがう'],['bug','🔧','うまく動かない']];
+const ENQ_PH={any:'感想、応援、要望…なんでもどうぞ',add:'その組の好きなところなど（任意）',more:'ひとこと（任意）',fn:'くわしく教えてください',info:'例：前説から始まった／これ下ネタじゃない',bug:'例：設定したのに下ネタばっかりだった'};
+const ENQ_SUB={info:['始まる位置','タグ','下ネタ判定','漫才/コント','タイトル','動画が観られない','公式じゃない'],bug:['寄席','ワンマン','記録','WBTI診断','ログイン']};
+S.enqK='any';S.enqV={};S.enqSub=null;
+function renderEnq(){
+  const el=$('#enq');if(!el)return;const all=unlocked('enqAll');if(!all)S.enqK='any';const k=S.enqK,V=S.enqV;
+  const iv=(id,ph,t='text',list='')=>`<input id="${id}" type="${t}" maxlength="300" placeholder="${ph}" value="${esc(V[id]||'')}"${list?` list="${list}"`:''}>`;
+  const dl=`<datalist id="eglist">${CAT.map(g=>`<option value="${esc(g.name)}">`).join('')}</datalist>`;
+  const sub=ENQ_SUB[k]?`<div class="echips sm" role="radiogroup">${ENQ_SUB[k].map(x=>`<button type="button" role="radio" data-esub="${esc(x)}" aria-checked="${S.enqSub===x}">${esc(x)}</button>`).join('')}</div>`:'';
+  const F={add:`<p class="eq">観たい組・芸人は？</p>${iv('eGroup','例：くりぃむしちゅー')}<p class="eq">おすすめの動画 <small>任意（URLでもOK）</small></p>${iv('eUrl','https://youtu.be/…','url')}`,
+    more:`<p class="eq">どの組？</p>${iv('eGroup','組名を入力','text','eglist')}${dl}<p class="eq">どんなネタが観たい？ <small>任意</small></p>${iv('eWant','例：コントだけ／M-1のネタ／昔のネタ')}`,
+    fn:`<p class="eq">どんな機能？</p>${iv('eFeat','例：友達と点数を比べたい')}`,
+    info:`<p class="eq">どの組のネタ？</p>${iv('eGroup','組名・ネタ名','text','eglist')}${dl}<p class="eq">なにがちがう？</p>${sub}`,
+    bug:`<p class="eq">どこで？</p>${sub}<p class="esub">端末・ブラウザの情報を自動で添付します</p>`}[k]||'';
+  const opt=k==='add'||k==='more';
+  el.innerHTML=`<div class="enqw"><h2 class="telop">アンケートを送る</h2>
+  <p class="eq">なにについて？ <small>（ひとつ選んでね）</small></p>
+  <div class="echips" role="radiogroup">${ENQ.map(([kk,ic,l])=>{const dis=!all&&kk!=='any';return `<button type="button" role="radio" data-enq="${kk}" aria-checked="${kk===k}"${dis?' disabled':''}>${ic} ${l}${dis?' 🔒':''}</button>`}).join('')}</div>
+  ${all?'':`<p class="esub">ほかの項目は、寄席であと${Math.max(1,3-yoseN())}本観ると選べます</p>`}
+  ${F}
+  <p class="eq">ひとこと${opt?' <small>任意</small>':''}</p><textarea id="eText" maxlength="1500" placeholder="${ENQ_PH[k]}">${esc(V.eText||'')}</textarea>
+  <p class="eq">返事がほしい？ <small>任意</small></p>${iv('eMail','メールアドレス（返事がほしい人だけ）','email')}
+  <button type="button" class="esend" data-act="enqsend">送る</button>
+  <p class="esub">※ アンケートは開発者に届きます。全部に返事はできませんが、全部読みます</p></div>`;
+}
+async function enqSend(){
+  const k=S.enqK,V=S.enqV,t=String(V.eText||'').trim(),g=String(V.eGroup||'').trim();
+  const need={any:!t&&'ひとことを書いてください',add:!g&&'観たい組・芸人を書いてください',more:!g&&'組名を書いてください',fn:!String(V.eFeat||'').trim()&&!t&&'どんな機能か書いてください',info:!g&&'どの組のネタか書いてください',bug:!S.enqSub&&!t&&'どこで起きたか選ぶか、ひとこと書いてください'}[k];
+  if(need)return toast(need);
+  const btn=$('[data-act="enqsend"]');if(btn){btn.disabled=true;btn.textContent='送信中…'}
+  const ok=await sendFeedback({source:'enquete',kind:k,label:(ENQ.find(x=>x[0]===k)||[])[2]||k,text:t,group:g,url:String(V.eUrl||'').trim(),want:String(V.eWant||'').trim(),feature:String(V.eFeat||'').trim(),sub:S.enqSub||'',email:String(V.eMail||'').trim()});
+  if(ok){S.enqV={};S.enqSub=null;S.enqK='any';renderEnq();toast('送りました。ありがとうございます！')}
+  else{if(btn){btn.disabled=false;btn.textContent='送る'}toast('送れませんでした。通信状況を確認して、もう一度お試しください')}
+}
+
+/* v1.3: videos added on the spot by the admin (Firestore `catalog`, public read) */
+function addExtra(x){
+  if(!x||!x.y||VID[x.y])return false;
+  let g=CAT.find(c=>c.id===x.gid)||CAT.find(c=>c.name===x.gname);
+  if(!g){g={id:x.gid||('x-'+x.y),name:x.gname,ro:x.gro||'',fmt:x.gfmt||(x.f==='p'?'p':x.f)||'m',styles:(x.tags||[]).slice(0,2),peak:x.peak||null,fan:x.peak?Math.min(75,Math.max(12,YEAR-x.peak+16)):null,note:x.gnote||'',v:[],extra:true};CAT.push(g)}
+  const v={y:x.y,f:x.f||g.fmt,t:x.t||'',n:x.n||0,l:0,d:x.d||0,s:x.s||0,tags:x.tags&&x.tags.length?x.tags:null,side:x.side||null,extra:true};
+  g.v.push(v);VID[x.y]={g,v};return true;
+}
+async function loadExtras(){
+  if(!S.fb)return;const {fs,db}=S.fb;
+  try{const sn=await fs.getDocs(fs.collection(db,'catalog'));let n=0;sn.docs.forEach(d=>{if(addExtra(d.data()))n++});if(n)render();else renderTabs()}catch(e){}
+}
+
+/* v1.3: admin page (james only; Firestore rules enforce it too) */
+const ADM={tab:null,users:null,fb:null,extras:null,key:null,res:null,pick:null,err:''};
+const isoDur=s=>{const m=String(s||'').match(/P(?:(\d+)D)?T?(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);return m?((+m[1]||0)*86400+(+m[2]||0)*3600+(+m[3]||0)*60+(+m[4]||0)):0};
+const ago=iso=>{const d=(Date.now()-new Date(iso))/1000;return isNaN(d)?'':d<3600?Math.max(1,Math.round(d/60))+'分前':d<86400?Math.round(d/3600)+'時間前':Math.round(d/86400)+'日前'};
+async function admLoad(){
+  if(!isAdmin())return;if(!S.fb){ADM.users=[];ADM.fb=[];ADM.extras=[];ADM.err='Firebaseに接続できません';return renderAdmin()}const {fs,db}=S.fb;ADM.err='';
+  const get=async(c,o)=>{try{const q=o?fs.query(fs.collection(db,c),fs.orderBy(o,'desc'),fs.limit(200)):fs.collection(db,c);return (await fs.getDocs(q)).docs.map(d=>({id:d.id,...d.data()}))}catch(e){ADM.err=(ADM.err?ADM.err+' / ':'')+c+': '+(e&&e.code||'error');return null}};
+  [ADM.users,ADM.fb,ADM.extras]=await Promise.all([get('profiles','last'),get('feedback','at'),get('catalog','at')]);
+  try{const k=await fs.getDoc(fs.doc(db,'adminconf','yt'));ADM.key=k.exists()?(k.data().key||null):null}catch(e){ADM.key=ADM.key||null}
+  if(!ADM.key){try{ADM.key=localStorage.getItem('uketa-ytkey')||null}catch(e){}}
+  renderAdmin();
+}
+function renderAdmin(){
+  const el=$('#adm');if(!el)return;
+  if(!isAdmin()){el.innerHTML='<p class="empty">管理者だけが開けます。</p>';return}
+  if(ADM.users===null&&ADM.fb===null&&!ADM.loading){ADM.loading=true;el.innerHTML='<div class="admw"><h2 class="telop">admin</h2><p>読み込み中…</p></div>';admLoad().finally(()=>{ADM.loading=false});return}
+  const U=ADM.users||[],FBK=ADM.fb||[],X=ADM.extras||[],wk=U.filter(u=>Date.now()-new Date(u.last)<7*86400e3).length;
+  const KL={any:'なんでも',add:'観たい組がない',more:'もっと観たい',fn:'機能',info:'ネタ情報',bug:'不具合',comment:'ひとこと'};
+  const P=ADM.pick;
+  el.innerHTML=`<div class="admw"><h2 class="telop">admin</h2>
+  ${ADM.err?`<p class="note2" style="color:var(--red)">読み込めないデータがあります（${esc(ADM.err)}）。Firebaseのルールを確認してください。</p>`:''}
+  <div class="kp"><div><b>${U.length}</b><small>ログインユーザー</small></div><div><b>${wk}</b><small>7日以内に利用</small></div><div><b>${FBK.length}</b><small>開発者あてコメント</small></div><div><b>${CAT.length}組・${Object.keys(VID).length}本</b><small>収録（うち追加 ${X.length}本）</small></div></div>
+  <h3>ネタを追加</h3>
+  ${ADM.key?'':`<p class="note2">YouTube検索キーが未設定です。<b>YouTube Data API v3</b> のAPIキーを貼ってください（このアカウントだけに保存されます）。</p><div class="row2"><input id="admKey" placeholder="AIza…"><button class="btn2" data-act="admkey">保存</button></div>`}
+  <div class="row2" style="margin-top:8px"><input id="admQ" placeholder="例：ラランド ギャンブル狂いの夫" value="${esc(ADM.q||'')}"><button class="btn2" data-act="admsearch">検索</button></div>
+  <p class="note2">組名＋ネタ名などをざっくり入れると候補を探します。タップすると自動で入力されます。</p>
+  ${ADM.res?`<div class="res">${ADM.res.length?ADM.res.map((r,i)=>`<button class="rc${VID[r.id]?' have':''}" data-act="admpick" data-i="${i}"><img src="${esc(r.th)}" alt="" loading="lazy"><span><b>${esc(r.t)}</b><small>${esc(r.ch)} · ${mmss(r.d)} · ${(r.n/1e4).toFixed(r.n<1e5?1:0)}万回${VID[r.id]?' · 収録済み':''}</small></span></button>`).join(''):'<p class="note2">見つかりませんでした。</p>'}</div>`:''}
+  ${P?`<div class="af"><b>追加する内容</b>
+    <label>組名（既存の組を選ぶか、新しい組名）<input id="afG" list="afgl" value="${esc(P.gname)}"><datalist id="afgl">${CAT.map(g=>`<option value="${esc(g.name)}">`).join('')}</datalist></label>
+    ${!CAT.find(g=>g.name===P.gname)?`<p class="note2">新しい組として登録されます。</p>`:''}
+    <label>ネタの題名<input id="afT" value="${esc(P.t)}"></label>
+    <div class="row2"><label>形式<select id="afF">${[['m','漫才'],['k','コント'],['p','ピン']].map(([k,l])=>`<option value="${k}"${P.f===k?' selected':''}>${l}</option>`).join('')}</select></label>
+    <label>開始（秒）<input id="afS" type="number" min="0" value="${P.s||0}"></label></div>
+    <label>タグ</label><div class="chips2">${Object.keys(STY).map(k=>`<button type="button" class="${P.tags.includes(k)?'on':''}" data-act="admtag" data-k="${k}">${STY[k]}</button>`).join('')}</div>
+    <p class="note2">${esc(P.ch)} · ${mmss(P.d)} · <a href="${ytUrl(P.y)}" target="_blank" rel="noopener">YouTubeで確認</a>（前説が長いときは開始秒を入れてください）</p>
+    <div class="row2"><button class="btn2" data-act="admcancel" style="background:var(--chip);color:var(--ink)">やめる</button><button class="btn2 red" data-act="admadd">追加する</button></div></div>`:''}
+  <h3>開発者あてコメント（${FBK.length}）</h3>
+  ${FBK.length?`<ul>${FBK.map(f=>`<li><span class="tag">${esc(KL[f.kind]||f.label||f.kind||'')}</span>${f.sub?`<span class="tag">${esc(f.sub)}</span>`:''}${f.group?`<b>${esc(f.group)}</b> `:''}${f.gname?`<b>${esc(f.gname)}</b>「${esc(cleanTitle(f.title||''))}」 `:''}${esc(f.text||'')}${f.want?` <i>（${esc(f.want)}）</i>`:''}${f.feature?` <i>${esc(f.feature)}</i>`:''}${f.url&&safeUrl(f.url)?` <a href="${esc(f.url)}" target="_blank" rel="noopener">動画</a>`:''}
+    <div class="m">${esc(f.name||(f.uid?'ログイン':'ゲスト'))} · ${ago(f.at)} · v${esc(f.ver||'')}${f.email?' · ✉ '+esc(f.email):''}${f.golden?' · ゴールデン':''} · ${f.nRated||0}本 <button class="lnk" data-act="admdelfb" data-id="${esc(f.id)}">既読にして消す</button></div></li>`).join('')}</ul>`:'<p class="note2">まだありません。</p>'}
+  <h3>ユーザー（ログインした人）</h3>
+  ${U.length?`<ul>${U.slice(0,50).map(u=>`<li><b>${esc(u.name||'名前なし')}</b> <span class="m">· ${u.n||0}本 · ${ago(u.last)} · v${esc(u.ver||'')}</span></li>`).join('')}</ul>`:'<p class="note2">まだいません（ゲストは数えられません）。</p>'}
+  ${X.length?`<h3>追加したネタ（${X.length}）</h3><ul>${X.map(x=>`<li><b>${esc(x.gname)}</b>「${esc(x.t)}」 <span class="m">${ago(x.at)}</span> <button class="lnk" data-act="admdelx" data-id="${esc(x.id)}">削除</button></li>`).join('')}</ul>`:''}
+  <p class="note2" style="margin-top:20px"><button class="lnk" data-act="admreload">再読み込み</button></p></div>`;
+}
+async function admSearch(){
+  const q=String(($('#admQ')||{}).value||'').trim();ADM.q=q;if(!q)return;if(!ADM.key){toast('先にYouTube検索キーを保存してください');return}
+  const K=encodeURIComponent(ADM.key);ADM.pick=null;
+  try{
+    const s=await (await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=8&regionCode=JP&relevanceLanguage=ja&q=${encodeURIComponent(q)}&key=${K}`)).json();
+    if(s.error)throw new Error(s.error.message||'search');
+    const ids=(s.items||[]).map(i=>i.id&&i.id.videoId).filter(Boolean);if(!ids.length){ADM.res=[];return renderAdmin()}
+    const v=await (await fetch(`https://www.googleapis.com/youtube/v3/videos?part=contentDetails,statistics,snippet&hl=ja&id=${ids.join(',')}&key=${K}`)).json();
+    if(v.error)throw new Error(v.error.message||'videos');
+    ADM.res=(v.items||[]).map(it=>({id:it.id,t:it.snippet.title,ch:it.snippet.channelTitle,d:isoDur(it.contentDetails.duration),n:+(it.statistics.viewCount||0),th:(it.snippet.thumbnails.medium||it.snippet.thumbnails.default||{}).url||''}));
+    renderAdmin();
+  }catch(e){toast('検索できませんでした：'+(e&&e.message||'error'))}
+}
+function admPick(r){
+  const q=ADM.q||'',txt=r.t+' '+r.ch+' '+q;
+  const g=CAT.slice().sort((a,b)=>b.name.length-a.name.length).find(g=>txt.includes(g.name));
+  const m=r.t.match(/[「『【]([^」』】]{1,40})[」』】]/g)||[];
+  let t=(m.map(x=>x.slice(1,-1)).find(x=>!/公式|漫才|コント|ネタ|単独|より|M-1|キングオブ|グランプリ|周年|劇場|ライブ|official/i.test(x)&&!(g&&x.includes(g.name))))||'';
+  if(!t){t=r.t.replace(/【[^】]*】|\[[^\]]*\]|\([^)]*\)|（[^）]*）/g,'').replace(g?g.name:'#','').replace(/公式|漫才|コント|ネタ|[|｜\/／・\-－–]+/g,' ').trim().split(/\s+/).slice(0,3).join(' ')}
+  const f=/コント/.test(r.t)?'k':/漫才/.test(r.t)?'m':g?(g.fmt==='b'?'m':g.fmt):'m';
+  const gname=g?g.name:(q.split(/[\s　]+/)[0]||r.ch.replace(/(公式)?チャンネル|Official|YouTube|channel/gi,'').trim());
+  ADM.pick={y:r.id,gname,t:t||r.t.slice(0,30),f,s:0,d:r.d,n:r.n,ch:r.ch,tags:g?(g.styles||[]).slice(0,3):[]};
+  renderAdmin();setTimeout(()=>{const a=$('.af');a&&a.scrollIntoView({behavior:'smooth',block:'center'})},50);
+}
+async function admAdd(){
+  const P=ADM.pick;if(!P||!S.fb)return;const {fs,db}=S.fb;
+  const gname=String($('#afG').value||'').trim(),t=String($('#afT').value||'').trim(),f=$('#afF').value,s=Math.max(0,parseInt($('#afS').value,10)||0);
+  if(!gname||!t)return toast('組名と題名を入れてください');
+  if(VID[P.y])return toast('このネタはもう収録されています');
+  const g=CAT.find(c=>c.name===gname);
+  const doc={y:P.y,gid:g?g.id:('x-'+gname.replace(/\s+/g,'').slice(0,20)+'-'+Date.now().toString(36)),gname,gfmt:g?g.fmt:(f==='p'?'p':f),f,t,n:P.n||0,d:P.d||0,s,tags:P.tags,side:f==='p'?'k':null,at:new Date().toISOString(),by:ADMIN_EMAIL};
+  try{await fs.setDoc(fs.doc(db,'catalog',P.y),doc);addExtra(doc);(ADM.extras=ADM.extras||[]).unshift({id:P.y,...doc});ADM.pick=null;ADM.res=null;renderAdmin();renderTabs();toast('追加しました：'+gname+'「'+t+'」')}
+  catch(e){toast('追加できませんでした（'+(e&&e.code||'error')+'）。Firebaseのルールを確認してください')}
+}
+async function admAct(d,t){
+  const fsx=S.fb&&S.fb.fs,db=S.fb&&S.fb.db;
+  if(d.act==='admreload'){ADM.users=ADM.fb=null;return renderAdmin()}
+  if(d.act==='admsearch')return admSearch();
+  if(d.act==='admpick')return admPick(ADM.res[+d.i]);
+  if(d.act==='admcancel'){ADM.pick=null;return renderAdmin()}
+  if(d.act==='admtag'){const P=ADM.pick;if(!P)return;const i=P.tags.indexOf(d.k);i>=0?P.tags.splice(i,1):P.tags.push(d.k);if(P.gname!==$('#afG').value)P.gname=$('#afG').value;P.t=$('#afT').value;P.f=$('#afF').value;P.s=$('#afS').value;return renderAdmin()}
+  if(d.act==='admadd')return admAdd();
+  if(d.act==='admkey'){const k=String(($('#admKey')||{}).value||'').trim();if(!k)return;ADM.key=k;try{localStorage.setItem('uketa-ytkey',k)}catch(e){}if(fsx)fsx.setDoc(fsx.doc(db,'adminconf','yt'),{key:k}).catch(()=>{});toast('検索キーを保存しました');return renderAdmin()}
+  if(d.act==='admdelfb'){if(!fsx)return;try{await fsx.deleteDoc(fsx.doc(db,'feedback',d.id));ADM.fb=(ADM.fb||[]).filter(f=>f.id!==d.id);renderAdmin()}catch(e){toast('消せませんでした（'+(e&&e.code||'error')+'）')}return}
+  if(d.act==='admdelx'){if(!fsx)return;try{await fsx.deleteDoc(fsx.doc(db,'catalog',d.id));ADM.extras=(ADM.extras||[]).filter(x=>x.id!==d.id);toast('削除しました（再読み込み後に反映）');renderAdmin()}catch(e){toast('削除できませんでした（'+(e&&e.code||'error')+'）')}return}
+}
+
+/* sheet */
+function openSheet(o={}){
+  const e=o.edit?S.entries.find(x=>x.id===o.edit):null,g=e?gById(e.gid):null;
+  F={edit:e?e.id:null,fmt:e?e.fmt:null,styles:new Set(e?e.styles:[]),r:e?e.r:null};
+  $('#glist').innerHTML=groups().map(x=>`<option value="${esc(x.name)}"></option>`).join('');
+  $('#fGroup').value=e?e.gname:'';$('#fT').value=e?.title||'';$('#fNote').value=e?.note||'';$('#fUrl').value=e?.url||'';$('#fPeak').value='';$('#fErr').textContent='';
+  $('#fDur').value=e&&e.sec&&!e.vid?Math.round(e.sec/30)/2:'';
+  $('#fTitle').textContent=e?'記録を編集':'ネタを記録する';
+  syncSheet();$('#sheet').hidden=false;setTimeout(()=>(g?$('#fT'):$('#fGroup')).focus(),40);
+}
+function closeSheet(){$('#sheet').hidden=true}
+function syncSheet(){
+  const name=$('#fGroup').value.trim();$('#fNew').hidden=!name||!!groups().find(x=>x.name===name);
+  $$('#fFmt [data-f]').forEach(b=>{b.classList.toggle('on',b.dataset.f===F.fmt);b.setAttribute('aria-pressed',b.dataset.f===F.fmt)});
+  $('#fStyles').innerHTML=Object.keys(STY).map(k=>`<button type="button" class="chip${F.styles.has(k)?' on':''}" data-st="${k}" aria-pressed="${F.styles.has(k)}">${STY[k]}</button>`).join('');
+  $('#fRate').innerHTML=rateBtns(F.r,'fr');
+}
+$('#fGroup').addEventListener('input',()=>{const g=groups().find(x=>x.name===$('#fGroup').value.trim());if(g&&!F.edit){if(g.fmt!=='b')F.fmt=g.fmt;F.styles=new Set(g.styles)}syncSheet()});
+$('#form').addEventListener('submit',async ev=>{
+  ev.preventDefault();const err=m=>{$('#fErr').textContent=m};
+  const name=$('#fGroup').value.trim(),url=$('#fUrl').value.trim();
+  if(!name)return err('コンビ・グループ名を入れてください。');
+  if(!F.fmt)return err('漫才かコントかを選んでください。');
+  if(F.r==null)return err('評価を選んでください。');
+  if(url&&!safeUrl(url))return err('リンクは https:// から始めてください。');
+  let g=groups().find(x=>x.name===name);
+  try{
+    if(!g){const gid=nid('c'),pk=parseInt($('#fPeak').value,10);await put(gid,{kind:'g',gid,name:name.slice(0,60),fmt:F.fmt,styles:[...F.styles],peak:pk>=1950&&pk<=2100?pk:null});g={id:gid,name:name.slice(0,60)}}
+    const prev=F.edit?S.entries.find(x=>x.id===F.edit):null,id=F.edit||nid('w');
+    await put(id,{kind:'w',fav:!!(prev&&prev.fav),gid:g.id,gname:g.name,...(prev&&prev.vid?{vid:prev.vid,sec:prev.sec||(VID[prev.vid]?VID[prev.vid].v.d:0)}:{sec:Math.min(18000,Math.max(0,Math.round((parseFloat($('#fDur').value)||0)*60)))}),title:$('#fT').value.trim().slice(0,200),url:url.slice(0,500),fmt:F.fmt,styles:[...F.styles],r:Number(F.r),at:prev?prev.at:new Date().toISOString(),...(prev?(prev.ver?{ver:prev.ver}:{}):{ver:VERSION}),...(prev&&prev.omN?{omN:prev.omN}:{}),...(prev&&prev.omOnly?{omOnly:true}:{}),...(prev&&prev.side?{side:prev.side}:{}),...($('#fNote').value.trim()?{note:$('#fNote').value.trim().slice(0,500)}:{})});
+    closeSheet();toast(prev?'記録を更新しました':'記録しました：'+g.name+'・'+R[String(F.r)]);
+  }catch(x){err('保存できませんでした（'+(x&&x.code||'error')+'）。もう一度お試しください。')}
+});
+
+function toast(m,acts=[]){const t=$('#toast');T=acts;t.innerHTML=`<span>${esc(m)}</span>`+acts.map((a,i)=>`<button data-ta="${i}">${esc(a[0])}</button>`).join('');t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>{t.hidden=true},7000)}
+
+document.addEventListener('click',ev=>{
+  if(ev.target.classList.contains('scrim')){$('#newsSheet').hidden=true;return closeSheet()}
+  const t=ev.target.closest('button,a');if(!t)return;const d=t.dataset;
+  if(t.matches('a[href^="#"]')){const v=t.getAttribute('href').slice(1);if(['watch','oneman','log','stats','enq','admin'].includes(v)){ev.preventDefault();if(!unlocked(v)){const n=yoseN(),need=v==='oneman'?3:20;toast(v==='admin'?'管理者だけが開けます':'寄席であと'+Math.max(1,need-n)+'本観ると解禁');return}go(v);window.scrollTo(0,0);return}}
+  if(d.play){S.played[d.play]=true;saveNow();setTimeout(renderWatch,300);return}
+  if(d.omg){S.omG=d.omg;renderOneman();window.scrollTo(0,0);return}
+  if('omback' in d){S.omG=null;renderOneman();return}
+  if(d.omplay){S.omPlayed=S.omPlayed||{};S.omPlayed[d.omplay]=true;setTimeout(renderOneman,300);return}
+  if(d.omrate!=null){omRate(d.y,d.omrate);return}
+  if(d.rate!=null){if(!t.disabled)rateCur(d.rate);return}
+  if('later' in d){if(!S.anim)return;S.later=!S.later;t.classList.toggle('on',S.later);t.setAttribute('aria-pressed',S.later);return}
+  if(d.lf!=null){S.logFav=d.lf==='1';return renderLog()}
+  if(d.fav){const e=S.entries.find(x=>x.id===d.fav);if(!e)return;const {id,...rest}=e;put(id,{...rest,fav:!e.fav}).then(()=>toast(e.fav?'★推しを外しました':'★推しました')).catch(x=>toast('保存できませんでした（'+(x&&x.code||'error')+'）'));return}
+  if(d.enq&&!t.disabled){S.enqK=d.enq;S.enqSub=null;return renderEnq()}
+  if(d.esub){S.enqSub=S.enqSub===d.esub?null:d.esub;return renderEnq()}
+  if(d.act==='enqsend')return enqSend();
+  if(d.act&&d.act.startsWith('adm'))return admAct(d,t);
+  if(d.act==='new')return openSheet();
+  if(d.act==='login')return login();
+  if(d.act==='logout'){if(S.fb)S.fb.au.signOut(S.fb.auth);return}
+  if(d.act==='news'){$('#newsBody').innerHTML=CHANGELOG.map(([v,dt,items])=>`<h3>v${v}<small style="font-weight:400;color:var(--mute);margin-left:8px">${dt}</small></h3><ul>${items.map(i=>`<li>${esc(i)}</li>`).join('')}</ul>`).join('');$('#newsSheet').hidden=false;return}
+  if(d.act==='savecard'){const c=$('#shareCv');if(!c)return;c.toBlob(async b=>{if(!b)return toast('画像を作れませんでした');if(!S.dl){const u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='owarai-card.png';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);return}try{await S.dl.save({filename:'owarai-card.png',data:b})}catch(e){if(!e||e.code!=='declined')toast('画像を保存できませんでした（'+(e&&e.code||'error')+'）')}},'image/png');return}
+  if(d.lr!=null){const e=S.entries.find(x=>x.id===d.id);if(!e||e.r===Number(d.lr))return;const {id,...rest}=e;put(id,{...rest,r:Number(d.lr)}).catch(x=>toast('保存できませんでした（'+(x&&x.code||'error')+'）'));return}
+  if(d.edit)return openSheet({edit:d.edit});
+  if(d.del){const e=S.entries.find(x=>x.id===d.del);if(!e)return;const {id,...rest}=e;del(id).then(()=>toast('削除しました：'+e.gname,[['元に戻す',()=>put(id,rest)]])).catch(x=>toast('削除できませんでした（'+(x&&x.code||'error')+'）'));return}
+  if(d.f&&t.closest('#fFmt')){F.fmt=d.f;return syncSheet()}
+  if(d.st){F.styles.has(d.st)?F.styles.delete(d.st):F.styles.add(d.st);return syncSheet()}
+  if(d.fr!=null){F.r=d.fr;return syncSheet()}
+  if('close' in d){$('#newsSheet').hidden=true;return closeSheet()}
+  if(d.ta!=null){const a=T[+d.ta];$('#toast').hidden=true;if(a)a[1]()}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target&&e.target.id==='admQ'){e.preventDefault();admSearch();return}if(e.key==='Escape'){$('#newsSheet').hidden=true;if(!$('#sheet').hidden)closeSheet()}});
+let omHold=null;
+document.addEventListener('pointerdown',ev=>{const b=ev.target.closest('[data-omar]');if(!b)return;ev.preventDefault();const sc=document.querySelector('.omscroll');if(!sc)return;
+  const dir=Number(b.dataset.omar),t0=performance.now();let last=t0,pos=sc.scrollLeft,held=false;
+  const step=now=>{const dt=Math.min(40,now-last);last=now;const el=now-t0;if(el>180){held=true;const v=Math.min(1.6,.5+el/900);pos+=dir*v*dt;sc.scrollLeft=pos;if(Math.abs(sc.scrollLeft-pos)>2)pos=sc.scrollLeft}omHold=requestAnimationFrame(step)};omHold=requestAnimationFrame(step);
+  try{b.setPointerCapture(ev.pointerId)}catch(x){}
+  const stop=()=>{cancelAnimationFrame(omHold);omHold=null;b.removeEventListener('pointerup',stop);b.removeEventListener('pointercancel',stop);b.removeEventListener('lostpointercapture',stop);if(!held)sc.scrollBy({left:dir*sc.clientWidth*.7,behavior:'smooth'})};
+  b.addEventListener('pointerup',stop);b.addEventListener('pointercancel',stop);b.addEventListener('lostpointercapture',stop)});
+document.addEventListener('keydown',ev=>{const b=ev.target.closest&&ev.target.closest('[data-omar]');if(b&&(ev.key==='Enter'||ev.key===' ')){ev.preventDefault();const sc=document.querySelector('.omscroll');sc&&sc.scrollBy({left:Number(b.dataset.omar)*sc.clientWidth*.8,behavior:'smooth'})}});
+document.addEventListener('input',ev=>{if(ev.target.id==='omq'){S.omQ=ev.target.value.trim();S.omG=null;renderOneman()}if(ev.target.closest&&ev.target.closest('#enq')&&ev.target.id){S.enqV[ev.target.id]=ev.target.value}if(ev.target.id==='cmtT'&&S.cur){S.draft={y:S.cur,t:ev.target.value,d:!!($('#cmtD')&&$('#cmtD').checked)}}});
+document.addEventListener('change',ev=>{
+  if(ev.target.id==='cmtD'&&S.cur){S.draft={y:S.cur,t:($('#cmtT')||{}).value||'',d:ev.target.checked};return}
+  if(ev.target.id==='lsort'){S.logSort=ev.target.value;renderLog();return}
+  if(ev.target.matches('[data-shimo]')){S.noShimo=ev.target.checked;try{localStorage.setItem(NS,S.noShimo?'1':'0')}catch(x){}if(!S.anim){if(S.noShimo&&S.cur&&VID[S.cur]&&vtags(VID[S.cur]).includes('shimo'))S.cur=null;renderWatch()}toast(S.noShimo?'ゴールデンタイム：下ネタがテーマだったり下ネタが多すぎるネタを減らします':'深夜帯：下ネタのネタも出します');return}
+  const t=ev.target;
+  if(t.dataset&&t.dataset.lsel!=null){const v=t.value;if(!v)return;const e=S.entries.find(x=>x.id===t.dataset.lsel);t.value='';if(!e)return;const {id,...rest}=e;put(id,{...rest,r:Number(v)}).then(()=>toast('評価を「'+R[v]+'」に変更しました')).catch(x=>toast('保存できませんでした（'+(x&&x.code||'error')+'）'));return}
+});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&S.view==='watch')renderWatch()});
+
+function render(){renderTabs();renderLog();if(!unlocked(S.view)){go('watch');return}if(S.view==='watch')renderWatch();if(S.view==='oneman')renderOneman();if(S.view==='stats')renderStats();if(S.view==='enq')renderEnq();if(S.view==='admin')renderAdmin()}
+function go(v){S.view=v;try{history.replaceState(null,'','#'+v)}catch(e){}route(v)}
+function route(force){const v=typeof force==='string'?force:location.hash.slice(1);S.view=['watch','oneman','log','stats','enq','admin'].includes(v)&&unlocked(v)?v:'watch';$$('.view').forEach(x=>x.hidden=x.id!=='v-'+S.view);$$('.tabs a').forEach(a=>a.setAttribute('aria-current',a.dataset.v===S.view?'page':'false'));render()}
+window.addEventListener('hashchange',route);
+loadNow();route();init();
+if(location.protocol==='file:')window.__u={VID,S,vtags,renderWatch,pickNext,ADM,renderAdmin,admPick,addExtra,go,render};
+}
+</script>
+</body>
+</html>
