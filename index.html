@@ -240,7 +240,8 @@ fieldset{border:0;padding:0;margin:0}legend{font-weight:700;font-size:14px;margi
 .small{font-size:13px;color:var(--mute);margin:4px 0 0}
 .err{color:var(--red);margin:0;font-weight:700;min-height:1.2em}
 .row{display:flex;justify-content:flex-end;gap:8px}
-.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--ink);color:var(--bg);border-radius:12px;padding:8px 10px 8px 16px;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;z-index:30;width:max-content;max-width:calc(100% - 24px);box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.toast{position:fixed;left:50%;bottom:18px;transform:translate(-50%,6px);opacity:0;transition:opacity .35s ease,transform .35s ease;background:rgba(44,36,32,.9);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#e9e1da;border:1px solid rgba(255,210,31,.18);font-size:13.5px;line-height:1.5;border-radius:12px;padding:8px 10px 8px 16px;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;z-index:30;width:max-content;max-width:calc(100% - 24px);box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
 .toast button{background:none;border:0;color:var(--yel);font-weight:700;cursor:pointer;min-height:40px;padding:0 6px}
 .acct{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
 .acct span{font-size:13px;font-weight:700;max-width:16em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1196,7 +1197,8 @@ $('#form').addEventListener('submit',async ev=>{
   }catch(x){err('保存できませんでした（'+(x&&x.code||'error')+'）。もう一度お試しください。')}
 });
 
-function toast(m,acts=[]){const t=$('#toast');T=acts;t.innerHTML=`<span>${esc(m)}</span>`+acts.map((a,i)=>`<button data-ta="${i}">${esc(a[0])}</button>`).join('');t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>{t.hidden=true},7000)}
+function toast(m,acts=[]){const t=$('#toast');T=acts;t.innerHTML=`<span>${esc(m)}</span>`+acts.map((a,i)=>`<button data-ta="${i}">${esc(a[0])}</button>`).join('');clearTimeout(tt);clearTimeout(tt2);t.hidden=false;void t.offsetWidth;t.classList.add('show');tt=setTimeout(hideToast,acts.length?7000:4000)}
+let tt2;function hideToast(){const t=$('#toast');t.classList.remove('show');clearTimeout(tt2);tt2=setTimeout(()=>{if(!t.classList.contains('show'))t.hidden=true},400)}
 
 document.addEventListener('click',ev=>{
   if(ev.target.classList.contains('scrim')){$('#newsSheet').hidden=true;return closeSheet()}
@@ -1229,7 +1231,7 @@ document.addEventListener('click',ev=>{
   if(d.st){F.styles.has(d.st)?F.styles.delete(d.st):F.styles.add(d.st);return syncSheet()}
   if(d.fr!=null){F.r=d.fr;return syncSheet()}
   if('close' in d){$('#newsSheet').hidden=true;return closeSheet()}
-  if(d.ta!=null){const a=T[+d.ta];$('#toast').hidden=true;if(a)a[1]()}
+  if(d.ta!=null){const a=T[+d.ta];hideToast();if(a)a[1]()}
 });
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target&&e.target.id==='admQ'){e.preventDefault();admSearch();return}if(e.key==='Escape'){$('#newsSheet').hidden=true;if(!$('#sheet').hidden)closeSheet()}});
 let omHold=null;
