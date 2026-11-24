@@ -352,7 +352,21 @@ fieldset{border:0;padding:0;margin:0}legend{font-weight:700;font-size:14px;margi
 .admw .rc{display:flex;gap:10px;align-items:center;text-align:left;background:var(--paper);border:1.5px solid var(--line);border-radius:12px;padding:6px;cursor:pointer;font:inherit;color:var(--ink)}
 .admw .rc img{width:120px;height:68px;object-fit:cover;border-radius:8px;flex:none;background:#000}
 .admw .rc small{display:block;color:var(--mute);font-size:11.5px}
-.admw .rc.have{opacity:.5}
+.admw .rc.have .rcb{opacity:.5}
+.admw .rc.have img{filter:grayscale(1) brightness(.7)}
+.admw .rcb{flex:1;min-width:0;text-align:left;background:none;border:0;font:inherit;color:inherit;cursor:pointer;padding:0}
+.admw .ath{position:relative;flex:none;width:120px;height:68px;display:block}
+.admw .ath img{width:120px;height:68px;object-fit:cover;border-radius:8px;display:block;background:#000}
+.admw .aplay{position:absolute;right:6px;bottom:6px;width:30px;height:30px;border-radius:50%;background:#ffd21f;border:2px solid #1d1714;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.admw .aplay svg{margin-left:2px}
+.admw .achk{position:absolute;left:6px;top:6px;width:26px;height:26px;border-radius:50%;background:#ffd21f;color:#1d1714;font-style:normal;font-weight:900;font-size:16px;display:flex;align-items:center;justify-content:center;border:2px solid #1d1714}
+.admw .afh{display:flex;align-items:center;gap:12px}
+.admw .vr{cursor:default;align-items:flex-start}
+.admw .vt{flex:1;min-width:0}
+.admw .vt b{display:block;font-size:13.5px}
+.admw .vbtn{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px}
+.admw .vedit{display:grid;gap:6px;margin-top:6px}
+.admw .vr.ed{border-color:#ffd21f}
 .admw .af{display:grid;gap:8px;background:var(--paper);border:2px solid #ffd21f;border-radius:12px;padding:12px;margin-top:10px}
 .admw .af label{font-size:12.5px;font-weight:700;display:grid;gap:3px}
 .admw .chips2{display:flex;flex-wrap:wrap;gap:5px}
@@ -1076,6 +1090,40 @@ async function enqSend(){
 }
 
 /* v1.3: videos added on the spot by the admin (Firestore `catalog`, public read) */
+function applyOvr(x){const e=x&&VID[x.y];if(!e)return false;
+  if(x.del){e.g.v=e.g.v.filter(v=>v!==e.v);delete VID[x.y];if(!e.g.v.length){const i=CAT.indexOf(e.g);if(i>=0)CAT.splice(i,1)}return true}
+  if(x.t!=null&&x.t!=='')e.v.t=x.t;if(x.s!=null)e.v.s=x.s;return true}
+const ytThumb=y=>'https://i.ytimg.com/vi/'+encodeURIComponent(y)+'/mqdefault.jpg';
+const PLAYMINI='<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M8 5v14l11-7z" fill="#1d1714"/></svg>';
+function admThumb(y,src,have,st){return `<span class="ath"><img src="${esc(src||ytThumb(y))}" alt="" loading="lazy">${have?'<i class="achk" aria-label="収録済み">✓</i>':''}<a class="aplay" href="${ytUrl(y,st||0)}" target="_blank" rel="noopener" aria-label="YouTubeで確認">${PLAYMINI}</a></span>`}
+function admVList(){
+  const q=String(ADM.vq||'').trim().toLowerCase();const del=(ADM.extras||[]).filter(x=>x.o&&x.del);
+  if(!q)return `<p class="note2">組名・題名・動画IDで探せます（全${Object.keys(VID).length}本）。</p>${del.length?`<p class="note2">削除したネタ：${del.map(x=>`${esc(x.gname||'')}「${esc(x.t0||x.y)}」 <button class="lnk" data-act="admrestore" data-y="${esc(x.y)}">戻す</button>`).join(' / ')}</p>`:''}`;
+  const L=Object.values(VID).filter(({g,v})=>(g.name+' '+(g.ro||'')+' '+v.t+' '+v.y).toLowerCase().includes(q)).slice(0,40);
+  if(!L.length)return '<p class="note2">見つかりませんでした。</p>';
+  return `<div class="res">${L.map(({g,v})=>{const ed=ADM.ved===v.y,dl=ADM.vdel===v.y;
+    return `<div class="rc vr${ed?' ed':''}">${admThumb(v.y,null,false,v.s)}<div class="vt"><b>${esc(g.name)}「${esc(cleanTitle(v.t))}」</b><small>${{m:'漫才',k:'コント',p:'ピン'}[v.f]||''} · ${mmss(v.d)} · 開始${v.s||0}秒${v.extra?' · 追加分':''}</small>
+    ${ed?`<div class="vedit"><label>表示タイトル<input id="veT" value="${esc(v.t)}"></label><label>開始（秒）<input id="veS" type="number" min="0" value="${v.s||0}"></label><div class="row2"><button class="btn2" data-act="admvcancel" style="background:var(--chip);color:var(--ink)">やめる</button><button class="btn2" data-act="admvsave" data-y="${esc(v.y)}">保存</button></div></div>`
+      :`<div class="vbtn"><button class="lnk" data-act="admvedit" data-y="${esc(v.y)}">✏️ 編集</button>${dl?`<span class="note2">本当に削除？</span><button class="lnk" data-act="admvdel2" data-y="${esc(v.y)}"><b>削除する</b></button><button class="lnk" data-act="admvcancel">やめる</button>`:`<button class="lnk" data-act="admvdel" data-y="${esc(v.y)}">🗑 削除</button>`}</div>`}</div></div>`}).join('')}</div>${L.length===40?'<p class="note2">40件まで表示しています。もっと絞り込んでください。</p>':''}`;
+}
+function renderAdmVL(){const el=$('#admVL');if(el)el.innerHTML=admVList()}
+async function admVSave(y){
+  const e=VID[y];if(!e||!S.fb)return;const {fs,db}=S.fb;
+  const t=String(($('#veT')||{}).value||'').trim(),sv=Math.max(0,parseInt(($('#veS')||{}).value,10)||0);if(!t)return toast('表示タイトルを入れてください');
+  try{
+    if(e.v.extra)await fs.setDoc(fs.doc(db,'catalog',y),{t,s:sv},{merge:true});
+    else await fs.setDoc(fs.doc(db,'catalog','o_'+y),{o:true,y,t,s:sv,gname:e.g.name,t0:e.v.t,at:new Date().toISOString(),by:ADMIN_EMAIL},{merge:true});
+    e.v.t=t;e.v.s=sv;ADM.ved=null;renderAdmVL();toast('保存しました：'+e.g.name+'「'+t+'」（開始'+sv+'秒）');if(S.cur===y)renderWatch(true);
+  }catch(x){toast('保存できませんでした（'+(x&&x.code||'error')+'）')}
+}
+async function admVDel(y){
+  const e=VID[y];if(!e||!S.fb)return;const {fs,db}=S.fb;
+  try{
+    if(e.v.extra){await fs.deleteDoc(fs.doc(db,'catalog',y));ADM.extras=(ADM.extras||[]).filter(x=>x.id!==y)}
+    else{const doc={o:true,y,del:true,gname:e.g.name,t0:e.v.t,at:new Date().toISOString(),by:ADMIN_EMAIL};await fs.setDoc(fs.doc(db,'catalog','o_'+y),doc);(ADM.extras=ADM.extras||[]).unshift({id:'o_'+y,...doc})}
+    applyOvr({y,del:true});if(S.cur===y)S.cur=null;ADM.vdel=null;renderAdmVL();renderTabs();toast('削除しました：'+e.g.name+'「'+cleanTitle(e.v.t)+'」');
+  }catch(x){toast('削除できませんでした（'+(x&&x.code||'error')+'）')}
+}
 function addExtra(x){
   if(!x||!x.y||VID[x.y])return false;
   let g=CAT.find(c=>c.id===x.gid)||CAT.find(c=>c.name===x.gname);
@@ -1085,7 +1133,7 @@ function addExtra(x){
 }
 async function loadExtras(){
   if(!S.fb)return;const {fs,db}=S.fb;
-  try{const sn=await fs.getDocs(fs.collection(db,'catalog'));let n=0;sn.docs.forEach(d=>{if(addExtra(d.data()))n++});if(n)render();else renderTabs()}catch(e){}
+  try{const sn=await fs.getDocs(fs.collection(db,'catalog'));let n=0;const D=sn.docs.map(d=>d.data());D.filter(x=>!x.o).forEach(x=>{if(addExtra(x))n++});D.filter(x=>x.o).forEach(x=>{if(applyOvr(x))n++});if(n)render();else renderTabs()}catch(e){}
 }
 
 /* v1.3: admin page (james only; Firestore rules enforce it too) */
@@ -1104,7 +1152,7 @@ function renderAdmin(){
   const el=$('#adm');if(!el)return;
   if(!isAdmin()){el.innerHTML='<p class="empty">管理者だけが開けます。</p>';return}
   if(ADM.users===null&&ADM.fb===null&&!ADM.loading){ADM.loading=true;el.innerHTML='<div class="admw"><h2 class="telop">admin</h2><p>読み込み中…</p></div>';admLoad().finally(()=>{ADM.loading=false});return}
-  const U=ADM.users||[],FBK=ADM.fb||[],X=ADM.extras||[],wk=U.filter(u=>Date.now()-new Date(u.last)<7*86400e3).length;
+  const U=ADM.users||[],FBK=ADM.fb||[],X=(ADM.extras||[]).filter(x=>!x.o),wk=U.filter(u=>Date.now()-new Date(u.last)<7*86400e3).length;
   const KL={any:'なんでも',add:'観たい組がない',more:'もっと観たい',fn:'機能',info:'ネタ情報',bug:'不具合',comment:'ひとこと'};
   const P=ADM.pick;
   el.innerHTML=`<div class="admw"><h2 class="telop">admin</h2>
@@ -1114,8 +1162,8 @@ function renderAdmin(){
   ${ADM.key?'':`<p class="note2">YouTube検索キーが未設定です。<b>YouTube Data API v3</b> のAPIキーを貼ってください（このアカウントだけに保存されます）。</p><div class="row2"><input id="admKey" placeholder="AIza…"><button class="btn2" data-act="admkey">保存</button></div>`}
   <div class="row2" style="margin-top:8px"><input id="admQ" placeholder="例：ラランド ギャンブル狂いの夫" value="${esc(ADM.q||'')}"><button class="btn2" data-act="admsearch">検索</button></div>
   <p class="note2">組名＋ネタ名などをざっくり入れると候補を探します。タップすると自動で入力されます。</p>
-  ${ADM.res?`<div class="res">${ADM.res.length?ADM.res.map((r,i)=>`<button class="rc${VID[r.id]?' have':''}" data-act="admpick" data-i="${i}"><img src="${esc(r.th)}" alt="" loading="lazy"><span><b>${esc(r.t)}</b><small>${esc(r.ch)} · ${mmss(r.d)} · ${(r.n/1e4).toFixed(r.n<1e5?1:0)}万回${VID[r.id]?' · 収録済み':''}</small></span></button>`).join(''):'<p class="note2">見つかりませんでした。</p>'}</div>`:''}
-  ${P?`<div class="af"><b>追加する内容</b>
+  ${ADM.res?`<div class="res">${ADM.res.length?ADM.res.map((r,i)=>`<div class="rc${VID[r.id]?' have':''}">${admThumb(r.id,r.th,!!VID[r.id])}<button class="rcb" data-act="admpick" data-i="${i}"><b>${esc(r.t)}</b><small>${esc(r.ch)} · ${mmss(r.d)} · ${(r.n/1e4).toFixed(r.n<1e5?1:0)}万回${VID[r.id]?' · 収録済み':''}</small></button></div>`).join(''):'<p class="note2">見つかりませんでした。</p>'}</div>`:''}
+  ${P?`<div class="af"><div class="afh">${admThumb(P.y,null,false)}<b>追加する内容</b></div>
     <label>組名（既存の組を選ぶか、新しい組名）<input id="afG" list="afgl" value="${esc(P.gname)}"><datalist id="afgl">${CAT.map(g=>`<option value="${esc(g.name)}">`).join('')}</datalist></label>
     ${!CAT.find(g=>g.name===P.gname)?`<p class="note2">新しい組として登録されます。</p>`:''}
     <label>ネタの題名<input id="afT" value="${esc(P.t)}"></label>
@@ -1124,6 +1172,9 @@ function renderAdmin(){
     <label>タグ</label><div class="chips2">${Object.keys(STY).map(k=>`<button type="button" class="${P.tags.includes(k)?'on':''}" data-act="admtag" data-k="${k}">${STY[k]}</button>`).join('')}</div>
     <p class="note2">${esc(P.ch)} · ${mmss(P.d)} · <a href="${ytUrl(P.y)}" target="_blank" rel="noopener">YouTubeで確認</a>（前説が長いときは開始秒を入れてください）</p>
     <div class="row2"><button class="btn2" data-act="admcancel" style="background:var(--chip);color:var(--ink)">やめる</button><button class="btn2 red" data-act="admadd">追加する</button></div></div>`:''}
+  <h3>収録済みのネタを探す・直す</h3>
+  <div class="row2"><input id="admV" placeholder="例：かが屋 / 一人カラオケ" value="${esc(ADM.vq||'')}" autocomplete="off"></div>
+  <div id="admVL">${admVList()}</div>
   <h3>開発者あてコメント（${FBK.length}）</h3>
   ${FBK.length?`<ul>${FBK.map(f=>`<li><span class="tag">${esc(KL[f.kind]||f.label||f.kind||'')}</span>${f.sub?`<span class="tag">${esc(f.sub)}</span>`:''}${f.group?`<b>${esc(f.group)}</b> `:''}${f.gname?`<b>${esc(f.gname)}</b>「${esc(cleanTitle(f.title||''))}」 `:''}${esc(f.text||'')}${f.want?` <i>（${esc(f.want)}）</i>`:''}${f.feature?` <i>${esc(f.feature)}</i>`:''}${f.url&&safeUrl(f.url)?` <a href="${esc(f.url)}" target="_blank" rel="noopener">動画</a>`:''}
     <div class="m">${esc(f.name||(f.uid?'ログイン':'ゲスト'))} · ${ago(f.at)} · v${esc(f.ver||'')}${f.email?' · ✉ '+esc(f.email):''}${f.golden?' · ゴールデン':''} · ${f.nRated||0}本 <button class="lnk" data-act="admdelfb" data-id="${esc(f.id)}">既読にして消す</button></div></li>`).join('')}</ul>`:'<p class="note2">まだありません。</p>'}
@@ -1176,6 +1227,12 @@ async function admAct(d,t){
   if(d.act==='admadd')return admAdd();
   if(d.act==='admkey'){const k=String(($('#admKey')||{}).value||'').trim();if(!k)return;ADM.key=k;try{localStorage.setItem('uketa-ytkey',k)}catch(e){}if(fsx)fsx.setDoc(fsx.doc(db,'adminconf','yt'),{key:k}).catch(()=>{});toast('検索キーを保存しました');return renderAdmin()}
   if(d.act==='admdelfb'){if(!fsx)return;try{await fsx.deleteDoc(fsx.doc(db,'feedback',d.id));ADM.fb=(ADM.fb||[]).filter(f=>f.id!==d.id);renderAdmin()}catch(e){toast('消せませんでした（'+(e&&e.code||'error')+'）')}return}
+  if(d.act==='admvedit'){ADM.ved=d.y;ADM.vdel=null;renderAdmVL();const x=$('#veT');x&&x.focus();return}
+  if(d.act==='admvcancel'){ADM.ved=null;ADM.vdel=null;renderAdmVL();return}
+  if(d.act==='admvsave')return admVSave(d.y);
+  if(d.act==='admvdel'){ADM.vdel=d.y;ADM.ved=null;renderAdmVL();return}
+  if(d.act==='admvdel2')return admVDel(d.y);
+  if(d.act==='admrestore'){if(!fsx)return;try{await fsx.deleteDoc(fsx.doc(db,'catalog','o_'+d.y));toast('戻しました。再読み込みします…');setTimeout(()=>location.reload(),900)}catch(e){toast('戻せませんでした（'+(e&&e.code||'error')+'）')}return}
   if(d.act==='admdelx'){if(!fsx)return;try{await fsx.deleteDoc(fsx.doc(db,'catalog',d.id));ADM.extras=(ADM.extras||[]).filter(x=>x.id!==d.id);toast('削除しました（再読み込み後に反映）');renderAdmin()}catch(e){toast('削除できませんでした（'+(e&&e.code||'error')+'）')}return}
 }
 
@@ -1261,7 +1318,7 @@ document.addEventListener('pointerdown',ev=>{const b=ev.target.closest('[data-om
   const stop=()=>{cancelAnimationFrame(omHold);omHold=null;b.removeEventListener('pointerup',stop);b.removeEventListener('pointercancel',stop);b.removeEventListener('lostpointercapture',stop);if(!held)sc.scrollBy({left:dir*sc.clientWidth*.7,behavior:'smooth'})};
   b.addEventListener('pointerup',stop);b.addEventListener('pointercancel',stop);b.addEventListener('lostpointercapture',stop)});
 document.addEventListener('keydown',ev=>{if(ev.target.id==='gmIn'){if(ev.key==='Enter'&&!ev.isComposing){ev.preventDefault();saveGeimei(ev.target.value);S.gmEdit=false;renderStats();toast('芸名を「'+geimei()+'」にしました')}else if(ev.key==='Escape'){S.gmEdit=false;renderStats()}return}const b=ev.target.closest&&ev.target.closest('[data-omar]');if(b&&(ev.key==='Enter'||ev.key===' ')){ev.preventDefault();const sc=document.querySelector('.omscroll');sc&&sc.scrollBy({left:Number(b.dataset.omar)*sc.clientWidth*.8,behavior:'smooth'})}});
-document.addEventListener('input',ev=>{if(ev.target.id==='omq'){S.omQ=ev.target.value.trim();S.omG=null;renderOneman()}if(ev.target.closest&&ev.target.closest('#enq')&&ev.target.id){S.enqV[ev.target.id]=ev.target.value}if(ev.target.id==='cmtT'&&S.cur){S.draft={y:S.cur,t:ev.target.value,d:!!($('#cmtD')&&$('#cmtD').checked)}}});
+document.addEventListener('input',ev=>{if(ev.target.id==='admV'){ADM.vq=ev.target.value;ADM.ved=null;ADM.vdel=null;renderAdmVL();return}if(ev.target.id==='omq'){S.omQ=ev.target.value.trim();S.omG=null;renderOneman()}if(ev.target.closest&&ev.target.closest('#enq')&&ev.target.id){S.enqV[ev.target.id]=ev.target.value}if(ev.target.id==='cmtT'&&S.cur){S.draft={y:S.cur,t:ev.target.value,d:!!($('#cmtD')&&$('#cmtD').checked)}}});
 document.addEventListener('change',ev=>{
   if(ev.target.id==='cmtD'&&S.cur){S.draft={y:S.cur,t:($('#cmtT')||{}).value||'',d:ev.target.checked};return}
   if(ev.target.id==='lsort'){S.logSort=ev.target.value;renderLog();return}
