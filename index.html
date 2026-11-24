@@ -211,7 +211,8 @@ main{padding:20px max(5vw,16px) 64px}
 .sharebox{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:24px;align-items:center;margin-top:14px;background:var(--paper);border:1.5px solid var(--line);border-radius:16px;padding:18px}
 .sharebox canvas{width:100%;height:auto;aspect-ratio:4/5;border-radius:12px;display:block;box-shadow:0 10px 30px rgba(0,0,0,.18)}
 .sharebox h3{margin:0 0 6px;font-size:19px}.sharebox p{margin:0 0 12px}
-.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px;align-items:start}
+.cols{columns:2;column-gap:14px;margin-top:14px}
+.cols>section{break-inside:avoid;margin:0 0 14px;display:block;width:100%;box-sizing:border-box}
 .cols section{background:var(--paper);border:1.5px solid var(--line);border-radius:16px;padding:18px 18px 12px}
 .cols h3{margin:0 0 2px;font-size:19px}.cols h3+p{margin:0 0 10px;color:var(--mute);font-size:14px}
 .br{display:grid;grid-template-columns:8.5em minmax(0,1fr) 5.6em;gap:10px;align-items:center;padding:5px 0}
@@ -241,6 +242,21 @@ fieldset{border:0;padding:0;margin:0}legend{font-weight:700;font-size:14px;margi
 .err{color:var(--red);margin:0;font-weight:700;min-height:1.2em}
 .row{display:flex;justify-content:flex-end;gap:8px}
 .toast{position:fixed;left:50%;bottom:18px;transform:translate(-50%,6px);opacity:0;transition:opacity .35s ease,transform .35s ease;background:rgba(44,36,32,.9);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#e9e1da;border:1px solid rgba(255,210,31,.18);font-size:13.5px;line-height:1.5;border-radius:12px;padding:8px 10px 8px 16px;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;z-index:30;width:max-content;max-width:calc(100% - 24px);box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.dtop{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.dtop .wbti{margin:0!important}
+.diag .gm{margin:0;padding:4px 6px 4px 12px;background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);gap:8px}
+.diag .gm .gml{color:#c9bfb4}
+.diag .gm b{color:var(--yel);font-size:16px;font-family:'Dela Gothic One',sans-serif;font-weight:400}
+.diag .gm .gme{margin-left:0;border-color:rgba(255,255,255,.25);padding:3px 8px}
+.diag .gm.edit input{min-width:120px;font-size:15px;padding:5px 8px}
+.diag .gm.edit button{padding:5px 12px}
+.diag .gm .gmx{border-color:rgba(255,255,255,.3)!important}
+.hero2{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:14px;align-items:start}
+.cardw canvas{width:100%;height:auto;aspect-ratio:4/5;border-radius:14px;display:block;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.cardb{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px}
+.cardb small{color:var(--mute);font-size:12px}
+.kage{font-family:'Dela Gothic One',sans-serif;font-weight:400;font-size:20px;color:var(--red);margin-left:6px}
+.cols .more{margin-top:6px;font-size:13px}
 .gm{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px;padding:10px 14px;border-radius:14px;background:rgba(29,23,20,.06);border:1.5px solid rgba(29,23,20,.12)}
 .gm .gml{font-size:12px;font-weight:700;color:#8a7f78;letter-spacing:.08em}
 .gm b{font-size:22px;line-height:1.2;color:var(--red,#c8321e);word-break:break-all}
@@ -271,8 +287,8 @@ fieldset{border:0;padding:0;margin:0}legend{font-weight:700;font-size:14px;margi
 .diag ul{margin:0;padding-left:1.2em;display:grid;gap:4px}.diag small{color:#c9bfb4}
 .news h3{margin:14px 0 4px;font-size:17px}.news ul{margin:0;padding-left:1.2em}
 .imp{display:flex;gap:8px;flex-wrap:wrap}
-@media(max-width:860px){.sharebox,.hero,.cols{grid-template-columns:minmax(0,1fr)}.log li{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.log .lr{grid-column:1/-1}}
-@media(max-width:600px){.tabs a{padding:10px 12px}main{padding:12px 10px 48px}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi.wide{grid-column:span 2}.br{grid-template-columns:6.8em minmax(0,1fr) 5em}.log li{grid-template-columns:minmax(0,1fr)}.stage{border-radius:16px}}
+@media(max-width:860px){.sharebox,.hero,.hero2{grid-template-columns:minmax(0,1fr)}.cols{columns:1}.cardw{max-width:420px;margin:0 auto;width:100%}.log li{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.log .lr{grid-column:1/-1}}
+@media(max-width:600px){.tabs a{padding:10px 12px}main{padding:12px 10px 48px}.kpis{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-flow:dense}.kpi.wide{grid-column:span 2}.br{grid-template-columns:6.8em minmax(0,1fr) 5em}.log li{grid-template-columns:minmax(0,1fr)}.stage{border-radius:16px}}
 @media(max-width:380px){.cur{width:36px}.boards{padding-left:42px;padding-right:42px}}
 .lc2{padding:4px 12px 4px 4px!important;gap:2px 12px!important;align-items:center}
 .lleft{align-self:stretch!important}
@@ -352,6 +368,8 @@ fieldset{border:0;padding:0;margin:0}legend{font-weight:700;font-size:14px;margi
 .admw .rc{display:flex;gap:10px;align-items:center;text-align:left;background:var(--paper);border:1.5px solid var(--line);border-radius:12px;padding:6px;cursor:pointer;font:inherit;color:var(--ink)}
 .admw .rc img{width:120px;height:68px;object-fit:cover;border-radius:8px;flex:none;background:#000}
 .admw .rc small{display:block;color:var(--mute);font-size:11.5px}
+.admw .arct{background:none;border:0;padding:6px 0;font:inherit;font-size:12.5px;color:var(--mute);cursor:pointer}
+.admw .arcl li{opacity:.7}
 .admw .rc.have .rcb{opacity:.5}
 .admw .rc.have img{filter:grayscale(1) brightness(.7)}
 .admw .rcb{flex:1;min-width:0;text-align:left;background:none;border:0;font:inherit;color:inherit;cursor:pointer;padding:0}
@@ -470,7 +488,7 @@ const sv=e=>e.fav?'s'+e.r:e.r;
 const VERSION='1.3';
 const ADMIN_EMAIL='james@raymercer.net';
 const CHANGELOG=[
- ['1.3','2026年11月24日',['WBTI診断に「芸名」を。✏️からいつでも好きな名前に変えられます','寄席の画面をコンパクトに。再生ボタンをタグの横に、ひとことはタップで開くように（書いている間は評価ボタンが隠れます）','ネタのタイプ分けを、芸人ごとではなく1本ずつに。同じ組でもネタによって違うタイプが付きます（今までの記録も新しい分け方で集計し直されます）','ネタが172本から520本に、芸人さんも73組から115組に。タイムマシーン3号、さまぁ～ず、四千頭身、かが屋、千鳥…やっと呼べました','★推す！はカウントダウン式に。幕が閉まるまでの3秒で決めてください。迷ったら推す','評価ボタンの上に「ひとこと」。自分用メモです。「開発者にも送る」にチェックすると開発者にも届きます（悪口はお手柔らかに）','新タブ「アンケート」。観たい組、欲しい機能、なんでもどうぞ。全部読みます','はじめての人は寄席から。3本でワンマン解禁＆チケット1枚プレゼント、20本で記録とWBTI診断が解禁。焦らず観てください','そのほか：収録数を表示、記録にひとことを表示、細かい改善']],
+ ['1.3','2026年11月24日',['WBTI診断に「芸名」を。✏️からいつでも変えられて、診断とシェア画像にも名前が出ます。ページもすっきり','寄席の画面をコンパクトに。再生ボタンをタグの横に、ひとことはタップで開くように（書いている間は評価ボタンが隠れます）','ネタのタイプ分けを、芸人ごとではなく1本ずつに。同じ組でもネタによって違うタイプが付きます（今までの記録も新しい分け方で集計し直されます）','ネタが172本から520本に、芸人さんも73組から115組に。タイムマシーン3号、さまぁ～ず、四千頭身、かが屋、千鳥…やっと呼べました','★推す！はカウントダウン式に。幕が閉まるまでの3秒で決めてください。迷ったら推す','評価ボタンの上に「ひとこと」。自分用メモです。「開発者にも送る」にチェックすると開発者にも届きます（悪口はお手柔らかに）','新タブ「アンケート」。観たい組、欲しい機能、なんでもどうぞ。全部読みます','はじめての人は寄席から。3本でワンマン解禁＆チケット1枚プレゼント、20本で記録とWBTI診断が解禁。焦らず観てください','そのほか：収録数を表示、記録にひとことを表示、細かい改善']],
  ['1.2','2026年11月21日',['新タブ「ワンマン」：寄席で10本観るごとにチケット1枚。推しのネタを好きなだけ…じゃなくて1本だけ観られます。好きな組ばかり観てると偏るので','ネタが64本から172本に。ピン芸人15人も仲間入り（R-1王者など）。ひとりで全部背負う人たちです','「ウケた」のあと、幕が閉まるあいだに★「推す！」。推したネタは記録からすぐ観直せます。推しは点数も＋50点、えこひいきです','ネタの頭から再生。前説や出囃子は飛ばします。早く本題に入りたいあなたへ','「成績表」は「WBTI診断」に。推しスタイルTOP3、ボケ派かツッコミ派か、ピン芸の点数も。あなたのツボ、丸裸です','そのほか：「観る」→「寄席」、「途中で飽きた」→「途中でやめた」（言い方は大事）、タグ約30種類、「ゴールデンタイム」設定（下ネタ控えめ）、漫才派・コント派の判定をゆるめに、「好きな尺」、バックアップのボタンを削除、デザインをいろいろ改善']],
  ['1.1','2026年11月20日',['Googleでログインできるように。スマホでもPCでも同じ記録。逃げられません','成績表に「笑いの診断」を追加。当たっても怒らないでください','記録にスタイルを表示。評価の変更はプルダウンから（うっかり変更防止）','更新履歴を追加。今まさに読んでるやつです','デザインを改善']],
  ['1.0','2026年11月20日',['UKETAとして公開','寄席の舞台で1本ずつ観る形式に。選り好みはさせません','「途中で飽きた」を追加。評価はYouTubeで観てから。観てない人の評価は聞いてません','視聴時間とベスト尺','全部日本語に。日本語話せないとお笑いは難しいよね・・・']],
@@ -889,8 +907,10 @@ function renderLog(){
 const bar=(l,sub,s,n,unit='本')=>`<div class="br"><div class="bl">${l}${sub?`<small>${sub}</small>`:''}</div><div class="bt"><i style="width:${Math.min(100,s??0)}%"></i></div><div class="bv">${s==null?'–':Math.min(100,s)}<small> · ${n}${unit}</small></div></div>`;
 const GM='uketa-geimei';
 function geimei(){const n=(S.geimei||'').trim();if(n)return n;const d=S.user&&S.user.displayName?String(S.user.displayName).trim().split(/\s+/)[0]:'';return d||'名無しのお客さん'}
+function hasName(){return !!((S.geimei||'').trim()||(S.user&&S.user.displayName))}
+function who(){if(!hasName())return 'あなた';const n=geimei();return /(さん|様|さま|ちゃん|くん|君|氏)$/.test(n)?n:n+'さん'}
 function gmBox(){return S.gmEdit?`<div class="gm edit"><label for="gmIn">芸名</label><input id="gmIn" maxlength="20" value="${esc(S.geimei||'')}" placeholder="${esc(geimei())}" autocomplete="off"><button type="button" class="gmok" data-act="gmsave">決定</button><button type="button" class="gmx" data-act="gmcancel">やめる</button></div>`
-  :`<div class="gm"><span class="gml">芸名</span><b class="telop">${esc(geimei())}</b><button type="button" class="gme" data-act="gmedit">✏️ 変える</button></div>`}
+  :`<div class="gm"><span class="gml">芸名</span><b>${esc(geimei())}</b><button type="button" class="gme" data-act="gmedit" aria-label="芸名を変える">✏️</button></div>`}
 function saveGeimei(v){v=String(v||'').replace(/\s+/g,' ').trim().slice(0,20);S.geimei=v;try{localStorage.setItem(GM,v)}catch(e){}
   if(S.fb&&S.user){const {fs,db}=S.fb;fs.setDoc(fs.doc(db,'users',S.user.uid,'meta','prefs'),{geimei:v,at:new Date().toISOString()},{merge:true}).catch(()=>{})}}
 function renderStats(){
@@ -924,39 +944,32 @@ function renderStats(){
   const era=ERAS.map(([l,a,b])=>{const x=E.filter(e=>{const g=gById(e.gid);return g&&g.peak>=a&&g.peak<=b}).map(sv);return {l,n:x.length,sc:score(x)}}).filter(x=>x.n);
   const GR=Object.entries(pg).map(([id,o])=>({name:(gById(id)||o).name,n:o.rs.length,s:score(o.sv),rs:o.rs,fav:o.sv.some(x=>String(x)[0]==='s')})).sort((a,b)=>b.s-a.s||b.n-a.n);
   const dg=diagnose({age,v,fav,sAll:score(rsv),E,bestLen,fm,fk,fp,spn,sNP});
-  el.innerHTML=`${gmBox()}<section class="diag" aria-label="WBTI診断"><p class="wbti">WBTI（Warai-Based Type Indicator）診断</p><div class="code" aria-label="タイプ ${dg.code}">${[...dg.code].map(c=>`<b>${c}</b>`).join('')}<span style="align-self:center;margin-left:6px;font-weight:700">型</span></div><h3>あなたは${esc(dg.name)}です。</h3><ul>${dg.lines.map(l=>`<li>${esc(l)}</li>`).join('')}</ul><small>${dg.legend}</small></section>
-  <h2 class="find">${v[1]}${fav?`。いちばん笑うのは「${STY[fav.k]}」`:''}。</h2>
-  <div class="hero">
-    <div class="agecard"><p class="lab">お笑い年齢</p>
-      <p class="age telop">${age??'–'}${age?'<small>歳</small>':''}</p>
-      <p>${age?`${age}歳の笑いのツボ。いちばん影響しているのは ${PL.map(g=>`<b>${esc(g.name)}</b>（ファン層≈${g.fan}歳）`).join('、')}。`:'「ウケた」を付けると計算できます。'}</p>
-      <p class="tier"><b>${tier[1]}</b> · 芸歴${E.length}本${nextT?` · あと${nextT[0]-E.length}本で${nextT[1]}`:''}</p></div>
+  const W=who(),SRshow=S.allSty?SR:SR.slice(0,10);
+  el.innerHTML=`<section class="diag" aria-label="WBTI診断"><div class="dtop"><p class="wbti">WBTI（Warai-Based Type Indicator）診断</p>${gmBox()}</div><div class="code" aria-label="タイプ ${dg.code}">${[...dg.code].map(c=>`<b>${c}</b>`).join('')}<span style="align-self:center;margin-left:6px;font-weight:700">型</span></div><h3>${esc(W)}は${esc(dg.name)}です。</h3><ul>${dg.lines.map(l=>`<li>${esc(l)}</li>`).join('')}</ul>${dg.legend?`<small>${esc(dg.legend)}</small>`:''}</section>
+  <div class="hero2">
+    <div class="cardw"><canvas id="shareCv" width="1080" height="1350" role="img" aria-label="シェア用カード：${esc(W)}のお笑い年齢${age??'不明'}歳、${v[0]}"></canvas>
+      <div class="cardb">${S.dl||!window.claude?'<button class="btn" data-act="savecard">画像を保存</button>':''}<small>SNS用の画像です。芸名と成績だけが載ります。</small></div></div>
     <div class="kpis">
+      <div class="kpi wide"><p class="kl">お笑い年齢 ${age?`<b class="kage">${age}歳</b>`:''}</p><p class="kd">${age?`いちばん影響しているのは ${PL.map(g=>`<b>${esc(g.name)}</b>（ファン層≈${g.fan}歳）`).join('、')}。`:'「ウケた」を付けると計算できます。'}</p><p class="kd"><b>${tier[1]}</b> · 芸歴${E.length}本${nextT?` · あと${nextT[0]-E.length}本で${nextT[1]}`:''}</p></div>
       <div class="kpi"><p class="kl">観た組数</p><p class="kv">${nG}<small>組 / 全${groups().length}組</small></p></div>
       <div class="kpi"><p class="kl">評価した本数</p><p class="kv">${E.length}<small>本</small></p></div>
       <div class="kpi"><p class="kl">視聴時間</p><p class="kv sm">${hm(TOT)}</p><p class="kd">1本あたり平均${hm(TOT/E.length)}</p></div>
       <div class="kpi wide"><p class="kl">評価の内訳 · 笑い度 ${Math.min(100,score(rsv))}/100</p><div class="split"><i style="width:${pc(cnt(1))}%"></i><i style="width:${pc(cnt(0))}%"></i><i style="width:${pc(cnt(-1))}%"></i><i style="width:${pc(cnt(-2))}%"></i></div>
         <p class="legend">ウケた ${cnt(1)} · まあまあ ${cnt(0)} · スベった ${cnt(-1)} · 途中でやめた ${cnt(-2)}${nFav?` · ★ ${nFav}`:''}</p></div>
-      <div class="kpi"><p class="kl">漫才かコントか</p><p class="kv sm">${v[0]}</p></div>
-      <div class="kpi"><p class="kl">推しスタイル TOP3</p><p class="kv sm">${top3.length?top3.map(x=>STY[x.k]).join('・'):'–'}</p></div>
       <div class="kpi"><p class="kl">ボケ派かツッコミ派か</p><p class="kv sm">${bt[0]}</p><p class="kd">${bt[1]}</p></div>
       <div class="kpi"><p class="kl">ピン芸</p><p class="kv sm">${fp.length?Math.min(100,spn)+'<small>点</small>':'–'}</p><p class="kd">${fp.length?`${fp.length}本観て、ウケた${upn}本`:'ひとり芸はまだ観ていません'}</p></div>
       <div class="kpi"><p class="kl">好きな尺</p><p class="kv sm">${bestLen?bestLen.l:'–'}</p><p class="kd">いちばんウケた長さ</p></div>
     </div>
   </div>
-  <section class="sharebox"><canvas id="shareCv" width="1080" height="1350" role="img" aria-label="シェア用カード：お笑い年齢${age??'不明'}歳、${v[0]}"></canvas>
-    <div><h3>シェア用カード</h3><p>SNSに載せやすい4:5の画像です。表示されるのは成績だけで、名前やアカウントは出ません。</p>
-    <div class="row" style="justify-content:flex-start;flex-wrap:wrap">${S.dl||!window.claude?'<button class="btn" data-act="savecard">画像を保存</button>':''}</div>
-    <p class="small">${S.dl||!window.claude?'スクリーンショットでもOKです。':'スクリーンショットで保存してください。'}</p></div></section>
   <div class="cols">
     <section><h3>漫才 vs コント</h3><p>${v[2]}（笑い度 · 本数。ピン芸は漫談なら漫才、ひとりコントならコントに数えます）</p>${bar('漫才','',sm,fm.length)}${bar('コント','',sk,fk.length)}${fp.length?bar('うちピン芸','',spn,fp.length):''}</section>
-    <section><h3>ハマるスタイル</h3><p>笑い度 · 本数（1本だけのスタイルは少し割り引いて順位付け）</p>${SR.map(x=>bar(STY[x.k],'',x.s,x.n)).join('')}</section>
+    <section><h3>ハマるスタイル</h3><p>笑い度 · 本数（1本だけのスタイルは少し割り引いて順位付け）</p>${SRshow.map(x=>bar(STY[x.k],'',x.s,x.n)).join('')}${SR.length>10?`<button class="link more" data-act="allsty">${S.allSty?'上位10だけ表示':`すべて表示（${SR.length}）`}</button>`:''}</section>
     <section><h3>好きな尺</h3><p>${bestLen?`いちばん笑えるのは<b>${bestLen.l}</b>のネタ。`:'2本以上観た長さで比べます。'}平均の長さ：ウケた ${avgLen(r=>r===1)?mmss(avgLen(r=>r===1)):'–'} · まあまあ ${avgLen(r=>r===0)?mmss(avgLen(r=>r===0)):'–'} · スベった ${avgLen(r=>r<0)?mmss(avgLen(r=>r<0)):'–'}</p>${LB.map(x=>bar(x.l,'',x.sc,x.n)).join('')}</section>
     <section><h3>時代</h3><p>各グループがブレイクした年代別</p>${era.map(x=>bar(x.l,'',x.sc,x.n)).join('')||'<p>まだデータがありません。</p>'}</section>
     <section class="full" style="grid-column:1/-1"><h3>推し</h3>${nFav>=3?`<p>笑い度の高い順（★推すは＋50点で順位に反映）</p>${GR.slice(0,8).map(x=>bar((x.fav?'★':'')+esc(x.name),tally(x.rs),x.s,x.n)).join('')}`:`<p class="locked">🔒 もっと観て、このセクションを解放しよう。「ウケた」のあとに★推す！を3本押すと、推しランキングが出ます（あと${3-nFav}本）。</p>`}</section>
   </div>
   <p class="foot">計算方法：笑い度はウケた＝100、まあまあ＝50、スベった・途中でやめた＝0の平均（★推すは＋50点。表示は100まで）。お笑い年齢は、評価したグループの「ファン層の年齢」（各グループの主な客層を推定した値）を、ウケた＝100%、まあまあ＝40%の重み（★は1.5倍）で平均したもの。視聴時間は評価したネタの長さの合計で、途中でやめたネタは半分として計算（実際にYouTubeで観た時間はアプリからは分かりません）。ランク：若手は3本から、中堅15本、ベテラン40本、大御所100本。再生数・長さは2026年11月19日時点。</p>`;
-  drawShare({age,v,fav,tier,nG,nV:E.length,tot:TOT,PL,dg});
+  drawShare({age,v,fav,tier,nG,nV:E.length,tot:TOT,PL,dg,who:W});
 }
 function diagnose({age,v,fav,sAll,E,bestLen,fm,fk,fp=[],spn=null,sNP=null}){
   const isM=v[3]==='m';
@@ -983,7 +996,7 @@ async function drawShare(d){
   const c=$('#shareCv');if(!c||!c.getContext)return;const x=c.getContext('2d'),W=1080,H=1350;
   const DG='"Dela Gothic One",sans-serif',ZK='"Zen Kaku Gothic New",sans-serif';
   const txt=[(d.dg?d.dg.code+'型'+d.dg.short:''),hm(d.tot),d.v[0],d.fav?STY[d.fav.k]:'',d.tier[1],...d.PL.map(g=>g.name)].join('');
-  try{await Promise.all([document.fonts.load('100px "Dela Gothic One"','UKETA年齢歳0123456789組本'+txt),document.fonts.load('700 40px "Zen Kaku Gothic New"','お笑い年齢組本推視聴時間'+txt)])}catch(e){}
+  try{await Promise.all([document.fonts.load('100px "Dela Gothic One"','UKETA年齢歳0123456789組本'+txt),document.fonts.load('700 40px "Zen Kaku Gothic New"','お笑い年齢組本推視聴時間の'+txt+(d.who||''))])}catch(e){}
   if(!c.isConnected)return;
   const fit=(t,max,size,fam,wt='')=>{let z=size;for(;z>16;z-=2){x.font=`${wt} ${z}px ${fam}`;if(x.measureText(t).width<=max)break}return z};
   const telop=(t,X,Y,z,al)=>{x.font=`${z}px ${DG}`;x.textAlign=al;x.lineJoin='round';x.fillStyle='#1d1714';x.fillText(t,X+z*.04,Y+z*.07);x.lineWidth=z*.16;x.strokeStyle='#1d1714';x.strokeText(t,X,Y);x.fillStyle='#ffd21f';x.fillText(t,X,Y)};
@@ -991,7 +1004,7 @@ async function drawShare(d){
   const gr=x.createRadialGradient(920,-40,0,920,-40,900);gr.addColorStop(0,'rgba(255,210,31,.5)');gr.addColorStop(1,'rgba(255,210,31,0)');x.fillStyle=gr;x.fillRect(0,0,W,H);
   telop('UKETA',70,150,80,'left');
   const dt=new Date();x.font=`700 30px ${ZK}`;x.fillStyle='#fff';x.textAlign='right';x.fillText(dt.getFullYear()+'.'+(dt.getMonth()+1),W-70,138);
-  x.textAlign='center';x.font=`700 46px ${ZK}`;x.fillText('お笑い年齢',W/2,275);
+  x.textAlign='center';const ttl=(d.who&&d.who!=='あなた'?d.who+'の':'')+'お笑い年齢';const tz0=fit(ttl,900,46,ZK,'700');x.font=`700 ${tz0}px ${ZK}`;x.fillText(ttl,W/2,275);
   const at=d.age==null?'?':String(d.age);x.font=`330px ${DG}`;const aw=x.measureText(at).width;x.font=`120px ${DG}`;const kw=d.age==null?0:x.measureText('歳').width+14;
   const sx=W/2-(aw+kw)/2;telop(at,sx,630,330,'left');if(d.age!=null)telop('歳',sx+aw+14,630,120,'left');
   const tl=d.dg?`${d.dg.code}型「${d.dg.short}」`:'';
@@ -1146,6 +1159,7 @@ async function admLoad(){
   [ADM.users,ADM.fb,ADM.extras]=await Promise.all([get('profiles','last'),get('feedback','at'),get('catalog','at')]);
   try{const k=await fs.getDoc(fs.doc(db,'adminconf','yt'));ADM.key=k.exists()?(k.data().key||null):null}catch(e){ADM.key=ADM.key||null}
   if(!ADM.key){try{ADM.key=localStorage.getItem('uketa-ytkey')||null}catch(e){}}
+  try{const a=await fs.getDoc(fs.doc(db,'adminconf','fbarch'));ADM.arch=a.exists()?(a.data().ids||[]):[]}catch(e){ADM.arch=ADM.arch||[]}
   renderAdmin();
 }
 function renderAdmin(){
@@ -1157,7 +1171,7 @@ function renderAdmin(){
   const P=ADM.pick;
   el.innerHTML=`<div class="admw"><h2 class="telop">admin</h2>
   ${ADM.err?`<p class="note2" style="color:var(--red)">読み込めないデータがあります（${esc(ADM.err)}）。Firebaseのルールを確認してください。</p>`:''}
-  <div class="kp"><div><b>${U.length}</b><small>ログインユーザー</small></div><div><b>${wk}</b><small>7日以内に利用</small></div><div><b>${FBK.length}</b><small>開発者あてコメント</small></div><div><b>${CAT.length}組・${Object.keys(VID).length}本</b><small>収録（うち追加 ${X.length}本）</small></div></div>
+  <div class="kp"><div><b>${U.length}</b><small>ログインユーザー</small></div><div><b>${wk}</b><small>7日以内に利用</small></div><div><b>${FBK.filter(f=>!(ADM.arch||[]).includes(f.id)).length}</b><small>開発者あてコメント</small></div><div><b>${CAT.length}組・${Object.keys(VID).length}本</b><small>収録（うち追加 ${X.length}本）</small></div></div>
   <h3>ネタを追加</h3>
   ${ADM.key?'':`<p class="note2">YouTube検索キーが未設定です。<b>YouTube Data API v3</b> のAPIキーを貼ってください（このアカウントだけに保存されます）。</p><div class="row2"><input id="admKey" placeholder="AIza…"><button class="btn2" data-act="admkey">保存</button></div>`}
   <div class="row2" style="margin-top:8px"><input id="admQ" placeholder="例：ラランド ギャンブル狂いの夫" value="${esc(ADM.q||'')}"><button class="btn2" data-act="admsearch">検索</button></div>
@@ -1175,9 +1189,10 @@ function renderAdmin(){
   <h3>収録済みのネタを探す・直す</h3>
   <div class="row2"><input id="admV" placeholder="例：かが屋 / 一人カラオケ" value="${esc(ADM.vq||'')}" autocomplete="off"></div>
   <div id="admVL">${admVList()}</div>
-  <h3>開発者あてコメント（${FBK.length}）</h3>
-  ${FBK.length?`<ul>${FBK.map(f=>`<li><span class="tag">${esc(KL[f.kind]||f.label||f.kind||'')}</span>${f.sub?`<span class="tag">${esc(f.sub)}</span>`:''}${f.group?`<b>${esc(f.group)}</b> `:''}${f.gname?`<b>${esc(f.gname)}</b>「${esc(cleanTitle(f.title||''))}」 `:''}${esc(f.text||'')}${f.want?` <i>（${esc(f.want)}）</i>`:''}${f.feature?` <i>${esc(f.feature)}</i>`:''}${f.url&&safeUrl(f.url)?` <a href="${esc(f.url)}" target="_blank" rel="noopener">動画</a>`:''}
-    <div class="m">${esc(f.name||(f.uid?'ログイン':'ゲスト'))} · ${ago(f.at)} · v${esc(f.ver||'')}${f.email?' · ✉ '+esc(f.email):''}${f.golden?' · ゴールデン':''} · ${f.nRated||0}本 <button class="lnk" data-act="admdelfb" data-id="${esc(f.id)}">既読にして消す</button></div></li>`).join('')}</ul>`:'<p class="note2">まだありません。</p>'}
+  ${(()=>{const AR=new Set(ADM.arch||[]),act=FBK.filter(f=>!AR.has(f.id)),old=FBK.filter(f=>AR.has(f.id)),row=(f,arc)=>`<li><span class="tag">${esc(KL[f.kind]||f.label||f.kind||'')}</span>${f.sub?`<span class="tag">${esc(f.sub)}</span>`:''}${f.group?`<b>${esc(f.group)}</b> `:''}${f.gname?`<b>${esc(f.gname)}</b>「${esc(cleanTitle(f.title||''))}」 `:''}${esc(f.text||'')}${f.want?` <i>（${esc(f.want)}）</i>`:''}${f.feature?` <i>${esc(f.feature)}</i>`:''}${f.url&&safeUrl(f.url)?` <a href="${esc(f.url)}" target="_blank" rel="noopener">動画</a>`:''}
+    <div class="m">${esc(f.name||(f.uid?'ログイン':'ゲスト'))} · ${ago(f.at)} · v${esc(f.ver||'')}${f.email?' · ✉ '+esc(f.email):''}${f.golden?' · ゴールデン':''} · ${f.nRated||0}本 ${arc?`<button class="lnk" data-act="admunarch" data-id="${esc(f.id)}">戻す</button> <button class="lnk" data-act="admdelfb" data-id="${esc(f.id)}">完全に削除</button>`:`<button class="lnk" data-act="admarch" data-id="${esc(f.id)}">アーカイブ</button>`}</div></li>`;
+  return `<h3>開発者あてコメント（${act.length}）</h3>${act.length?`<ul>${act.map(f=>row(f,false)).join('')}</ul>`:'<p class="note2">新しいコメントはありません。</p>'}
+  ${old.length?`<button class="arct" data-act="admarchtog">${ADM.showArch?'▾ アーカイブを隠す':'▸ アーカイブ済み（'+old.length+'）を表示'}</button>${ADM.showArch?`<ul class="arcl">${old.map(f=>row(f,true)).join('')}</ul>`:''}`:''}`})()}
   <h3>ユーザー（ログインした人）</h3>
   ${U.length?`<ul>${U.slice(0,50).map(u=>`<li><b>${esc(u.name||'名前なし')}</b> <span class="m">· ${u.n||0}本 · ${ago(u.last)} · v${esc(u.ver||'')}</span></li>`).join('')}</ul>`:'<p class="note2">まだいません（ゲストは数えられません）。</p>'}
   ${X.length?`<h3>追加したネタ（${X.length}）</h3><ul>${X.map(x=>`<li><b>${esc(x.gname)}</b>「${esc(x.t)}」 <span class="m">${ago(x.at)}</span> <button class="lnk" data-act="admdelx" data-id="${esc(x.id)}">削除</button></li>`).join('')}</ul>`:''}
@@ -1226,6 +1241,8 @@ async function admAct(d,t){
   if(d.act==='admtag'){const P=ADM.pick;if(!P)return;const i=P.tags.indexOf(d.k);i>=0?P.tags.splice(i,1):P.tags.push(d.k);if(P.gname!==$('#afG').value)P.gname=$('#afG').value;P.t=$('#afT').value;P.f=$('#afF').value;P.s=$('#afS').value;return renderAdmin()}
   if(d.act==='admadd')return admAdd();
   if(d.act==='admkey'){const k=String(($('#admKey')||{}).value||'').trim();if(!k)return;ADM.key=k;try{localStorage.setItem('uketa-ytkey',k)}catch(e){}if(fsx)fsx.setDoc(fsx.doc(db,'adminconf','yt'),{key:k}).catch(()=>{});toast('検索キーを保存しました');return renderAdmin()}
+  if(d.act==='admarch'||d.act==='admunarch'){if(!fsx)return;const A=new Set(ADM.arch||[]);d.act==='admarch'?A.add(d.id):A.delete(d.id);const ids=[...A].filter(id=>(ADM.fb||[]).some(f=>f.id===id));try{await fsx.setDoc(fsx.doc(db,'adminconf','fbarch'),{ids});ADM.arch=ids;renderAdmin();toast(d.act==='admarch'?'アーカイブしました':'戻しました')}catch(e){toast('保存できませんでした（'+(e&&e.code||'error')+'）')}return}
+  if(d.act==='admarchtog'){ADM.showArch=!ADM.showArch;renderAdmin();return}
   if(d.act==='admdelfb'){if(!fsx)return;try{await fsx.deleteDoc(fsx.doc(db,'feedback',d.id));ADM.fb=(ADM.fb||[]).filter(f=>f.id!==d.id);renderAdmin()}catch(e){toast('消せませんでした（'+(e&&e.code||'error')+'）')}return}
   if(d.act==='admvedit'){ADM.ved=d.y;ADM.vdel=null;renderAdmVL();const x=$('#veT');x&&x.focus();return}
   if(d.act==='admvcancel'){ADM.ved=null;ADM.vdel=null;renderAdmVL();return}
@@ -1284,6 +1301,7 @@ document.addEventListener('click',ev=>{
   if(d.omrate!=null){omRate(d.y,d.omrate);return}
   if(d.rate!=null){if(!t.disabled)rateCur(d.rate);return}
   if(d.act==='cmtopen'&&S.cur){S.cmtOpen=S.cur;renderWatch(true);const x=$('#cmtT');if(x){x.focus();x.setSelectionRange(x.value.length,x.value.length)}return}
+  if(d.act==='allsty'){S.allSty=!S.allSty;renderStats();return}
   if(d.act==='gmedit'){S.gmEdit=true;renderStats();const x=$('#gmIn');if(x){x.focus();x.select()}return}
   if(d.act==='gmsave'){saveGeimei(($('#gmIn')||{}).value);S.gmEdit=false;renderStats();toast('芸名を「'+geimei()+'」にしました');return}
   if(d.act==='gmcancel'){S.gmEdit=false;renderStats();return}
