@@ -385,6 +385,13 @@ fieldset{border:0;padding:0;margin:0}legend{font-weight:700;font-size:14px;margi
 .admw .vbtn{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:4px}
 .admw .vedit{display:grid;gap:6px;margin-top:6px}
 .admw .vr.ed{border-color:#ffd21f}
+.admw .vr.ed{flex-direction:column}
+.admw .vr.ed .vt{width:100%}
+.admw .vedit .row2{flex-wrap:wrap}
+.admw .vedit .row2 label{flex:1 1 110px}
+.admw .vtg{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
+.admw .vtg span{background:var(--chip);border-radius:5px;padding:0 6px;font-size:11px;color:var(--ink)}
+.admw .vtg span.sh,.admw .chips2 button.sh.on{background:#c2351e;color:#fff}
 .admw .af{display:grid;gap:8px;background:var(--paper);border:2px solid #ffd21f;border-radius:12px;padding:12px;margin-top:10px}
 .admw .af label{font-size:12.5px;font-weight:700;display:grid;gap:3px}
 .admw .chips2{display:flex;flex-wrap:wrap;gap:5px}
@@ -1105,7 +1112,9 @@ async function enqSend(){
 /* v1.3: videos added on the spot by the admin (Firestore `catalog`, public read) */
 function applyOvr(x){const e=x&&VID[x.y];if(!e)return false;
   if(x.del){e.g.v=e.g.v.filter(v=>v!==e.v);delete VID[x.y];if(!e.g.v.length){const i=CAT.indexOf(e.g);if(i>=0)CAT.splice(i,1)}return true}
-  if(x.t!=null&&x.t!=='')e.v.t=x.t;if(x.s!=null)e.v.s=x.s;return true}
+  if(x.t!=null&&x.t!=='')e.v.t=x.t;if(x.s!=null)e.v.s=x.s;if(x.f)e.v.f=x.f;if(x.side!==undefined)e.v.side=x.side;if(Array.isArray(x.tags))e.v.tags=x.tags.slice();
+  if(x.gid&&x.gid!==e.g.id){const ng=CAT.find(c=>c.id===x.gid);if(ng){e.g.v=e.g.v.filter(v=>v!==e.v);if(!e.g.v.length){const i=CAT.indexOf(e.g);if(i>=0)CAT.splice(i,1)}ng.v.push(e.v);VID[x.y]={g:ng,v:e.v}}}
+  return true}
 const ytThumb=y=>'https://i.ytimg.com/vi/'+encodeURIComponent(y)+'/mqdefault.jpg';
 const PLAYMINI='<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M8 5v14l11-7z" fill="#1d1714"/></svg>';
 function admThumb(y,src,have,st){return `<span class="ath"><img src="${esc(src||ytThumb(y))}" alt="" loading="lazy">${have?'<i class="achk" aria-label="収録済み">✓</i>':''}<a class="aplay" href="${ytUrl(y,st||0)}" target="_blank" rel="noopener" aria-label="YouTubeで確認">${PLAYMINI}</a></span>`}
@@ -1115,18 +1124,29 @@ function admVList(){
   const L=Object.values(VID).filter(({g,v})=>(g.name+' '+(g.ro||'')+' '+v.t+' '+v.y).toLowerCase().includes(q)).slice(0,40);
   if(!L.length)return '<p class="note2">見つかりませんでした。</p>';
   return `<div class="res">${L.map(({g,v})=>{const ed=ADM.ved===v.y,dl=ADM.vdel===v.y;
-    return `<div class="rc vr${ed?' ed':''}">${admThumb(v.y,null,false,v.s)}<div class="vt"><b>${esc(g.name)}「${esc(cleanTitle(v.t))}」</b><small>${{m:'漫才',k:'コント',p:'ピン'}[v.f]||''} · ${mmss(v.d)} · 開始${v.s||0}秒${v.extra?' · 追加分':''}</small>
-    ${ed?`<div class="vedit"><label>表示タイトル<input id="veT" value="${esc(v.t)}"></label><label>開始（秒）<input id="veS" type="number" min="0" value="${v.s||0}"></label><div class="row2"><button class="btn2" data-act="admvcancel" style="background:var(--chip);color:var(--ink)">やめる</button><button class="btn2" data-act="admvsave" data-y="${esc(v.y)}">保存</button></div></div>`
+    return `<div class="rc vr${ed?' ed':''}">${admThumb(v.y,null,false,v.s)}<div class="vt"><b>${esc(g.name)}「${esc(cleanTitle(v.t))}」</b><small>${{m:'漫才',k:'コント',p:'ピン'}[v.f]||''} · ${mmss(v.d)} · 開始${v.s||0}秒${v.extra?' · 追加分':''}</small><small class="vtg">${(v.tags||g.styles||[]).filter(k=>STY[k]).map(k=>`<span${k==='shimo'?' class="sh"':''}>${STY[k]}</span>`).join('')}</small>
+    ${ed?(()=>{const D=ADM.vdraft||{},T=ADM.vtg||[],f=D.f||v.f,gn=D.g!=null?D.g:g.name;return `<div class="vedit">
+      <label>表示タイトル<input id="veT" value="${esc(D.t!=null?D.t:v.t)}"></label>
+      <label>組<input id="veG" list="vegl" value="${esc(gn)}"><datalist id="vegl">${CAT.map(c=>`<option value="${esc(c.name)}">`).join('')}</datalist></label>
+      <div class="row2"><label>形式<select id="veF">${[['m','漫才'],['k','コント'],['p','ピン']].map(([k,l])=>`<option value="${k}"${f===k?' selected':''}>${l}</option>`).join('')}</select></label>
+      ${f==='p'?`<label>ピンの種類<select id="veSd">${[['m','漫談（漫才扱い）'],['k','ひとりコント']].map(([k,l])=>`<option value="${k}"${(D.sd||v.side||'k')===k?' selected':''}>${l}</option>`).join('')}</select></label>`:''}
+      <label>開始（秒）<input id="veS" type="number" min="0" value="${D.s!=null?D.s:(v.s||0)}"></label></div>
+      <label>タグ <small>（${T.length}個${T.includes('shimo')?' · 下ネタあり':''}）</small></label><div class="chips2">${Object.keys(STY).map(k=>`<button type="button" class="${T.includes(k)?'on':''}${k==='shimo'?' sh':''}" data-act="admvtag" data-k="${k}">${STY[k]}</button>`).join('')}</div>
+      <div class="row2"><button class="btn2" data-act="admvcancel" style="background:var(--chip);color:var(--ink)">やめる</button><button class="btn2" data-act="admvsave" data-y="${esc(v.y)}">保存</button></div></div>`})()
       :`<div class="vbtn"><button class="lnk" data-act="admvedit" data-y="${esc(v.y)}">✏️ 編集</button>${dl?`<span class="note2">本当に削除？</span><button class="lnk" data-act="admvdel2" data-y="${esc(v.y)}"><b>削除する</b></button><button class="lnk" data-act="admvcancel">やめる</button>`:`<button class="lnk" data-act="admvdel" data-y="${esc(v.y)}">🗑 削除</button>`}</div>`}</div></div>`}).join('')}</div>${L.length===40?'<p class="note2">40件まで表示しています。もっと絞り込んでください。</p>':''}`;
 }
 function renderAdmVL(){const el=$('#admVL');if(el)el.innerHTML=admVList()}
+function vDraft(){const g=id=>{const e=$(id);return e?e.value:undefined};return {t:g('#veT'),g:g('#veG'),f:g('#veF'),sd:g('#veSd'),s:g('#veS')}}
 async function admVSave(y){
-  const e=VID[y];if(!e||!S.fb)return;const {fs,db}=S.fb;
-  const t=String(($('#veT')||{}).value||'').trim(),sv=Math.max(0,parseInt(($('#veS')||{}).value,10)||0);if(!t)return toast('表示タイトルを入れてください');
+  const e=VID[y];if(!e||!S.fb)return;const {fs,db}=S.fb;const D=vDraft();
+  const t=String(D.t||'').trim(),sv=Math.max(0,parseInt(D.s,10)||0),f=D.f||e.v.f,side=f==='p'?(D.sd||e.v.side||'k'):null,tags=(ADM.vtg||[]).filter(k=>STY[k]);
+  if(!t)return toast('表示タイトルを入れてください');if(!tags.length)return toast('タグを1つ以上選んでください');
+  const gn=String(D.g||'').trim(),ng=CAT.find(c=>c.name===gn);if(!ng)return toast('組は既存の組から選んでください');
+  const ch={t,s:sv,f,side,tags,gid:ng.id};
   try{
-    if(e.v.extra)await fs.setDoc(fs.doc(db,'catalog',y),{t,s:sv},{merge:true});
-    else await fs.setDoc(fs.doc(db,'catalog','o_'+y),{o:true,y,t,s:sv,gname:e.g.name,t0:e.v.t,at:new Date().toISOString(),by:ADMIN_EMAIL},{merge:true});
-    e.v.t=t;e.v.s=sv;ADM.ved=null;renderAdmVL();toast('保存しました：'+e.g.name+'「'+t+'」（開始'+sv+'秒）');if(S.cur===y)renderWatch(true);
+    if(e.v.extra)await fs.setDoc(fs.doc(db,'catalog',y),{...ch,gname:ng.name},{merge:true});
+    else await fs.setDoc(fs.doc(db,'catalog','o_'+y),{o:true,y,...ch,gname:ng.name,t0:e.v.t,at:new Date().toISOString(),by:ADMIN_EMAIL},{merge:true});
+    applyOvr({y,...ch});ADM.ved=null;ADM.vdraft=null;ADM.vtg=null;renderAdmVL();toast('保存しました：'+ng.name+'「'+t+'」');if(S.cur===y){if(S.noShimo&&tags.includes('shimo'))S.cur=null;renderWatch(true)}
   }catch(x){toast('保存できませんでした（'+(x&&x.code||'error')+'）')}
 }
 async function admVDel(y){
@@ -1244,8 +1264,9 @@ async function admAct(d,t){
   if(d.act==='admarch'||d.act==='admunarch'){if(!fsx)return;const A=new Set(ADM.arch||[]);d.act==='admarch'?A.add(d.id):A.delete(d.id);const ids=[...A].filter(id=>(ADM.fb||[]).some(f=>f.id===id));try{await fsx.setDoc(fsx.doc(db,'adminconf','fbarch'),{ids});ADM.arch=ids;renderAdmin();toast(d.act==='admarch'?'アーカイブしました':'戻しました')}catch(e){toast('保存できませんでした（'+(e&&e.code||'error')+'）')}return}
   if(d.act==='admarchtog'){ADM.showArch=!ADM.showArch;renderAdmin();return}
   if(d.act==='admdelfb'){if(!fsx)return;try{await fsx.deleteDoc(fsx.doc(db,'feedback',d.id));ADM.fb=(ADM.fb||[]).filter(f=>f.id!==d.id);renderAdmin()}catch(e){toast('消せませんでした（'+(e&&e.code||'error')+'）')}return}
-  if(d.act==='admvedit'){ADM.ved=d.y;ADM.vdel=null;renderAdmVL();const x=$('#veT');x&&x.focus();return}
-  if(d.act==='admvcancel'){ADM.ved=null;ADM.vdel=null;renderAdmVL();return}
+  if(d.act==='admvedit'){const e=VID[d.y];ADM.ved=d.y;ADM.vdel=null;ADM.vdraft=null;ADM.vtg=e?(e.v.tags||e.g.styles||[]).slice():[];renderAdmVL();const x=$('#veT');x&&x.focus();return}
+  if(d.act==='admvtag'){ADM.vdraft=vDraft();const T=ADM.vtg||(ADM.vtg=[]),i=T.indexOf(d.k);i>=0?T.splice(i,1):T.push(d.k);renderAdmVL();return}
+  if(d.act==='admvcancel'){ADM.ved=null;ADM.vdel=null;ADM.vdraft=null;ADM.vtg=null;renderAdmVL();return}
   if(d.act==='admvsave')return admVSave(d.y);
   if(d.act==='admvdel'){ADM.vdel=d.y;ADM.ved=null;renderAdmVL();return}
   if(d.act==='admvdel2')return admVDel(d.y);
@@ -1337,7 +1358,7 @@ document.addEventListener('pointerdown',ev=>{const b=ev.target.closest('[data-om
   b.addEventListener('pointerup',stop);b.addEventListener('pointercancel',stop);b.addEventListener('lostpointercapture',stop)});
 document.addEventListener('keydown',ev=>{if(ev.target.id==='gmIn'){if(ev.key==='Enter'&&!ev.isComposing){ev.preventDefault();saveGeimei(ev.target.value);S.gmEdit=false;renderStats();toast('芸名を「'+geimei()+'」にしました')}else if(ev.key==='Escape'){S.gmEdit=false;renderStats()}return}const b=ev.target.closest&&ev.target.closest('[data-omar]');if(b&&(ev.key==='Enter'||ev.key===' ')){ev.preventDefault();const sc=document.querySelector('.omscroll');sc&&sc.scrollBy({left:Number(b.dataset.omar)*sc.clientWidth*.8,behavior:'smooth'})}});
 document.addEventListener('input',ev=>{if(ev.target.id==='admV'){ADM.vq=ev.target.value;ADM.ved=null;ADM.vdel=null;renderAdmVL();return}if(ev.target.id==='omq'){S.omQ=ev.target.value.trim();S.omG=null;renderOneman()}if(ev.target.closest&&ev.target.closest('#enq')&&ev.target.id){S.enqV[ev.target.id]=ev.target.value}if(ev.target.id==='cmtT'&&S.cur){S.draft={y:S.cur,t:ev.target.value,d:!!($('#cmtD')&&$('#cmtD').checked)}}});
-document.addEventListener('change',ev=>{
+document.addEventListener('change',ev=>{if(ev.target.id==='veF'){ADM.vdraft=vDraft();renderAdmVL();return}
   if(ev.target.id==='cmtD'&&S.cur){S.draft={y:S.cur,t:($('#cmtT')||{}).value||'',d:ev.target.checked};return}
   if(ev.target.id==='lsort'){S.logSort=ev.target.value;renderLog();return}
   if(ev.target.matches('[data-shimo]')){S.noShimo=ev.target.checked;try{localStorage.setItem(NS,S.noShimo?'1':'0')}catch(x){}if(!S.anim){if(S.noShimo&&S.cur&&VID[S.cur]&&vtags(VID[S.cur]).includes('shimo'))S.cur=null;renderWatch()}toast(S.noShimo?'ゴールデンタイム：下ネタがテーマだったり下ネタが多すぎるネタを減らします':'深夜帯：下ネタのネタも出します');return}
