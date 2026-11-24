@@ -51,8 +51,8 @@ main{padding:20px max(5vw,16px) 64px}
 .scene{position:relative;width:100%;margin-top:14px}
 .mek{position:absolute;left:0;bottom:0}
 .prop{position:absolute;bottom:0}
-.play{display:flex;align-items:center;gap:14px;margin:8px 0 0;width:100%;justify-content:center}
-.play .pl{flex:0 1 auto;min-width:0;display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.play{display:flex;align-items:flex-start;gap:14px;margin:8px 0 0;width:100%;justify-content:center}
+.play .pl{flex:0 1 auto;min-width:0;min-height:78px;display:flex;flex-direction:column;justify-content:center;gap:6px;align-items:flex-end}
 .play .pl .tg{justify-content:flex-end}
 .play .pl .hint{text-align:right;font-size:12.5px;white-space:nowrap}
 .play .pr{display:flex;flex-direction:column;align-items:center;gap:0;flex:none;line-height:1.25}
@@ -61,7 +61,7 @@ main{padding:20px max(5vw,16px) 64px}
 .play a{width:78px;height:78px;border-radius:39px;background:var(--yel);border:4px solid #1d1714;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(0,0,0,.4);transition:transform .15s}
 .play a:active{transform:scale(.94)}
 .play .pr p{margin:0;font-size:12px;white-space:nowrap;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.7)}
-.pit{position:relative;z-index:3;margin-top:-40px;padding:52px 20px 20px;background:linear-gradient(180deg,rgba(20,15,13,0) 0%,rgba(20,15,13,.9) 34%,#140f0d 100%);display:flex;flex-direction:column;gap:10px}
+.pit{position:relative;z-index:3;margin-top:-34px;padding:6px 20px 20px;background:linear-gradient(180deg,rgba(20,15,13,0) 0%,rgba(20,15,13,.9) 34%,#140f0d 100%);display:flex;flex-direction:column;gap:10px}
 .tg{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
 .tg span{background:rgba(255,255,255,.16);font-size:13px;font-weight:700;padding:2px 9px;border-radius:6px}
 .hint{margin:0;font-size:13px;color:#c9bfb4;text-align:center}
@@ -351,10 +351,12 @@ fieldset{border:0;padding:0;margin:0}legend{font-weight:700;font-size:14px;margi
 .admw .note2{font-size:12px;color:var(--mute)}
 .lnote{margin:4px 0 0;font-size:12.5px;line-height:1.45;color:var(--mute);overflow-wrap:anywhere}
 .cmt{display:flex;flex-direction:column;gap:8px}
-.rgrid[hidden]{display:none}
 .rzone{display:flex;flex-direction:column;gap:10px}
-.cmt.open{box-sizing:border-box;gap:8px}
-.cmt.open textarea{flex:1;min-height:0;resize:none}
+.rbox{position:relative}
+.rgrid[inert]{visibility:hidden}
+.cmt.open{position:absolute;inset:0;box-sizing:border-box;gap:8px;z-index:2}
+.cmt.open textarea{flex:1;min-height:0;resize:none;height:auto}
+.cmtpill.on{border-color:#fff}
 .cmtpill{align-self:flex-start;width:calc((100% - 8px)/2*.82);min-height:40px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:6px;font:inherit;font-size:13px;font-weight:700;color:#fff;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.28);border-radius:14px;padding:4px 10px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cmtpill small{font-weight:400;color:#c9bfb4;font-size:11.5px}
 .cmtpill b{font-size:10px;color:#c9bfb4;margin-left:2px}
@@ -725,11 +727,9 @@ const PLAY_SVG='<svg width="34" height="38" viewBox="0 0 14 16" aria-hidden="tru
 const CURT='<div class="cur l"></div><div class="cur r"></div><div class="val"></div>';
 const FINE='<p class="fine">面白かったネタは、YouTube内でも高評価・チャンネル登録・コメントで直接応援しましょう</p>';
 const SHIMO=()=>`<label class="shimo"><input type="checkbox" data-shimo${S.noShimo?' checked':''}> ゴールデンタイム</label>`;
-function cmtBlock(v){
-  const dr=S.draft&&S.draft.y===v.y?S.draft:null,txt=dr?String(dr.t||''):'',dev=!!(dr&&dr.d),tt=txt.trim();
-  if(S.cmtOpen===v.y)return `<div class="cmt open"${S.cmtH?` style="height:${S.cmtH}px"`:''}><textarea id="cmtT" rows="3" maxlength="500" placeholder="ひとこと（自分用メモ）　例：ツッコミ最高">${esc(txt)}</textarea><div class="crow"><label class="sw"><input type="checkbox" id="cmtD"${dev?' checked':''}><i aria-hidden="true"></i><span>開発者にも送る</span></label><button type="button" class="cdone" data-act="cmtclose">完了</button></div></div>`;
-  return `<button type="button" class="cmtpill${tt?' has':''}" data-act="cmtopen">💬 ${tt?esc(tt.length>7?tt.slice(0,7)+'…':tt)+(dev?' <small>✉</small>':''):'ひとこと'}<b aria-hidden="true">▾</b></button>`;
-}
+function cmtState(v){const dr=S.draft&&S.draft.y===v.y?S.draft:null,txt=dr?String(dr.t||''):'';return {txt,dev:!!(dr&&dr.d),tt:txt.trim(),op:S.cmtOpen===v.y}}
+function cmtEditor(v){const {txt,dev}=cmtState(v);return `<div class="cmt open"><textarea id="cmtT" maxlength="500" placeholder="ひとこと（自分用メモ）　例：ツッコミ最高">${esc(txt)}</textarea><div class="crow"><label class="sw"><input type="checkbox" id="cmtD"${dev?' checked':''}><i aria-hidden="true"></i><span>開発者にも送る</span></label><button type="button" class="cdone" data-act="cmtclose">完了</button></div></div>`}
+function cmtPill(v){const {tt,dev,op}=cmtState(v);return `<button type="button" class="cmtpill${tt?' has':''}${op?' on':''}" data-act="${op?'cmtclose':'cmtopen'}" aria-expanded="${op}">💬 ${tt?esc(tt.length>7?tt.slice(0,7)+'…':tt)+(dev?' <small>✉</small>':''):'ひとこと'}<b aria-hidden="true">${op?'▴':'▾'}</b></button>`}
 function renderWatch(force){
   if(S.anim&&!force)return;
   if(!force&&document.activeElement&&document.activeElement.id==='cmtT'&&S.cur&&VID[S.cur]&&rated()[S.cur]==null)return;
@@ -741,15 +741,15 @@ function renderWatch(force){
   st.innerHTML=`${CURT}<div class="boards">
     <h2 class="ttl telop" style="font-size:${tz}px">「${esc(t)}」</h2>
     <div class="scene" style="height:${Math.max(200,mk.h+4)}px">${mk.html}${prop}</div>
-    <div class="play"><div class="pl"><div class="tg">${vtags({g,v}).filter(s=>STY[s]).map(s=>`<span>${STY[s]}</span>`).join('')}</div><p class="hint">${p?'観終わったら評価 ↓':''}</p></div><div class="pr"><a href="${ytUrl(v.y,v.s)}" target="_blank" rel="noopener" data-play="${esc(v.y)}" aria-label="YouTubeで観る（${mmss(v.d)}）">${PLAY_SVG}</a><p>YouTubeへ</p><small class="dur">${mmss(v.d)}</small></div></div>
+    <div class="play"><div class="pl"><div class="tg">${vtags({g,v}).filter(s=>STY[s]).map(s=>`<span>${STY[s]}</span>`).join('')}</div></div><div class="pr"><a href="${ytUrl(v.y,v.s)}" target="_blank" rel="noopener" data-play="${esc(v.y)}" aria-label="YouTubeで観る（${mmss(v.d)}）">${PLAY_SVG}</a><p>YouTubeへ</p><small class="dur">${mmss(v.d)}</small></div></div>
   </div>
   <div class="pit">
-    <div class="rzone">${S.cmtOpen===v.y?cmtBlock(v):cmtBlock(v)+`    <div class="rgrid" role="group" aria-label="評価">
+    <div class="rzone">${cmtPill(v)}<div class="rbox">${S.cmtOpen===v.y?cmtEditor(v):''}<div class="rgrid" role="group" aria-label="評価"${S.cmtOpen===v.y?' aria-hidden="true" inert':''}>
       <button type="button" class="rb u" data-rate="1"${p?'':' disabled'}>ウケた</button>
       <button type="button" class="rb m" data-rate="0"${p?'':' disabled'}>まあまあ</button>
       <button type="button" class="rb s" data-rate="-1"${p?'':' disabled'}>スベった</button>
       <button type="button" class="rb a" data-rate="-2"${p?'':' disabled'}>途中でやめた</button>
-    </div>`}</div>
+    </div></div></div>
     <p class="today">今日の評価 ${todayN}本</p>${FINE}${SHIMO()}
   </div>`;
 }
@@ -1208,7 +1208,7 @@ document.addEventListener('click',ev=>{
   if(d.omplay){S.omPlayed=S.omPlayed||{};S.omPlayed[d.omplay]=true;setTimeout(renderOneman,300);return}
   if(d.omrate!=null){omRate(d.y,d.omrate);return}
   if(d.rate!=null){if(!t.disabled)rateCur(d.rate);return}
-  if(d.act==='cmtopen'&&S.cur){const z=$('.rzone');S.cmtH=z?Math.round(z.getBoundingClientRect().height):0;S.cmtOpen=S.cur;renderWatch(true);const x=$('#cmtT');if(x){x.focus();x.setSelectionRange(x.value.length,x.value.length)}return}
+  if(d.act==='cmtopen'&&S.cur){S.cmtOpen=S.cur;renderWatch(true);const x=$('#cmtT');if(x){x.focus();x.setSelectionRange(x.value.length,x.value.length)}return}
   if(d.act==='cmtclose'){S.cmtOpen=null;renderWatch(true);return}
   if('later' in d){if(!S.anim)return;S.later=!S.later;t.classList.toggle('on',S.later);t.setAttribute('aria-pressed',S.later);return}
   if(d.lf!=null){S.logFav=d.lf==='1';return renderLog()}
