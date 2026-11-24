@@ -51,15 +51,17 @@ main{padding:20px max(5vw,16px) 64px}
 .scene{position:relative;width:100%;margin-top:14px}
 .mek{position:absolute;left:0;bottom:0}
 .prop{position:absolute;bottom:0}
-.play{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin:14px 0 0;width:100%;margin-right:-12px}
-.play .pl{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.play{display:flex;align-items:center;gap:14px;margin:8px 0 0;width:100%;justify-content:center}
+.play .pl{flex:0 1 auto;min-width:0;display:flex;flex-direction:column;gap:6px;align-items:flex-end}
 .play .pl .tg{justify-content:flex-end}
 .play .pl .hint{text-align:right;font-size:12.5px;white-space:nowrap}
-.play .pr{display:flex;flex-direction:column;align-items:center;gap:5px;flex:none}
+.play .pr{display:flex;flex-direction:column;align-items:center;gap:0;flex:none;line-height:1.25}
+.play .pr a{margin-bottom:4px}
+.play .pr .dur{font-size:11.5px;font-weight:700;color:#c9bfb4}
 .play a{width:78px;height:78px;border-radius:39px;background:var(--yel);border:4px solid #1d1714;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(0,0,0,.4);transition:transform .15s}
 .play a:active{transform:scale(.94)}
 .play .pr p{margin:0;font-size:12px;white-space:nowrap;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.7)}
-.pit{position:relative;z-index:3;margin-top:-34px;padding:44px 20px 20px;background:linear-gradient(180deg,rgba(20,15,13,0) 0%,rgba(20,15,13,.9) 34%,#140f0d 100%);display:flex;flex-direction:column;gap:10px}
+.pit{position:relative;z-index:3;margin-top:-40px;padding:30px 20px 20px;background:linear-gradient(180deg,rgba(20,15,13,0) 0%,rgba(20,15,13,.9) 34%,#140f0d 100%);display:flex;flex-direction:column;gap:10px}
 .tg{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
 .tg span{background:rgba(255,255,255,.16);font-size:13px;font-weight:700;padding:2px 9px;border-radius:6px}
 .hint{margin:0;font-size:13px;color:#c9bfb4;text-align:center}
@@ -350,7 +352,7 @@ fieldset{border:0;padding:0;margin:0}legend{font-weight:700;font-size:14px;margi
 .lnote{margin:4px 0 0;font-size:12.5px;line-height:1.45;color:var(--mute);overflow-wrap:anywhere}
 .cmt{display:flex;flex-direction:column;gap:8px}
 .rgrid[hidden]{display:none}
-.cmtpill{align-self:center;max-width:100%;display:flex;align-items:center;gap:6px;font:inherit;font-size:13px;font-weight:700;color:#fff;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.2);border-radius:999px;padding:6px 14px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmtpill{align-self:flex-start;width:calc((100% - 8px)/2*.82);min-height:40px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:6px;font:inherit;font-size:13px;font-weight:700;color:#fff;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.28);border-radius:14px;padding:4px 10px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cmtpill small{font-weight:400;color:#c9bfb4;font-size:11.5px}
 .cmtpill b{font-size:10px;color:#c9bfb4;margin-left:2px}
 .cmtpill.has{border-color:var(--yel)}
@@ -439,7 +441,7 @@ const sv=e=>e.fav?'s'+e.r:e.r;
 const VERSION='1.3';
 const ADMIN_EMAIL='james@raymercer.net';
 const CHANGELOG=[
- ['1.3','2026年11月24日',['寄席の画面をコンパクトに。再生ボタンを右に、ひとことはタップで開くように（書いている間は評価ボタンが隠れます）','ネタのタイプ分けを、芸人ごとではなく1本ずつに。同じ組でもネタによって違うタイプが付きます（今までの記録も新しい分け方で集計し直されます）','ネタが172本から520本に、芸人さんも73組から115組に。タイムマシーン3号、さまぁ～ず、四千頭身、かが屋、千鳥…やっと呼べました','★推す！はカウントダウン式に。幕が閉まるまでの3秒で決めてください。迷ったら推す','評価ボタンの上に「ひとこと」。自分用メモです。「開発者にも送る」にチェックすると開発者にも届きます（悪口はお手柔らかに）','新タブ「アンケート」。観たい組、欲しい機能、なんでもどうぞ。全部読みます','はじめての人は寄席から。3本でワンマン解禁＆チケット1枚プレゼント、20本で記録とWBTI診断が解禁。焦らず観てください','そのほか：収録数を表示、記録にひとことを表示、細かい改善']],
+ ['1.3','2026年11月24日',['寄席の画面をコンパクトに。再生ボタンをタグの横に、ひとことはタップで開くように（書いている間は評価ボタンが隠れます）','ネタのタイプ分けを、芸人ごとではなく1本ずつに。同じ組でもネタによって違うタイプが付きます（今までの記録も新しい分け方で集計し直されます）','ネタが172本から520本に、芸人さんも73組から115組に。タイムマシーン3号、さまぁ～ず、四千頭身、かが屋、千鳥…やっと呼べました','★推す！はカウントダウン式に。幕が閉まるまでの3秒で決めてください。迷ったら推す','評価ボタンの上に「ひとこと」。自分用メモです。「開発者にも送る」にチェックすると開発者にも届きます（悪口はお手柔らかに）','新タブ「アンケート」。観たい組、欲しい機能、なんでもどうぞ。全部読みます','はじめての人は寄席から。3本でワンマン解禁＆チケット1枚プレゼント、20本で記録とWBTI診断が解禁。焦らず観てください','そのほか：収録数を表示、記録にひとことを表示、細かい改善']],
  ['1.2','2026年11月21日',['新タブ「ワンマン」：寄席で10本観るごとにチケット1枚。推しのネタを好きなだけ…じゃなくて1本だけ観られます。好きな組ばかり観てると偏るので','ネタが64本から172本に。ピン芸人15人も仲間入り（R-1王者など）。ひとりで全部背負う人たちです','「ウケた」のあと、幕が閉まるあいだに★「推す！」。推したネタは記録からすぐ観直せます。推しは点数も＋50点、えこひいきです','ネタの頭から再生。前説や出囃子は飛ばします。早く本題に入りたいあなたへ','「成績表」は「WBTI診断」に。推しスタイルTOP3、ボケ派かツッコミ派か、ピン芸の点数も。あなたのツボ、丸裸です','そのほか：「観る」→「寄席」、「途中で飽きた」→「途中でやめた」（言い方は大事）、タグ約30種類、「ゴールデンタイム」設定（下ネタ控えめ）、漫才派・コント派の判定をゆるめに、「好きな尺」、バックアップのボタンを削除、デザインをいろいろ改善']],
  ['1.1','2026年11月20日',['Googleでログインできるように。スマホでもPCでも同じ記録。逃げられません','成績表に「笑いの診断」を追加。当たっても怒らないでください','記録にスタイルを表示。評価の変更はプルダウンから（うっかり変更防止）','更新履歴を追加。今まさに読んでるやつです','デザインを改善']],
  ['1.0','2026年11月20日',['UKETAとして公開','寄席の舞台で1本ずつ観る形式に。選り好みはさせません','「途中で飽きた」を追加。評価はYouTubeで観てから。観てない人の評価は聞いてません','視聴時間とベスト尺','全部日本語に。日本語話せないとお笑いは難しいよね・・・']],
@@ -723,7 +725,7 @@ const SHIMO=()=>`<label class="shimo"><input type="checkbox" data-shimo${S.noShi
 function cmtBlock(v){
   const dr=S.draft&&S.draft.y===v.y?S.draft:null,txt=dr?String(dr.t||''):'',dev=!!(dr&&dr.d),tt=txt.trim();
   if(S.cmtOpen===v.y)return `<div class="cmt open"><textarea id="cmtT" rows="3" maxlength="500" placeholder="ひとこと（自分用メモ）　例：ツッコミ最高">${esc(txt)}</textarea><div class="crow"><label class="sw"><input type="checkbox" id="cmtD"${dev?' checked':''}><i aria-hidden="true"></i><span>開発者にも送る</span></label><button type="button" class="cdone" data-act="cmtclose">完了</button></div></div>`;
-  return `<button type="button" class="cmtpill${tt?' has':''}" data-act="cmtopen">💬 ${tt?esc(tt.length>16?tt.slice(0,16)+'…':tt)+(dev?' <small>· 開発者へ</small>':''):'ひとこと <small>（任意）</small>'}<b aria-hidden="true">▾</b></button>`;
+  return `<button type="button" class="cmtpill${tt?' has':''}" data-act="cmtopen">💬 ${tt?esc(tt.length>7?tt.slice(0,7)+'…':tt)+(dev?' <small>✉</small>':''):'ひとこと'}<b aria-hidden="true">▾</b></button>`;
 }
 function renderWatch(force){
   if(S.anim&&!force)return;
@@ -736,7 +738,7 @@ function renderWatch(force){
   st.innerHTML=`${CURT}<div class="boards">
     <h2 class="ttl telop" style="font-size:${tz}px">「${esc(t)}」</h2>
     <div class="scene" style="height:${Math.max(200,mk.h+4)}px">${mk.html}${prop}</div>
-    <div class="play"><div class="pl"><div class="tg">${vtags({g,v}).filter(s=>STY[s]).map(s=>`<span>${STY[s]}</span>`).join('')}</div><p class="hint">${p?'観終わったら評価 ↓':'タップでYouTubeへ →'}</p></div><div class="pr"><a href="${ytUrl(v.y,v.s)}" target="_blank" rel="noopener" data-play="${esc(v.y)}" aria-label="YouTubeで観る（${mmss(v.d)}）">${PLAY_SVG}</a><p>${mmss(v.d)}</p></div></div>
+    <div class="play"><div class="pl"><div class="tg">${vtags({g,v}).filter(s=>STY[s]).map(s=>`<span>${STY[s]}</span>`).join('')}</div><p class="hint">${p?'観終わったら評価 ↓':''}</p></div><div class="pr"><a href="${ytUrl(v.y,v.s)}" target="_blank" rel="noopener" data-play="${esc(v.y)}" aria-label="YouTubeで観る（${mmss(v.d)}）">${PLAY_SVG}</a><p>YouTubeへ</p><small class="dur">${mmss(v.d)}</small></div></div>
   </div>
   <div class="pit">
     ${cmtBlock(v)}
