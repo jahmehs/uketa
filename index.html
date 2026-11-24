@@ -241,6 +241,15 @@ fieldset{border:0;padding:0;margin:0}legend{font-weight:700;font-size:14px;margi
 .err{color:var(--red);margin:0;font-weight:700;min-height:1.2em}
 .row{display:flex;justify-content:flex-end;gap:8px}
 .toast{position:fixed;left:50%;bottom:18px;transform:translate(-50%,6px);opacity:0;transition:opacity .35s ease,transform .35s ease;background:rgba(44,36,32,.9);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#e9e1da;border:1px solid rgba(255,210,31,.18);font-size:13.5px;line-height:1.5;border-radius:12px;padding:8px 10px 8px 16px;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;z-index:30;width:max-content;max-width:calc(100% - 24px);box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.gm{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px;padding:10px 14px;border-radius:14px;background:rgba(29,23,20,.06);border:1.5px solid rgba(29,23,20,.12)}
+.gm .gml{font-size:12px;font-weight:700;color:#8a7f78;letter-spacing:.08em}
+.gm b{font-size:22px;line-height:1.2;color:var(--red,#c8321e);word-break:break-all}
+.gm .gme{margin-left:auto;font:inherit;font-size:13px;font-weight:700;background:none;border:1.5px solid rgba(29,23,20,.25);border-radius:10px;padding:5px 10px;cursor:pointer;color:inherit}
+.gm.edit label{font-size:12px;font-weight:700;color:#8a7f78}
+.gm.edit input{flex:1;min-width:140px;font:inherit;font-size:16px;padding:7px 10px;border-radius:10px;border:1.5px solid rgba(29,23,20,.3);background:#fff;color:#1d1714}
+.gm.edit button{font:inherit;font-size:14px;font-weight:700;border-radius:10px;padding:7px 14px;cursor:pointer;border:0}
+.gm .gmok{background:var(--yel);color:#1d1714}
+.gm .gmx{background:none;color:inherit;border:1.5px solid rgba(29,23,20,.25)!important}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .toast button{background:none;border:0;color:var(--yel);font-weight:700;cursor:pointer;min-height:40px;padding:0 6px}
 .acct{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
@@ -447,7 +456,7 @@ const sv=e=>e.fav?'s'+e.r:e.r;
 const VERSION='1.3';
 const ADMIN_EMAIL='james@raymercer.net';
 const CHANGELOG=[
- ['1.3','2026年11月24日',['寄席の画面をコンパクトに。再生ボタンをタグの横に、ひとことはタップで開くように（書いている間は評価ボタンが隠れます）','ネタのタイプ分けを、芸人ごとではなく1本ずつに。同じ組でもネタによって違うタイプが付きます（今までの記録も新しい分け方で集計し直されます）','ネタが172本から520本に、芸人さんも73組から115組に。タイムマシーン3号、さまぁ～ず、四千頭身、かが屋、千鳥…やっと呼べました','★推す！はカウントダウン式に。幕が閉まるまでの3秒で決めてください。迷ったら推す','評価ボタンの上に「ひとこと」。自分用メモです。「開発者にも送る」にチェックすると開発者にも届きます（悪口はお手柔らかに）','新タブ「アンケート」。観たい組、欲しい機能、なんでもどうぞ。全部読みます','はじめての人は寄席から。3本でワンマン解禁＆チケット1枚プレゼント、20本で記録とWBTI診断が解禁。焦らず観てください','そのほか：収録数を表示、記録にひとことを表示、細かい改善']],
+ ['1.3','2026年11月24日',['WBTI診断に「芸名」を。✏️からいつでも好きな名前に変えられます','寄席の画面をコンパクトに。再生ボタンをタグの横に、ひとことはタップで開くように（書いている間は評価ボタンが隠れます）','ネタのタイプ分けを、芸人ごとではなく1本ずつに。同じ組でもネタによって違うタイプが付きます（今までの記録も新しい分け方で集計し直されます）','ネタが172本から520本に、芸人さんも73組から115組に。タイムマシーン3号、さまぁ～ず、四千頭身、かが屋、千鳥…やっと呼べました','★推す！はカウントダウン式に。幕が閉まるまでの3秒で決めてください。迷ったら推す','評価ボタンの上に「ひとこと」。自分用メモです。「開発者にも送る」にチェックすると開発者にも届きます（悪口はお手柔らかに）','新タブ「アンケート」。観たい組、欲しい機能、なんでもどうぞ。全部読みます','はじめての人は寄席から。3本でワンマン解禁＆チケット1枚プレゼント、20本で記録とWBTI診断が解禁。焦らず観てください','そのほか：収録数を表示、記録にひとことを表示、細かい改善']],
  ['1.2','2026年11月21日',['新タブ「ワンマン」：寄席で10本観るごとにチケット1枚。推しのネタを好きなだけ…じゃなくて1本だけ観られます。好きな組ばかり観てると偏るので','ネタが64本から172本に。ピン芸人15人も仲間入り（R-1王者など）。ひとりで全部背負う人たちです','「ウケた」のあと、幕が閉まるあいだに★「推す！」。推したネタは記録からすぐ観直せます。推しは点数も＋50点、えこひいきです','ネタの頭から再生。前説や出囃子は飛ばします。早く本題に入りたいあなたへ','「成績表」は「WBTI診断」に。推しスタイルTOP3、ボケ派かツッコミ派か、ピン芸の点数も。あなたのツボ、丸裸です','そのほか：「観る」→「寄席」、「途中で飽きた」→「途中でやめた」（言い方は大事）、タグ約30種類、「ゴールデンタイム」設定（下ネタ控えめ）、漫才派・コント派の判定をゆるめに、「好きな尺」、バックアップのボタンを削除、デザインをいろいろ改善']],
  ['1.1','2026年11月20日',['Googleでログインできるように。スマホでもPCでも同じ記録。逃げられません','成績表に「笑いの診断」を追加。当たっても怒らないでください','記録にスタイルを表示。評価の変更はプルダウンから（うっかり変更防止）','更新履歴を追加。今まさに読んでるやつです','デザインを改善']],
  ['1.0','2026年11月20日',['UKETAとして公開','寄席の舞台で1本ずつ観る形式に。選り好みはさせません','「途中で飽きた」を追加。評価はYouTubeで観てから。観てない人の評価は聞いてません','視聴時間とベスト尺','全部日本語に。日本語話せないとお笑いは難しいよね・・・']],
@@ -588,7 +597,7 @@ const hm=sec=>{const m=Math.round((sec||0)/60);return m>=60?Math.floor(m/60)+'�
 const mmss=sec=>Math.floor(sec/60)+':'+String(Math.round(sec%60)).padStart(2,'0');
 const nid=p=>p+'-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const score=rs=>rs.length?Math.round(rs.reduce((a,r)=>a+(RV[r]??0),0)/rs.length):null;
-const S={entries:[],custom:[],view:'watch',cur:null,played:{},dl:null,fb:null,user:null,mode:'local',star:false,logFav:false};
+const S={geimei:(()=>{try{return localStorage.getItem('uketa-geimei')||''}catch(e){return ''}})(),entries:[],custom:[],view:'watch',cur:null,played:{},dl:null,fb:null,user:null,mode:'local',star:false,logFav:false};
 let F={},T=[],col=null,localDocs={},readyRes,tt;
 const ready=new Promise(r=>readyRes=r);
 const LS='owarai-techo-v1',SS='owarai-techo-now',NS='uketa-noshimo';
@@ -647,6 +656,7 @@ async function startFirebase(){
       col={doc:id=>({set:d=>fs.setDoc(ref(id),d),delete:()=>fs.deleteDoc(ref(id))})};S.mode='cloud';
       const loc=Object.entries(localDocs);
       if(loc.length){try{const ex=await fs.getDocs(fs.collection(db,'users',u.uid,'items')),have=new Set(ex.docs.map(d=>d.id));let n=0;for(const [id,d] of loc){if(!have.has(id)){await fs.setDoc(ref(id),d);n++}}localDocs={};try{localStorage.removeItem(LS)}catch(e){}if(n)toast('このブラウザの記録'+n+'件をアカウントに移しました')}catch(e){toast('このブラウザの記録を移せませんでした（'+(e&&e.code||'error')+'）')}}
+      fs.getDoc(fs.doc(db,'users',u.uid,'meta','prefs')).then(d=>{const g=d.exists()&&d.data().geimei;if(g!=null&&g!==S.geimei){S.geimei=g;try{localStorage.setItem('uketa-geimei',g)}catch(e){}if(S.view==='stats')renderStats()}else if(!d.exists()&&S.geimei){saveGeimei(S.geimei)}}).catch(()=>{});
       fbUnsub=fs.onSnapshot(fs.collection(db,'users',u.uid,'items'),s=>ingest(s.docs.map(d=>[d.id,d.data()])),e=>note('記録を読み込めませんでした（'+(e&&e.code||'error')+'）'));
       note('');
     }else{
@@ -863,6 +873,12 @@ function renderLog(){
 
 /* scorecard */
 const bar=(l,sub,s,n,unit='本')=>`<div class="br"><div class="bl">${l}${sub?`<small>${sub}</small>`:''}</div><div class="bt"><i style="width:${Math.min(100,s??0)}%"></i></div><div class="bv">${s==null?'–':Math.min(100,s)}<small> · ${n}${unit}</small></div></div>`;
+const GM='uketa-geimei';
+function geimei(){const n=(S.geimei||'').trim();if(n)return n;const d=S.user&&S.user.displayName?String(S.user.displayName).trim().split(/\s+/)[0]:'';return d||'名無しのお客さん'}
+function gmBox(){return S.gmEdit?`<div class="gm edit"><label for="gmIn">芸名</label><input id="gmIn" maxlength="20" value="${esc(S.geimei||'')}" placeholder="${esc(geimei())}" autocomplete="off"><button type="button" class="gmok" data-act="gmsave">決定</button><button type="button" class="gmx" data-act="gmcancel">やめる</button></div>`
+  :`<div class="gm"><span class="gml">芸名</span><b class="telop">${esc(geimei())}</b><button type="button" class="gme" data-act="gmedit">✏️ 変える</button></div>`}
+function saveGeimei(v){v=String(v||'').replace(/\s+/g,' ').trim().slice(0,20);S.geimei=v;try{localStorage.setItem(GM,v)}catch(e){}
+  if(S.fb&&S.user){const {fs,db}=S.fb;fs.setDoc(fs.doc(db,'users',S.user.uid,'meta','prefs'),{geimei:v,at:new Date().toISOString()},{merge:true}).catch(()=>{})}}
 function renderStats(){
   const E=S.entries,el=$('#dash');
   if(!E.length){el.innerHTML=`<div class="emptyd"><p class="telop">?</p><h2>お笑い年齢はまだ謎です</h2><p>ネタを何本か評価すると、観た組数、漫才派かコント派か、推しスタイル、好きな尺、そしてお笑い年齢がわかります。</p><a class="btn" href="#watch">観に行く</a></div>`;return}
@@ -894,7 +910,7 @@ function renderStats(){
   const era=ERAS.map(([l,a,b])=>{const x=E.filter(e=>{const g=gById(e.gid);return g&&g.peak>=a&&g.peak<=b}).map(sv);return {l,n:x.length,sc:score(x)}}).filter(x=>x.n);
   const GR=Object.entries(pg).map(([id,o])=>({name:(gById(id)||o).name,n:o.rs.length,s:score(o.sv),rs:o.rs,fav:o.sv.some(x=>String(x)[0]==='s')})).sort((a,b)=>b.s-a.s||b.n-a.n);
   const dg=diagnose({age,v,fav,sAll:score(rsv),E,bestLen,fm,fk,fp,spn,sNP});
-  el.innerHTML=`<section class="diag" aria-label="WBTI診断"><p class="wbti">WBTI（Warai-Based Type Indicator）診断</p><div class="code" aria-label="タイプ ${dg.code}">${[...dg.code].map(c=>`<b>${c}</b>`).join('')}<span style="align-self:center;margin-left:6px;font-weight:700">型</span></div><h3>あなたは${esc(dg.name)}です。</h3><ul>${dg.lines.map(l=>`<li>${esc(l)}</li>`).join('')}</ul><small>${dg.legend}</small></section>
+  el.innerHTML=`${gmBox()}<section class="diag" aria-label="WBTI診断"><p class="wbti">WBTI（Warai-Based Type Indicator）診断</p><div class="code" aria-label="タイプ ${dg.code}">${[...dg.code].map(c=>`<b>${c}</b>`).join('')}<span style="align-self:center;margin-left:6px;font-weight:700">型</span></div><h3>あなたは${esc(dg.name)}です。</h3><ul>${dg.lines.map(l=>`<li>${esc(l)}</li>`).join('')}</ul><small>${dg.legend}</small></section>
   <h2 class="find">${v[1]}${fav?`。いちばん笑うのは「${STY[fav.k]}」`:''}。</h2>
   <div class="hero">
     <div class="agecard"><p class="lab">お笑い年齢</p>
@@ -1211,6 +1227,9 @@ document.addEventListener('click',ev=>{
   if(d.omrate!=null){omRate(d.y,d.omrate);return}
   if(d.rate!=null){if(!t.disabled)rateCur(d.rate);return}
   if(d.act==='cmtopen'&&S.cur){S.cmtOpen=S.cur;renderWatch(true);const x=$('#cmtT');if(x){x.focus();x.setSelectionRange(x.value.length,x.value.length)}return}
+  if(d.act==='gmedit'){S.gmEdit=true;renderStats();const x=$('#gmIn');if(x){x.focus();x.select()}return}
+  if(d.act==='gmsave'){saveGeimei(($('#gmIn')||{}).value);S.gmEdit=false;renderStats();toast('芸名を「'+geimei()+'」にしました');return}
+  if(d.act==='gmcancel'){S.gmEdit=false;renderStats();return}
   if(d.act==='cmtclose'){S.cmtOpen=null;renderWatch(true);return}
   if('later' in d){if(!S.anim)return;S.later=!S.later;t.classList.toggle('on',S.later);t.setAttribute('aria-pressed',S.later);return}
   if(d.lf!=null){S.logFav=d.lf==='1';return renderLog()}
@@ -1241,7 +1260,7 @@ document.addEventListener('pointerdown',ev=>{const b=ev.target.closest('[data-om
   try{b.setPointerCapture(ev.pointerId)}catch(x){}
   const stop=()=>{cancelAnimationFrame(omHold);omHold=null;b.removeEventListener('pointerup',stop);b.removeEventListener('pointercancel',stop);b.removeEventListener('lostpointercapture',stop);if(!held)sc.scrollBy({left:dir*sc.clientWidth*.7,behavior:'smooth'})};
   b.addEventListener('pointerup',stop);b.addEventListener('pointercancel',stop);b.addEventListener('lostpointercapture',stop)});
-document.addEventListener('keydown',ev=>{const b=ev.target.closest&&ev.target.closest('[data-omar]');if(b&&(ev.key==='Enter'||ev.key===' ')){ev.preventDefault();const sc=document.querySelector('.omscroll');sc&&sc.scrollBy({left:Number(b.dataset.omar)*sc.clientWidth*.8,behavior:'smooth'})}});
+document.addEventListener('keydown',ev=>{if(ev.target.id==='gmIn'){if(ev.key==='Enter'&&!ev.isComposing){ev.preventDefault();saveGeimei(ev.target.value);S.gmEdit=false;renderStats();toast('芸名を「'+geimei()+'」にしました')}else if(ev.key==='Escape'){S.gmEdit=false;renderStats()}return}const b=ev.target.closest&&ev.target.closest('[data-omar]');if(b&&(ev.key==='Enter'||ev.key===' ')){ev.preventDefault();const sc=document.querySelector('.omscroll');sc&&sc.scrollBy({left:Number(b.dataset.omar)*sc.clientWidth*.8,behavior:'smooth'})}});
 document.addEventListener('input',ev=>{if(ev.target.id==='omq'){S.omQ=ev.target.value.trim();S.omG=null;renderOneman()}if(ev.target.closest&&ev.target.closest('#enq')&&ev.target.id){S.enqV[ev.target.id]=ev.target.value}if(ev.target.id==='cmtT'&&S.cur){S.draft={y:S.cur,t:ev.target.value,d:!!($('#cmtD')&&$('#cmtD').checked)}}});
 document.addEventListener('change',ev=>{
   if(ev.target.id==='cmtD'&&S.cur){S.draft={y:S.cur,t:($('#cmtT')||{}).value||'',d:ev.target.checked};return}
