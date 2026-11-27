@@ -433,7 +433,7 @@ fieldset{border:0;padding:0;margin:0}legend{font-weight:700;font-size:14px;margi
 </head>
 <body>
 <header class="top"><div class="in">
-  <div class="brand"><h1 class="telop">UKETA</h1><p>漫才とコントを観て、評価して、自分の笑いのツボを知る <button class="ver" data-act="news" id="verBtn">v1.3.009 · 更新履歴</button><small class="ccount" id="ccount"></small></p><div class="acct" id="acct"></div></div>
+  <div class="brand"><h1 class="telop">UKETA</h1><p>漫才とコントを観て、評価して、自分の笑いのツボを知る <button class="ver" data-act="news" id="verBtn">v1.3.010 · 更新履歴</button><small class="ccount" id="ccount"></small></p><div class="acct" id="acct"></div></div>
   <nav class="tabs">
     <a href="#watch" data-v="watch">寄席</a>
     <a href="#oneman" data-v="oneman">ワンマン</a>
@@ -495,7 +495,7 @@ const FMT={m:'漫才',k:'コント',b:'漫才・コント',p:'ピン'};
 const R={'1':'ウケた','0':'まあまあ','-1':'スベった','-2':'途中でやめた'};
 const RV={'1':100,'0':50,'-1':0,'-2':0,'s1':150,'s0':100,'s-1':50,'s-2':50};
 const sv=e=>e.fav?'s'+e.r:e.r;
-const VERSION='1.3',BUILD='1.3.009';
+const VERSION='1.3',BUILD='1.3.010';
 const ADMIN_EMAIL='james@raymercer.net';
 const CHANGELOG=[
  ['1.3','2026年11月24日',['ワンマンチケットが7本ごとにもらえるように（前は10本ごと）。今までの分もさかのぼって増えています','WBTI診断に「芸名」を。✏️からいつでも変えられて、診断とシェア画像にも名前が出ます。ページもすっきり','寄席の画面をコンパクトに。再生ボタンをタグの横に、ひとことはタップで開くように（書いている間は評価ボタンが隠れます）','ネタのタイプ分けを、芸人ごとではなく1本ずつに。同じ組でもネタによって違うタイプが付きます（今までの記録も新しい分け方で集計し直されます）','ネタが172本から520本に、芸人さんも73組から115組に。タイムマシーン3号、さまぁ～ず、四千頭身、かが屋、千鳥…やっと呼べました','★推す！はカウントダウン式に。幕が閉まるまでの3秒で決めてください。迷ったら推す','評価ボタンの上に「ひとこと」。自分用メモです。「開発者にも送る」にチェックすると開発者にも届きます（悪口はお手柔らかに）','新タブ「アンケート」。観たい組、欲しい機能、なんでもどうぞ。全部読みます','はじめての人は寄席から。3本でワンマン解禁＆チケット1枚プレゼント、20本で記録とWBTI診断が解禁。焦らず観てください','そのほか：収録数を表示、記録にひとことを表示、細かい改善']],
@@ -894,7 +894,9 @@ function renderOneman(){
 async function omRate(y,r){
   const x=VID[y];if(!x)return;const {g,v}=x,id='v-'+y,e=S.entries.find(q=>q.vid===y);
   const base=e?(({id:_,...rest})=>rest)(e):{kind:'w',fav:false,gid:g.id,gname:g.name,vid:y,sec:v.d,title:v.t,url:ytUrl(y,v.s),fmt:v.f,side:v.side||null,styles:(v.tags||g.styles).slice(),omOnly:true,ver:VERSION};
-  try{await put(id,{...base,r:Number(r),omN:(base.omN||0)+1,at:new Date().toISOString()});delete S.omPlayed[y];toast(R[r]+' · チケットを1枚使いました');renderOneman()}catch(err){toast('保存できませんでした（'+(err&&err.code||'error')+'）')}
+  try{const doc={...base,r:Number(r),omN:(base.omN||0)+1,at:new Date().toISOString()};await put(id,doc);if(S.omPlayed)delete S.omPlayed[y];renderOneman();
+    if(r==='1'&&!doc.fav)toast(R[r]+' · チケットを1枚使いました',[['★推す！',async()=>{await put(id,{...doc,fav:true});toast('★推しました：'+g.name+'「'+cleanTitle(v.t)+'」');renderOneman()}]]);
+    else toast(R[r]+' · チケットを1枚使いました')}catch(err){toast('保存できませんでした（'+(err&&err.code||'error')+'）')}
 }
 
 /* log */
@@ -1384,7 +1386,7 @@ function go(v){S.view=v;try{history.replaceState(null,'','#'+v)}catch(e){}route(
 function route(force){const v=typeof force==='string'?force:location.hash.slice(1);S.view=['watch','oneman','log','stats','enq','admin'].includes(v)&&unlocked(v)?v:'watch';$$('.view').forEach(x=>x.hidden=x.id!=='v-'+S.view);$$('.tabs a').forEach(a=>a.setAttribute('aria-current',a.dataset.v===S.view?'page':'false'));render()}
 window.addEventListener('hashchange',route);
 loadNow();route();init();
-if(location.protocol==='file:')window.__u={VID,S,vtags,renderWatch,pickNext,ADM,renderAdmin,admPick,addExtra,go,render,sendFeedback};
+if(location.protocol==='file:')window.__u={VID,S,vtags,renderWatch,pickNext,ADM,renderAdmin,admPick,addExtra,go,render,sendFeedback,omRate};
 }
 </script>
 </body>
